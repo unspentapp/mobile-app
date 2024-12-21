@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { Button, Icon, Text } from "app/components"
+import { Button, Icon, Text, Screen } from "app/components"
 import { colors, spacing, typography } from "app/theme"
 import { useHeader } from "app/utils/useHeader"
 import { useStore } from "app/store"
@@ -8,11 +8,9 @@ import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import {
   BottomSheetModal,
-  BottomSheetModalProvider,
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet"
-import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { logger } from "@nozbe/watermelondb/utils/common"
 import { Tag } from "app/components/Tag"
 
@@ -69,121 +67,118 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   }, [logout])
 
   return (
+    <View style={$container}>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        onChange={handleSheetChanges}
+        handleIndicatorStyle={$modalIndicator}
+        keyboardBehavior="fillParent"
+        android_keyboardInputMode="adjustResize"
+      >
+        <BottomSheetView
+          style={$bottomSheetContainer}
+        >
+          <Text>Add new expense</Text>
+          <View style={$inputContainer}>
+            <BottomSheetTextInput
+              ref={firstTextInputRef as any}
+              style={$modalExpenseInput}
+              inputMode="numeric"
+              returnKeyType="next"
+              autoComplete="off"
+              placeholderTextColor={colors.palette.neutral200}
+              autoCorrect={false}
+              autoFocus={true}
+              cursorColor={colors.palette.primary500}
+              maxFontSizeMultiplier={0}
+              maxLength={8}
+              onChangeText={value => setExpenseValue(value)}
+              blurOnSubmit={false}
+              onSubmitEditing={() => {
+                secondTextInputRef.current?.focus();
+              }}
+            />
 
-      <GestureHandlerRootView style={$container}>
-        <BottomSheetModalProvider>
-          <BottomSheetModal
-            ref={bottomSheetModalRef}
-            onChange={handleSheetChanges}
-            handleIndicatorStyle={$modalIndicator}
-            keyboardBehavior="fillParent"
-            android_keyboardInputMode="adjustResize"
-          >
-            <BottomSheetView
-              style={$bottomSheetContainer}
-            >
-              <Text>Add new expense</Text>
-              <View style={$inputContainer}>
-                <BottomSheetTextInput
-                  ref={firstTextInputRef as any}
-                  style={$modalExpenseInput}
-                  inputMode="numeric"
-                  returnKeyType="next"
-                  autoComplete="off"
-                  placeholderTextColor={colors.palette.neutral200}
-                  autoCorrect={false}
-                  autoFocus={true}
-                  cursorColor={colors.palette.primary500}
-                  maxFontSizeMultiplier={0}
-                  maxLength={8}
-                  onChangeText={value => setExpenseValue(value)}
-                  blurOnSubmit={false}
-                  onSubmitEditing={() => {
-                    secondTextInputRef.current?.focus();
-                  }}
-                />
-
-                {/* todo dynamic currency selection */}
-                <Text
-                  style={$euroSymbol}
-                  numberOfLines={1}
-                >
-                  €
-                </Text>
-              </View>
-
-              <View style={$noteInputContainer}>
-                <Icon icon="heart" />
-
-                <BottomSheetTextInput
-                  ref={secondTextInputRef as any}
-                  style={$modalNoteInput}
-                  textAlign="left"
-                  inputMode="text"
-                  returnKeyType="done"
-                  cursorColor={colors.palette.primary500}
-                  placeholder="Add a note"
-                  placeholderTextColor={colors.palette.neutral400}
-                  maxFontSizeMultiplier={0}
-                  maxLength={40}
-                  onChangeText={value => setNote(value)}
-                  onSubmitEditing={handleKeyboardEnter}
-                />
-              </View>
-
-
-              <View style={$bottomContainer}>
-                <Text
-                  style={$categoryText}
-                  preset="formLabel"
-                  tx={"addExpenseModal.categoryLabel"}
-                />
-                <View
-                  style={$categoriesContainer}
-                >
-                  <Tag />
-                  <Tag />
-                  <Tag />
-                  <Tag />
-                  <Tag />
-
-                </View>
-
-                <Button
-                  text="Add Expense"
-                  onPress={handleAddExpense}
-                  preset="filled"
-                />
-              </View>
-            </BottomSheetView>
-          </BottomSheetModal>
-
-          <View style={$topContainer}>
+            {/* todo dynamic currency selection */}
             <Text
-              testID="expenses-heading"
-              style={$expensesHeading}
-              tx="expensesScreen.title"
-              preset="heading"
+              style={$euroSymbol}
+              numberOfLines={1}
+            >
+              €
+            </Text>
+          </View>
+
+          <View style={$noteInputContainer}>
+            <Icon icon="heart" />
+
+            <BottomSheetTextInput
+              ref={secondTextInputRef as any}
+              style={$modalNoteInput}
+              textAlign="left"
+              inputMode="text"
+              returnKeyType="done"
+              cursorColor={colors.palette.primary500}
+              placeholder="Add a note"
+              placeholderTextColor={colors.palette.neutral400}
+              maxFontSizeMultiplier={0}
+              maxLength={40}
+              onChangeText={value => setNote(value)}
+              onSubmitEditing={handleKeyboardEnter}
             />
           </View>
-          <View style={$expensesContainer}>
-            <ExpenseCard name={"Grocery"} value={55}/>
-            <ExpenseCard name={"Grocery"} value={55}/>
-            <ExpenseCard name={"Grocery"} value={55}/>
-            <ExpenseCard name={"Grocery"} value={55}/>
-            <ExpenseCard name={"Grocery"} value={55}/>
+
+
+          <View style={$bottomContainer}>
+            <Text
+              style={$categoryText}
+              preset="formLabel"
+              tx={"addExpenseModal.categoryLabel"}
+            />
+            <View
+              style={$categoriesContainer}
+            >
+              <Tag />
+              <Tag />
+              <Tag />
+              <Tag />
+              <Tag />
+
+            </View>
+
+            <Button
+              text="Add Expense"
+              onPress={handleAddExpense}
+              preset="filled"
+            />
           </View>
+        </BottomSheetView>
+      </BottomSheetModal>
 
 
-          <Button
-            style={$roundButton}
-            onPress={handlePresentModalPress}
-          >
-            <Icon icon={"plus"} color={colors.palette.neutral100} />
-          </Button>
-        </BottomSheetModalProvider>
+      <View style={$topContainer}>
+        <Text
+          testID="expenses-heading"
+          style={$expensesHeading}
+          tx="expensesScreen.title"
+          preset="heading"
+        />
+      </View>
+      <View style={$expensesContainer}>
+        <ExpenseCard name={"Grocery"} value={55}/>
+        <ExpenseCard name={"Grocery"} value={55}/>
+        <ExpenseCard name={"Grocery"} value={55}/>
+        <ExpenseCard name={"Grocery"} value={55}/>
+        <ExpenseCard name={"Grocery"} value={55}/>
+      </View>
 
-      </GestureHandlerRootView>
+
+      <Button
+        style={$roundButton}
+        onPress={handlePresentModalPress}
+      >
+        <Icon icon={"plus"} color={colors.palette.neutral100} />
+      </Button>
+    </View>
 
   )
 }
