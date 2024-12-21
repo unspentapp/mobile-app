@@ -1,27 +1,24 @@
-import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
-import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { Button, Text } from "app/components"
 import { isRTL } from "../i18n"
-import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 import { useHeader } from "../utils/useHeader"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
+import { useStore } from "app/store"
 
 const welcomeLogo = require("../../assets/images/logo.png")
 const welcomeFace = require("../../assets/images/welcome-face.png")
 
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
-export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeScreen(_props) {
-  const { navigation } = _props
-  const {
-    authenticationStore: { logout },
-  } = useStores()
+export const WelcomeScreen: FC<WelcomeScreenProps> = (props) => {
+  const { navigation } = props
+  const logout = useStore((state) => state.logout)
 
   function goNext() {
-    navigation.navigate("Demo", { screen: "DemoShowroom", params: {} })
+    navigation.navigate("Main", { screen: "Expenses" })
   }
 
   useHeader(
@@ -57,10 +54,16 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
           tx="welcomeScreen.letsGo"
           onPress={goNext}
         />
+        <Pressable
+          onPress={goNext}
+        >
+
+          <Text preset={"bold"}>Go in</Text>
+        </Pressable>
       </View>
     </View>
   )
-})
+}
 
 const $container: ViewStyle = {
   flex: 1,
@@ -85,6 +88,7 @@ const $bottomContainer: ViewStyle = {
   paddingHorizontal: spacing.lg,
   justifyContent: "space-around",
 }
+
 const $welcomeLogo: ImageStyle = {
   height: 88,
   width: "100%",

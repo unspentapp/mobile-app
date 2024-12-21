@@ -86,3 +86,4 @@ web-build/
 !env.js
 
 /coverage
+/app/screens/DemoShowroomScreen/

@@ -13,13 +13,20 @@
     "noUnusedLocals": true,
     "sourceMap": true,
     "target": "esnext",
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "app/*": ["./app/*"],
-      "assets/*": ["./assets/*"]
+      "app/*": [
+        "./app/*"
+      ],
+      "assets/*": [
+        "./assets/*"
+      ]
     }
   },
   "extends": "expo/tsconfig.base",
@@ -31,6 +38,17 @@
       "module": "commonjs"
     }
   },
-  "include": ["index.js", "App.tsx", "app", "types", "plugins", "app.config.ts"],
-  "exclude": ["node_modules", "test/**/*"]
+  "include": [
+    "index.js",
+    "App.tsx",
+    "app",
+    "types",
+    "plugins",
+    "app.config.ts",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "test/**/*"
+  ]
 }

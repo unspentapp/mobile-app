@@ -1,23 +1,23 @@
-import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
-import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
-
+import { useAuthenticationStore, useStore, validationErrorSelector } from "app/store"
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
-export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
+export const LoginScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
 
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
-  const {
-    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
-  } = useStores()
+
+  // pick several values & actions from the AuthenticationStore
+  const { authEmail, setAuthEmail, setAuthToken } = useAuthenticationStore();
+  // we can also use multiple hooks
+  const validationError = useStore(validationErrorSelector);
 
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
@@ -106,7 +106,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         RightAccessory={PasswordRightAccessory}
       />
 
-      <Button
+       <Button
         testID="login-button"
         tx="loginScreen.tapToLogIn"
         style={$tapButton}
@@ -115,7 +115,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       />
     </Screen>
   )
-})
+}
 
 const $screenContentContainer: ViewStyle = {
   paddingVertical: spacing.xxl,

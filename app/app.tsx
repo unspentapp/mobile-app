@@ -10,6 +10,7 @@
  * The app navigation resides in ./app/navigators, so head over there
  * if you're interested in adding screens and navigators.
  */
+
 if (__DEV__) {
   // Load Reactotron in development only.
   // Note that you must be using metro's `inlineRequires` for this to work.
@@ -20,11 +21,11 @@ import "./utils/gestureHandler"
 import "./i18n"
 import "./utils/ignoreWarnings"
 import { useFonts } from "expo-font"
-import React from "react"
+import React, { useEffect } from "react"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Linking from "expo-linking"
-import { useInitialRootStore } from "./models"
 import { AppNavigator, useNavigationPersistence } from "./navigators"
+import { useStore } from "./store"
 import { ErrorBoundary } from "./screens/ErrorScreen/ErrorBoundary"
 import * as storage from "./utils/storage"
 import { customFontsToLoad } from "./theme"
@@ -50,6 +51,18 @@ const config = {
         DemoCommunity: "community",
       },
     },
+    Main: {
+      screens: {
+        DemoShowroom: {
+          path: "showroom/:queryIndex?/:itemIndex?",
+        },
+        Expenses: {
+          screens: {
+              Expenses: "expenses",
+          }
+        }
+      }
+    }
   },
 }
 
@@ -72,15 +85,12 @@ function App(props: AppProps) {
 
   const [areFontsLoaded, fontLoadError] = useFonts(customFontsToLoad)
 
-  const { rehydrated } = useInitialRootStore(() => {
-    // This runs after the root store has been initialized and rehydrated.
-
-    // If your initialization scripts run very fast, it's good to show the splash screen for just a bit longer to prevent flicker.
-    // Slightly delaying splash screen hiding for better UX; can be customized or removed as needed,
-    // Note: (vanilla Android) The splash-screen will not appear if you launch your app via the terminal or Android Studio. Kill the app and launch it normally by tapping on the launcher icon. https://stackoverflow.com/a/69831106
-    // Note: (vanilla iOS) You might notice the splash-screen logo change size. This happens in debug/development mode. Try building the app for release.
-    setTimeout(hideSplashScreen, 500)
-  })
+  const rehydrated = useStore((state) => state._hasHydrated)
+  useEffect(() => {
+    if (rehydrated) {
+      setTimeout(hideSplashScreen, 500)
+    }
+  }, [rehydrated])
 
   // Before we show the app, we have to wait for our state to be ready.
   // In the meantime, don't render anything. This will be the background
