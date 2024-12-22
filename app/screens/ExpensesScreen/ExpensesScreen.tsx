@@ -334,5 +334,4 @@ const $calendarContainer: ViewStyle = {
 
 const $calendarText: TextStyle = {
   color: colors.palette.primary500,
-  fontWeight: typography.primary.medium,
 }
