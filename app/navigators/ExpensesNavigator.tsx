@@ -3,6 +3,7 @@ import React from "react"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { ExpensesScreen } from "app/screens/ExpensesScreen/ExpensesScreen"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
+import { colors } from "app/theme"
 
 export type ExpensesStackParamList = {
   Expenses: undefined,
@@ -35,7 +36,14 @@ export function ExpensesNavigator() {
         <ExpensesStack.Screen
           name="Expenses"
           component={ExpensesScreen}
+          options={{
+            statusBarColor: colors.background,
+            statusBarStyle: "dark",
+          }}
         />
+
+
+
 
     </ExpensesStack.Navigator>
   )

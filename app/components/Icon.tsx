@@ -85,11 +85,18 @@ export function Icon(props: IconProps) {
   )
 }
 
+/*
+* Save icons from https://www.flaticon.com and then import them in assets folder
+* name.png (24px)
+* name@2x.png (32px)
+* name@3x.png (64px)
+* */
 export const iconRegistry = {
   home: require("../../assets/icons/home.png"),
   plus: require("../../assets/icons/plus.png"),
   chart: require("../../assets/icons/chart.png"),
-
+  edit: require("../../assets/icons/edit.png"),
+  calendar: require("../../assets/icons/calendar.png"),
   back: require("../../assets/icons/back.png"),
   bell: require("../../assets/icons/bell.png"),
   caretLeft: require("../../assets/icons/caretLeft.png"),
