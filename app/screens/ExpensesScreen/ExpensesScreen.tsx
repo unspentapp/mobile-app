@@ -90,9 +90,9 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
         handleIndicatorStyle={$modalIndicator}
-        keyboardBehavior="fillParent"
+        // keyboardBehavior="fillParent"
         android_keyboardInputMode="adjustResize"
-
+        snapPoints={['100%']}
       >
 
         <BottomSheetView style={$bottomSheetContainer}>
@@ -150,7 +150,6 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
                 preset="formLabel"
                 text={isToday(new Date(date)) ? 'Today' : format(new Date(date), 'eee do MMM, yyyy')}
               />
-
             </Pressable>
 
             <Text style={$categoryText} preset="formLabel" tx={"addExpenseModal.categoryLabel"} />
@@ -246,6 +245,7 @@ const $bottomSheetContainer : ViewStyle = {
   flex: 1,
   padding: 10,
   alignItems: 'center',
+  marginBottom: spacing.md,
 }
 
 const $modalIndicator: ViewStyle = {
