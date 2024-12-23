@@ -1,10 +1,10 @@
 import { BlurView } from '@react-native-community/blur';
-import { Animated, Modal, Platform, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Modal, Platform, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
-import React, { useEffect } from "react"
+import React from "react"
 import { Calendar } from "react-native-calendars"
 import { Icon } from "app/components"
-import { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated"
 
 type CalendarModalProps = {
   visible: boolean;

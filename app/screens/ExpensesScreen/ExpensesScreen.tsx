@@ -1,8 +1,5 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useRef, useState } from "react"
 import {
-  Alert,
-  Modal,
-  Platform,
   Pressable,
   TextInput,
   TextStyle,
@@ -25,15 +22,11 @@ import { logger } from "@nozbe/watermelondb/utils/common"
 import { Tag } from "app/components/Tag"
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
-import { isEqual, toDate } from "date-fns/fp"
-import { getDate, getISODay, isToday, parse } from "date-fns"
-import { parseDate } from "react-native-calendars/src/interface"
-import { formatDate } from "app/utils/formatDate"
+import { isToday } from "date-fns"
 
 
 type BottomSheetTextInputRef = TextInput;
-
-interface ExpensesScreenProps extends MainTabScreenProps<"Expenses"> {}
+interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
 
 export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const { navigation } = props
