@@ -64,7 +64,8 @@
     "react-native-screens": "^4.1.0",
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.6",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.0",
+    "expo-system-ui": "~3.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.8",

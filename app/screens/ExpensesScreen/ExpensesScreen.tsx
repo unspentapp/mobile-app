@@ -42,21 +42,29 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       onRightPress: goSettings,
   }, [logout])
 
+
+  const categories = [
+    {id: "1", label: "Home"},
+    {id: "2", label: "Clothes"},
+    {id: "3", label: "Transportation"},
+    {id: "4", label: "Groceries"},
+    {id: "5", label: "Extra"},
+  ]
+
+  const [dateModalToggle, setDateModalToggle] = useState(false)
+
   const [expenseValue, setExpenseValue] = useState<string>("")
   const [note, setNote] = useState<string>("")
   const [date, setDate] = useState<string>(format(new Date, 'yyyy-MM-dd'))
-  const [dateModalToggle, setDateModalToggle] = useState(false)
-
-  // todo dynamic category selection
-  const [category, setCategory] = useState<boolean>(true)
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
 
   const handleAddExpense = () => {
-    logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}`)
+    logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
     bottomSheetModalRef.current?.close();
   }
 
   const handleKeyboardEnter = () => {
-    if (category) handleAddExpense()
+    if (selectedCategory) handleAddExpense()
   }
 
   /* Bottom Sheet Modal ref */
@@ -68,7 +76,10 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   }, []);
 
   const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) setDate(format(new Date, 'yyyy-MM-dd'))
+    if (index === -1) {
+      setDate(format(new Date, 'yyyy-MM-dd'))
+      setSelectedCategory("")
+    }
     console.log('handleSheetChanges', index);
   }, []);
 
@@ -124,7 +135,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           </View>
 
           <View style={$noteInputContainer}>
-            <Icon icon="edit" color={colors.palette.neutral400} />
+            <Icon icon="edit" color={colors.palette.neutral400} size={22}/>
 
             <BottomSheetTextInput
               ref={secondTextInputRef as any}
@@ -144,7 +155,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
 
           <View style={$bottomContainer}>
             <Pressable style={$calendarContainer} onPress={() => setDateModalToggle(true)}>
-              <Icon icon={"calendar"} color={colors.palette.primary500} />
+              <Icon icon={"calendar"} color={colors.palette.primary500} size={22} />
               <Text
                 style={$calendarText}
                 preset="formLabel"
@@ -154,11 +165,16 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
 
             <Text style={$categoryText} preset="formLabel" tx={"addExpenseModal.categoryLabel"} />
             <View style={$categoriesContainer}>
-              <Tag />
-              <Tag />
-              <Tag />
-              <Tag />
-              <Tag />
+              {categories.map(category => (
+                <Tag
+                  id={category.id}
+                  label={category.label}
+                  key={category.id}
+                  onSelect={() => {
+                    setSelectedCategory(category.id)
+                    }}
+                  isSelected={selectedCategory === category.id} />
+              ))}
             </View>
 
             <Button text="Add Expense" onPress={handleAddExpense} preset="filled" />
@@ -255,9 +271,9 @@ const $modalIndicator: ViewStyle = {
 const $modalExpenseInput: TextStyle = {
   alignSelf: "stretch",
   textAlign: "center",
-  marginTop: spacing.xs,
-  marginBottom: 10,
-  borderRadius: 10,
+  marginTop: spacing.lg,
+  marginBottom: spacing.lg,
+  borderRadius: 8,
   fontFamily: typography.primary.normal,
   fontSize: 46,
   lineHeight: 28,
@@ -292,11 +308,11 @@ const $noteInputContainer: ViewStyle = {
   gap: spacing.xs,
   justifyContent: 'flex-start',
   alignItems: 'center',
-  borderWidth: 2,
-  borderColor: colors.palette.neutral200,
-  marginTop: 8,
-  marginBottom: 10,
-  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: colors.palette.neutral300,
+  marginTop: spacing.xs,
+  marginBottom: spacing.sm,
+  borderRadius: spacing.xxs,
   paddingHorizontal: spacing.sm,
   paddingVertical: spacing.xs,
   minWidth: "50%",
@@ -306,7 +322,7 @@ const $noteInputContainer: ViewStyle = {
 const $categoriesContainer: ViewStyle = {
   marginVertical: spacing.md,
   flexDirection: "row",
-  gap: 14,
+  gap: spacing.sm,
   alignItems: "center",
   justifyContent: "flex-start",
   flexWrap: "wrap",
@@ -319,12 +335,13 @@ const $calendarContainer: ViewStyle = {
   alignItems: "center",
   paddingVertical: spacing.xs,
   paddingHorizontal: spacing.sm,
-  marginBottom: spacing.xs,
+  marginBottom: spacing.md,
   borderWidth: 1,
   borderColor: colors.palette.primary500,
-  borderRadius: 8,
+  borderRadius: spacing.xxs,
 }
 
 const $calendarText: TextStyle = {
   color: colors.palette.primary500,
 }
+

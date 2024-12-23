@@ -19,7 +19,7 @@ export type ExpensesStackScreenProps<T extends keyof ExpensesStackParamList> = C
   AppStackScreenProps<keyof AppStackParamList>
 >
 
-const ExpensesStack = createNativeStackNavigator<ExpensesStackScreenProps<ExpensesStackParamList>>()
+const ExpensesStack = createNativeStackNavigator<ExpensesStackScreenProps<"Expenses">>()
 
 /**
  * This is the main navigator with a bottom tab bar.
