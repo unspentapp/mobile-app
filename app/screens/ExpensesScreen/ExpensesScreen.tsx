@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useRef, useState } from "react"
 import {
+  BackHandler,
   Pressable,
   TextInput,
   TextStyle,
@@ -23,6 +24,7 @@ import { Tag } from "app/components/Tag"
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
 import { isToday } from "date-fns"
+import { useFocusEffect } from "@react-navigation/native"
 
 
 type BottomSheetTextInputRef = TextInput;
@@ -51,6 +53,15 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     {id: "5", label: "Extra"},
   ]
 
+  /* Bottom Sheet Modal ref */
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  /* Bottom Sheet Modal callbacks */
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
   const [dateModalToggle, setDateModalToggle] = useState(false)
 
   const [expenseValue, setExpenseValue] = useState<string>("")
@@ -61,30 +72,42 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const handleAddExpense = () => {
     logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
     bottomSheetModalRef.current?.close();
+    setDate(format(new Date, 'yyyy-MM-dd'))
+    setSelectedCategory("")
   }
 
   const handleKeyboardEnter = () => {
     if (selectedCategory) handleAddExpense()
   }
 
-  /* Bottom Sheet Modal ref */
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  /* Bottom Sheet Modal callbacks */
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      setDate(format(new Date, 'yyyy-MM-dd'))
-      setSelectedCategory("")
-    }
+  const handleSheetChanges = (index: number) => {
+    if (index === 0) setIsExpenseModalOpen(false)
+    else if (index === -1) setIsExpenseModalOpen(true)
     console.log('handleSheetChanges', index);
-  }, []);
+    console.log('IS ADD EXPENSE MODAL OPEN', isExpenseModalOpen);
+  };
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        bottomSheetModalRef.current?.close();
+        setDateModalToggle(false)
+
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      );
+
+      return () => subscription.remove();
+    }, [dateModalToggle, isExpenseModalOpen])
+  );
 
 
   return (
@@ -171,7 +194,8 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
                   label={category.label}
                   key={category.id}
                   onSelect={() => {
-                    setSelectedCategory(category.id)
+                    if (selectedCategory === category.id) setSelectedCategory("")
+                    else setSelectedCategory(category.id)
                     }}
                   isSelected={selectedCategory === category.id} />
               ))}

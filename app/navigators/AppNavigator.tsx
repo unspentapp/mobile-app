@@ -8,11 +8,11 @@ import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
-  NavigatorScreenParams,
+  NavigatorScreenParams, useFocusEffect,
 } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
-import React from "react"
-import { useColorScheme } from "react-native"
+import React, { useCallback, useEffect, useRef } from "react"
+import { BackHandler, useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 // import { DemoTabParamList } from "./DemoNavigator"
@@ -61,11 +61,11 @@ const AppStack = () => {
   return (
     <RootStack.Navigator
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      initialRouteName={isAuthenticated ? "Main" : "Login"}
     >
       {isAuthenticated ? (
         <>
-          <RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} />
+          {/*<RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} />*/}
           <RootStack.Screen name="Main" component={MainNavigator} />
         </>
       ) : (
