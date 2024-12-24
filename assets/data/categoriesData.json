@@ -1,0 +1,9 @@
+{
+  "categories": [
+    {"id": "1", "label": "Home"},
+    {"id": "2", "label": "Clothes"},
+    {"id": "3", "label": "Transportation"},
+    {"id": "4", "label": "Groceries"},
+    {"id": "5", "label": "Extra"}
+  ]
+}

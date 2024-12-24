@@ -17,6 +17,9 @@ Welcome to the Unspent App build in public. This repository documents the develo
 - Polish the expense input screen
 - Implement the home screen (expenses list view)
 
+### December 24nd, 2024
+Added hard coded category tabs (and logic to select a category) in _Add new expense modal_ and implemented the state management logic with [Zustand](https://github.com/pmndrs/zustand). I also optimize the flow for adding a new expense as I want the user to perform as little effort as possible in this action.
+
 ### December 22nd, 2024
 Added date picker to the Add new expense modal thanks to [react-native-calendars](https://github.com/wix/react-native-calendars) module.
 

@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useRef, useState } from "react"
 import {
-  BackHandler,
+  BackHandler, FlatList,
   Pressable,
   TextInput,
   TextStyle,
@@ -19,12 +19,16 @@ import {
   BottomSheetTextInput,
   BottomSheetView
 } from "@gorhom/bottom-sheet"
-import { logger } from "@nozbe/watermelondb/utils/common"
+import { logger, randomId } from "@nozbe/watermelondb/utils/common"
 import { Tag } from "app/components/Tag"
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
 import { isToday } from "date-fns"
 import { useFocusEffect } from "@react-navigation/native"
+import { Category } from "app/models/Category"
+import { getCategories, getExpenses } from "assets/data"
+import { Expense } from "app/models/Expense"
+import { useExpensesStore } from "app/store/ExpensesStore"
 
 
 type BottomSheetTextInputRef = TextInput;
@@ -45,13 +49,8 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   }, [logout])
 
 
-  const categories = [
-    {id: "1", label: "Home"},
-    {id: "2", label: "Clothes"},
-    {id: "3", label: "Transportation"},
-    {id: "4", label: "Groceries"},
-    {id: "5", label: "Extra"},
-  ]
+  const categories: Category[] = getCategories()
+  // const expenses: Expense[] = getExpenses()
 
   /* Bottom Sheet Modal ref */
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -70,6 +69,17 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("")
 
   const handleAddExpense = () => {
+    const expense: Expense = {
+      categoryId: selectedCategory.toString(),
+      description: note,
+      value: parseInt(expenseValue),
+      recurrent: false,
+      date: date,
+      type: "",
+      id: randomId()
+    }
+
+    addExpense(expense)
     logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
     bottomSheetModalRef.current?.close();
     setDate(format(new Date, 'yyyy-MM-dd'))
@@ -108,6 +118,8 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       return () => subscription.remove();
     }, [dateModalToggle, isExpenseModalOpen])
   );
+
+  const { expenses, addExpense, removeExpense } = useExpensesStore()
 
 
   return (
@@ -215,11 +227,11 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         />
       </View>
       <View style={$expensesContainer}>
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
+        <FlatList
+          data={expenses}
+          renderItem={({ item }) => (
+          <ExpenseCard onPress={() => removeExpense(item)} expense={item}/>
+        )} />
       </View>
 
       <TouchableOpacity style={$roundButton} onPress={handlePresentModalPress}>

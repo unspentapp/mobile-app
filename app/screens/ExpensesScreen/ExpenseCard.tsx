@@ -1,27 +1,21 @@
 /* eslint-disable react/jsx-key, react-native/no-inline-styles */
 import React from "react"
 import { ListItem, Text } from "app/components"
-import { TextStyle, ViewStyle } from "react-native"
+import { GestureResponderEvent, TextStyle, ViewStyle } from "react-native"
+import { Expense } from "app/models/Expense"
 
-export interface Expense {
-  name: string
-  description?: string
-  value: number
+interface Props {
+  expense: Expense;
+  onPress: (event: GestureResponderEvent) => void
 }
 
-export const ExpenseCard = (props: Expense) => {
+export const ExpenseCard = (props: Props) => {
   return (
-    // <ListItem
-    //   bottomSeparator={true}
-    //   text={props.name}
-    //   RightComponent={
-    //     <Text text={props.value.toString()} />
-    //   }
-    // />
     <ListItem
-      LeftComponent={<Text>{props.name}</Text>}
-      RightComponent={<Text style={$textValue}>{props.value} €</Text>}
+      LeftComponent={<Text style={$textValue1}>{props.expense.description} - Category Id:{props.expense.categoryId}</Text>}
+      RightComponent={<Text style={$textValue}>{props.expense.value} €</Text>}
       bottomSeparator={true}
+      onLongPress={props.onPress}
       style={$itemList}
     />
   )
@@ -29,8 +23,16 @@ export const ExpenseCard = (props: Expense) => {
 
 const $itemList : ViewStyle = {
   alignItems: "center"
+
 }
 
 const $textValue : TextStyle = {
   fontWeight: "bold",
+}
+
+const $textValue1 : TextStyle = {
+  flexDirection: "row",
+  flex: 1,
+  maxWidth: '80%',
+  overflow: "hidden",
 }
