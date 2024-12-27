@@ -3,6 +3,7 @@ import { Animated, Image, ImageStyle, TextStyle, View, ViewStyle } from "react-n
 import { Text } from "app/components/Text"
 import React, { useMemo } from "react"
 import profilePic from "assets/images/profile-pic.jpg"
+import { useExpensesStore } from "app/store/ExpensesStore"
 
 interface DynamicHeaderProps {
   value: Animated.Value,
@@ -33,6 +34,8 @@ export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
       extrapolate: 'clamp',
     }), []);
 
+  const { totalExpenses } = useExpensesStore()
+
   return (
     <Animated.View
       style={[
@@ -50,7 +53,7 @@ export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
         <Text
           style={$headerTotalExpense}
         >
-          1031 €
+          {totalExpenses} €
         </Text>
       </Animated.View>
 
