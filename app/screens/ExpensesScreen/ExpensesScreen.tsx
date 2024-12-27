@@ -34,6 +34,7 @@ import profilePic from "../../../assets/images/profile-pic.jpg"
 import { DynamicHeader } from "app/components/DynamicHeader"
 import { StatusBar } from "expo-status-bar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useCategoriesStore } from "app/store/CategoriesStore"
 
 
 type BottomSheetTextInputRef = TextInput;
@@ -57,7 +58,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   }, [logout])*/
 
   const userName = "Amie"
-  const categories: Category[] = getCategories()
+  // const categories: Category[] = getCategories()
   // const expenses: Expense[] = getExpenses()
 
   /* Bottom Sheet Modal ref */
@@ -99,7 +100,11 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   }
 
   const handleSheetChanges = (index: number) => {
-    if (index === 0) setIsExpenseModalOpen(false)
+    if (index === 0) {
+      setDate(format(new Date, 'yyyy-MM-dd'))
+      setSelectedCategory("")
+      setIsExpenseModalOpen(false)
+    }
     else if (index === -1) setIsExpenseModalOpen(true)
     console.log('handleSheetChanges', index);
     console.log('IS ADD EXPENSE MODAL OPEN', isExpenseModalOpen);
@@ -127,7 +132,12 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     }, [dateModalToggle, isExpenseModalOpen])
   );
 
+  const getCategoryName = (expense: Expense) => {
+    return categories.filter(category => category.id === expense.categoryId)[0]
+  }
+
   const { expenses, addExpense, removeExpense } = useExpensesStore()
+  const { categories } = useCategoriesStore()
   const { bottom } = useSafeAreaInsets()
 
 
@@ -255,7 +265,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           >
           <View style={$expensesContainer}>
             {expenses.map(expense => (
-              <ExpenseCard onPress={() => removeExpense(expense)} expense={expense} key={expense.id}/>
+              <ExpenseCard onPress={() => removeExpense(expense)} expense={expense} key={expense.id} category={getCategoryName(expense)}/>
             ))}
           </View>
         </ScrollView>
