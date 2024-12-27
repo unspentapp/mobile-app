@@ -45,7 +45,8 @@
     "types",
     "plugins",
     "app.config.ts",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    "declarations.d.ts"
   ],
   "exclude": [
     "node_modules",

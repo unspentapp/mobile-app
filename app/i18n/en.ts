@@ -47,7 +47,7 @@ const en = {
     settingsTab: "Settings",
   },
   expensesScreen: {
-    title: "Expenses",
+    title: "Hello",
   },
   settingsScreen: {
     howTo: "HOW TO",

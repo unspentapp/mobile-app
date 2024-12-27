@@ -20,6 +20,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { useStore, isAuthenticatedSelector } from "app/store";
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
+import { StatusBar } from "expo-status-bar"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -91,7 +92,8 @@ export const AppNavigator = (props: NavigationProps) => {
   return (
     <NavigationContainer
       ref={navigationRef}
-      theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      theme={DefaultTheme}
+      // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       {...props}
     >
       <AppStack />

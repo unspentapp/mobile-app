@@ -1,7 +1,8 @@
 import React, { FC, useCallback, useRef, useState } from "react"
 import {
-  BackHandler, FlatList,
-  Pressable,
+  Animated,
+  BackHandler, FlatList, Image, ImageStyle,
+  Pressable, ScrollView,
   TextInput,
   TextStyle,
   TouchableOpacity,
@@ -29,6 +30,10 @@ import { Category } from "app/models/Category"
 import { getCategories, getExpenses } from "assets/data"
 import { Expense } from "app/models/Expense"
 import { useExpensesStore } from "app/store/ExpensesStore"
+import profilePic from "../../../assets/images/profile-pic.jpg"
+import { DynamicHeader } from "app/components/DynamicHeader"
+import { StatusBar } from "expo-status-bar"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 
 type BottomSheetTextInputRef = TextInput;
@@ -38,17 +43,20 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const { navigation } = props
   const logout = useStore((state) => state.logout)
 
+  // value for dynamic header
+  const scrollOffsetY = useRef(new Animated.Value(0)).current;
+
   function goSettings() {
     navigation.navigate("Settings")
   }
 
-  useHeader({
+/*  useHeader({
       leftIcon: "menu",
       rightIcon: "settings",
       onRightPress: goSettings,
-  }, [logout])
+  }, [logout])*/
 
-
+  const userName = "Amie"
   const categories: Category[] = getCategories()
   // const expenses: Expense[] = getExpenses()
 
@@ -120,11 +128,11 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   );
 
   const { expenses, addExpense, removeExpense } = useExpensesStore()
+  const { bottom } = useSafeAreaInsets()
 
 
   return (
     <View style={$container}>
-
       <CalendarModal
         visible={dateModalToggle}
         onClose={() => setDateModalToggle(false)}
@@ -134,6 +142,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
+        animateOnMount={true}
         onChange={handleSheetChanges}
         handleIndicatorStyle={$modalIndicator}
         // keyboardBehavior="fillParent"
@@ -218,34 +227,47 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         </BottomSheetView>
       </BottomSheetModal>
 
-      <View style={$topContainer}>
-        <Text
+
+
+      {/* <Text
           testID="expenses-heading"
           style={$expensesHeading}
-          tx="expensesScreen.title"
+          text={`expensesScreen.title ${userName}`}
           preset="heading"
-        />
-      </View>
-      <View style={$expensesContainer}>
-        <FlatList
-          data={expenses}
-          renderItem={({ item }) => (
-          <ExpenseCard onPress={() => removeExpense(item)} expense={item}/>
-        )} />
-      </View>
+        /> */}
 
-      <TouchableOpacity style={$roundButton} onPress={handlePresentModalPress}>
+      <TouchableOpacity style={[$roundButton, {  bottom: spacing.lg + bottom,}]} onPress={handlePresentModalPress}>
         <Icon icon={"plus"} color={colors.palette.neutral100} />
       </TouchableOpacity>
+
+      <View>
+        <DynamicHeader value={scrollOffsetY} name={userName} />
+        <ScrollView
+          style={$expensesListScrollView}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: scrollOffsetY}}}],
+            {
+              useNativeDriver: false,
+            },
+          )}
+          >
+          <View style={$expensesContainer}>
+            {expenses.map(expense => (
+              <ExpenseCard onPress={() => removeExpense(expense)} expense={expense} key={expense.id}/>
+            ))}
+          </View>
+        </ScrollView>
+
+      </View>
     </View>
   )
 }
-
 /* COMMON */
 const $categoryText: TextStyle = {
   fontFamily: typography.primary.medium,
 }
-
 
 const $bottomContainer: ViewStyle = {
   flexGrow: 1,
@@ -257,21 +279,10 @@ const $bottomContainer: ViewStyle = {
 const $container: ViewStyle = {
   flex: 1,
   backgroundColor: colors.background,
-}
-
-const $topContainer: ViewStyle = {
-  justifyContent: "flex-start",
-  paddingHorizontal: spacing.lg,
-}
-
-const $expensesHeading: TextStyle = {
-  marginBottom: spacing.md,
+  // backgroundColor: 'blue' // test!
 }
 
 const $expensesContainer: ViewStyle = {
-  flex: 1,
-  flexShrink: 1,
-  flexGrow: 1,
   justifyContent: "flex-start",
   paddingHorizontal: spacing.lg,
 
@@ -280,7 +291,7 @@ const $expensesContainer: ViewStyle = {
 const $roundButton: ViewStyle = {
   position: "absolute",
   right: spacing.lg,
-  bottom: spacing.lg,
+  elevation: 3, // android shadow
   height: 56,
   width: 56,
   padding: 20,
@@ -288,6 +299,17 @@ const $roundButton: ViewStyle = {
   backgroundColor: colors.palette.primary500,
   alignItems: "center",
   justifyContent: "center",
+  zIndex: 1,
+  // iOS shadow
+  shadowColor: "#000", // For iOS shadow
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+}
+
+/* header */
+const $expensesListScrollView: ViewStyle = {
+  paddingTop: 250
 }
 
 /*
@@ -309,7 +331,6 @@ const $modalExpenseInput: TextStyle = {
   textAlign: "center",
   marginTop: spacing.lg,
   marginBottom: spacing.lg,
-  borderRadius: 8,
   fontFamily: typography.primary.normal,
   fontSize: 46,
   lineHeight: 28,
@@ -380,4 +401,12 @@ const $calendarContainer: ViewStyle = {
 const $calendarText: TextStyle = {
   color: colors.palette.primary500,
 }
+
+
+
+
+
+
+
+
 

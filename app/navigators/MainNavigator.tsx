@@ -100,7 +100,7 @@ const $tabBar: ViewStyle = {
 }
 
 const $tabBarItem: ViewStyle = {
-  paddingTop: spacing.md,
+  paddingTop: spacing.sm,
 }
 
 const $tabBarLabel: TextStyle = {
