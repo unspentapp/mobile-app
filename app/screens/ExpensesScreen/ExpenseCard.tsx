@@ -24,6 +24,7 @@ export const ExpenseCard = (props: Props) => {
 }
 
 const $itemList : ViewStyle = {
+
   alignItems: "center"
 
 }
@@ -33,8 +34,5 @@ const $textValue : TextStyle = {
 }
 
 const $textValue1 : TextStyle = {
-  flexDirection: "row",
-  flex: 1,
-  maxWidth: '80%',
   overflow: "hidden",
 }

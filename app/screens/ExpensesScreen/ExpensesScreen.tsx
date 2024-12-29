@@ -133,6 +133,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   );
 
   const getCategoryName = (expense: Expense) => {
+    if (expense.categoryId === "") return ""
     return categories.filter(category => category.id === expense.categoryId)[0]
   }
 
