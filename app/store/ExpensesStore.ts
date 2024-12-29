@@ -1,5 +1,6 @@
 import { Expense } from "app/models/Expense"
 import { create } from "zustand"
+import { getExpenses } from "assets/data"
 
 export interface ExpensesState {
   expenses: Expense[];
@@ -10,7 +11,7 @@ export interface ExpensesState {
 }
 
 export const useExpensesStore = create<ExpensesState>((set) => ({
-  expenses: [],
+  expenses: getExpenses(),
   totalExpenses: 0,
   addExpense: (newExpense: Expense) => set((state) => {
     return {

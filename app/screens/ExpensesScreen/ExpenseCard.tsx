@@ -8,7 +8,7 @@ import { Category } from "app/models/Category"
 interface Props {
   expense: Expense;
   category: Category;
-  onPress: (event: GestureResponderEvent) => void
+  onPress?: (event: GestureResponderEvent) => void
 }
 
 export const ExpenseCard = (props: Props) => {

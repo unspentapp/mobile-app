@@ -35,6 +35,8 @@ import { DynamicHeader } from "app/components/DynamicHeader"
 import { StatusBar } from "expo-status-bar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useCategoriesStore } from "app/store/CategoriesStore"
+import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
+import { useSharedValue } from "react-native-reanimated"
 
 
 type BottomSheetTextInputRef = TextInput;
@@ -76,6 +78,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const [note, setNote] = useState<string>("")
   const [date, setDate] = useState<string>(format(new Date, 'yyyy-MM-dd'))
   const [selectedCategory, setSelectedCategory] = useState<string>("")
+
 
   const handleAddExpense = () => {
     const expense: Expense = {
@@ -140,6 +143,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const { expenses, addExpense, removeExpense } = useExpensesStore()
   const { categories } = useCategoriesStore()
   const { bottom } = useSafeAreaInsets()
+
 
 
   return (
@@ -263,12 +267,10 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
               useNativeDriver: false,
             },
           )}
-          >
-          <View style={$expensesContainer}>
-            {expenses.map(expense => (
-              <ExpenseCard onPress={() => removeExpense(expense)} expense={expense} key={expense.id} category={getCategoryName(expense)}/>
-            ))}
-          </View>
+        >
+          {categories.map(category => (
+            <CategoryCard category={category} key={category.id} />
+          ))}
         </ScrollView>
 
       </View>
@@ -320,7 +322,9 @@ const $roundButton: ViewStyle = {
 
 /* header */
 const $expensesListScrollView: ViewStyle = {
-  paddingTop: 250
+  paddingTop: 250 + spacing.lg,
+  paddingHorizontal: spacing.lg,
+  paddingVertical: spacing.md,
 }
 
 /*
