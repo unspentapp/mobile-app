@@ -1,9 +1,10 @@
 {
   "categories": [
-    {"id": "1", "label": "Home"},
-    {"id": "2", "label": "Clothes"},
-    {"id": "3", "label": "Transportation"},
-    {"id": "4", "label": "Groceries"},
-    {"id": "5", "label": "Extra"}
+    {"id": "1", "label": "Home & Tax"},
+    {"id": "2", "label": "Transport"},
+    {"id": "3", "label": "Grocery & Essentials"},
+    {"id": "4", "label": "Clothes & Books"},
+    {"id": "5", "label": "Extra"},
+    {"id": "6", "label": "Health"}
   ]
 }

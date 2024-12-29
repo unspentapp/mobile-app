@@ -1,36 +1,46 @@
 import React from 'react';
 import { View, StyleProp, ViewStyle } from "react-native"
 import Animated, {
-  SharedValue,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
-  withTiming,
+  withSpring,
 } from "react-native-reanimated"
 import { spacing } from "app/theme"
 
 type Props = {
-  isExpanded:  SharedValue<boolean>,
-  children?: React.ReactNode,
-  viewKey: string,
-  style?: StyleProp<ViewStyle>,
-  duration?: number,
+  isExpanded: boolean
+  children?: React.ReactNode
+  viewKey: string
+  style?: StyleProp<ViewStyle>
+  springConfig?: {
+    damping?: number
+    stiffness?: number
+    mass?: number
+  }
 }
 
 export const AccordionItem = ({
-   isExpanded,
-   children,
-   viewKey,
-   style,
-   duration = 500,
- }: Props) => {
+    isExpanded,
+    children,
+    viewKey,
+    style,
+    springConfig = {
+      damping: 12,
+      stiffness: 100,
+      mass: 1
+    },
+  }: Props) => {
   const height = useSharedValue(0);
 
   const derivedHeight = useDerivedValue(() =>
-    withTiming(height.value * Number(isExpanded.value), {
-      duration,
+    withSpring(height.value * Number(isExpanded), {
+      damping: springConfig.damping,
+      stiffness: springConfig.stiffness,
+      mass: springConfig.mass,
     })
   );
+
   const bodyStyle = useAnimatedStyle(() => ({
     height: derivedHeight.value,
   }));

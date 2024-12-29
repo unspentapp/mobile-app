@@ -1,37 +1,60 @@
-import React from "react"
-import { Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
+import React, { useCallback } from "react"
+import { Animated, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { Category } from "app/models/Category"
 import { useExpensesStore } from "app/store/ExpensesStore"
 import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import { AccordionItem } from "app/components/AccordionItem"
-import { useSharedValue } from "react-native-reanimated"
+import { Icon } from "app/components"
+import { useAnimatedStyle, withTiming } from "react-native-reanimated"
+import ArrowIconAnimated from "app/screens/ExpensesScreen/ArrowIconAnimated"
 
 type Props = {
-  key: string,
   category: Category,
+  onHeightChange: any,
 }
 
-const CategoryCard = (props: Props) => {
-const { expenses } = useExpensesStore()
-  const open = useSharedValue(false);
-  const onPress = () => {
-    open.value = !open.value;
-  };
+const CategoryCard = ({ category, onHeightChange }: Props) => {
+  const { expenses } = useExpensesStore()
+  const filtredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
+  const [isExpanded, setExpanded] = React.useState(false)
+
+  const onLayout = useCallback((event) => {
+    const { height } = event.nativeEvent.layout;
+    onHeightChange(height);
+  }, [onHeightChange]);
+
+  
 
   return (
-    <TouchableOpacity style={$cardContainer} onPress={onPress}>
-      <Text style={$title}>
-        {props.category.label}
-      </Text>
-      <AccordionItem isExpanded={open} viewKey="Accordion">
-        {expenses
-          .filter(expense => expense.categoryId === props.category.id)
-          .map(expense => (
-            <ExpenseCard expense={expense} key={expense.id} category={props.category} />
-          ))}
-      </AccordionItem>
-    </TouchableOpacity>
+    <View onLayout={onLayout} style={$cardContainer}>
+      <TouchableOpacity  onPress={() => setExpanded(!isExpanded)} style={$labelContainer}>
+        <Text style={$title}>
+          {category.label}
+        </Text>
+        <ArrowIconAnimated  value={isExpanded}/>
+      </TouchableOpacity>
+      {isExpanded ? (
+        <AccordionItem
+          isExpanded={isExpanded}
+          viewKey="Accordion"
+          springConfig={{
+            damping: 15,
+            stiffness: 200,
+            mass: 0.8
+          }}
+        >
+          {filtredExpenses.length > 0 ? (
+            filtredExpenses.map(expense => (
+              <ExpenseCard expense={expense} key={expense.id} category={category} />
+            ))) : (
+              <Text style={$normalText}>
+                No expenses found.
+              </Text>
+          )}
+        </AccordionItem>
+      ) : null}
+    </View>
   )
 }
 
@@ -39,20 +62,34 @@ export default CategoryCard
 
 
 const $cardContainer: ViewStyle = {
-  flex: 1,
   justifyContent: 'center',
   alignItems: 'flex-start',
   paddingHorizontal: spacing.lg,
-  paddingVertical: spacing.md,
+  backgroundColor: colors.elevatedBackground,
   borderWidth: 1,
-  borderColor: colors.palette.neutral300,
-  marginTop: spacing.xs,
+  borderColor: colors.border,
   marginBottom: spacing.sm,
   borderRadius: spacing.xxs,
 }
 
-const $title: TextStyle = {
-  fontSize: 16,
-  fontFamily: typography.fonts.spaceGrotesk.bold,
-  color: colors.palette.neutral700,
+const $labelContainer: ViewStyle = {
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  paddingVertical: spacing.md,
 }
+
+const $title: TextStyle = {
+  fontSize: 20,
+  fontFamily: typography.fonts.spaceGrotesk.medium,
+  color: colors.text,
+}
+
+const $normalText: TextStyle = {
+  paddingBottom: spacing.md,
+  fontSize: 14,
+  fontFamily: typography.fonts.spaceGrotesk.normal,
+}
+

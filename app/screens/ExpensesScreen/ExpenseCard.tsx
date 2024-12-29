@@ -14,7 +14,7 @@ interface Props {
 export const ExpenseCard = (props: Props) => {
   return (
     <ListItem
-      LeftComponent={<Text style={$textValue1}>{props.expense.description} - {props.category.label}</Text>}
+      LeftComponent={<Text style={$textValue1}>{props.expense.description}</Text>}
       RightComponent={<Text style={$textValue}>{props.expense.value} €</Text>}
       bottomSeparator={true}
       onLongPress={props.onPress}

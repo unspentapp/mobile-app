@@ -23,9 +23,15 @@ export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
 
   const animatedHeaderColor = value.interpolate({
     inputRange: [0, SCROLL_DISTANCE],
-    outputRange: [colors.palette.primary500, colors.background],
+    outputRange: [colors.palette.primary500, colors.elevatedBackground],
     extrapolate: 'clamp',
   });
+
+  const animatedBorderRadius = value.interpolate({
+    inputRange: [0, SCROLL_DISTANCE],
+    outputRange: [spacing.sm, 0],
+    extrapolate: 'clamp',
+  })
 
   const showPreHeader = useMemo(() =>
     value.interpolate({
@@ -43,6 +49,8 @@ export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
         {
           height: animatedHeaderHeight,
           backgroundColor: animatedHeaderColor,
+          borderBottomRightRadius: animatedBorderRadius,
+          borderBottomLeftRadius: animatedBorderRadius,
         },
       ]}>
       <Animated.View
@@ -102,8 +110,6 @@ const $header: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'center',
   zIndex: 1,
-  borderBottomRightRadius: spacing.md,
-  borderBottomLeftRadius: spacing.md,
 }
 
 const $topContainer: ViewStyle = {
