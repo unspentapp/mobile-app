@@ -8,6 +8,7 @@ import { Tag } from "app/components/Tag"
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
 import React, { Dispatch, RefObject, SetStateAction } from "react"
 import { useCategoriesStore } from "app/store/CategoriesStore"
+import { BottomSheetBackground } from "app/components/BottomSheetBackground"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -45,6 +46,7 @@ export const NewExpenseModal = ({
     <BottomSheetModal
       ref={bottomSheetModalRef}
       animateOnMount={true}
+      backgroundComponent={props => <BottomSheetBackground {...props} /> }
       onChange={handleSheetChanges}
       handleIndicatorStyle={$modalIndicator}
       // keyboardBehavior="fillParent"

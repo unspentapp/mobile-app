@@ -82,25 +82,5 @@
   },
   "ignite": {
     "version": "9.10.1"
-  },
-  "expo": {
-    "splash": {
-      "backgroundColor": "#222222"
-    },
-    "android": {
-      "splash": {
-        "backgroundColor": "#222222"
-      }
-    },
-    "ios": {
-      "splash": {
-        "backgroundColor": "#222222"
-      }
-    },
-    "web": {
-      "splash": {
-        "backgroundColor": "#222222"
-      }
-    }
   }
 }

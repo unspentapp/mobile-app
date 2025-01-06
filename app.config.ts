@@ -21,5 +21,9 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
       ...existingPlugins,
       require("./plugins/withSplashScreen").withSplashScreen,
     ],
+    "android": {
+      "package": "com.unspent.mobileapp"
+    }
   }
 }
+
