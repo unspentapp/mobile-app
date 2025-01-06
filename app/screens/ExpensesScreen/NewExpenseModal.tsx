@@ -6,7 +6,7 @@ import { isToday } from "date-fns"
 import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
-import { Dispatch, RefObject, SetStateAction } from "react"
+import React, { Dispatch, RefObject, SetStateAction } from "react"
 import { useCategoriesStore } from "app/store/CategoriesStore"
 
 type Props = {

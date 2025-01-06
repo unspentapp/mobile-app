@@ -1,5 +1,5 @@
 {
-  "name": "unspent_app",
+  "name": "Unspent",
   "slug": "unspent_app",
   "scheme": "unspent_app",
   "version": "1.0.0",
@@ -9,7 +9,7 @@
   "splash": {
     "image": "./assets/images/splash-logo-all.png",
     "resizeMode": "contain",
-    "backgroundColor": "#191015"
+    "backgroundColor": "#222222"
   },
   "updates": {
     "fallbackToCacheTimeout": 0
@@ -28,7 +28,7 @@
     "splash": {
       "image": "./assets/images/splash-logo-android-universal.png",
       "resizeMode": "contain",
-      "backgroundColor": "#191015"
+      "backgroundColor": "#222222"
     }
   },
   "ios": {
@@ -39,7 +39,7 @@
       "image": "./assets/images/splash-logo-ios-mobile.png",
       "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
       "resizeMode": "contain",
-      "backgroundColor": "#191015"
+      "backgroundColor": "#222222"
     }
   },
   "web": {
@@ -47,7 +47,7 @@
     "splash": {
       "image": "./assets/images/splash-logo-web.png",
       "resizeMode": "contain",
-      "backgroundColor": "#191015"
+      "backgroundColor": "#222222"
     },
     "bundler": "metro"
   },
@@ -61,7 +61,10 @@
           "extraPods": [
             {
               "name": "simdjson",
-              "configurations": ["Debug", "Release"],
+              "configurations": [
+                "Debug",
+                "Release"
+              ],
               "path": "../node_modules/@nozbe/simdjson",
               "modular_headers": true
             }
@@ -79,5 +82,25 @@
   },
   "ignite": {
     "version": "9.10.1"
+  },
+  "expo": {
+    "splash": {
+      "backgroundColor": "#222222"
+    },
+    "android": {
+      "splash": {
+        "backgroundColor": "#222222"
+      }
+    },
+    "ios": {
+      "splash": {
+        "backgroundColor": "#222222"
+      }
+    },
+    "web": {
+      "splash": {
+        "backgroundColor": "#222222"
+      }
+    }
   }
 }

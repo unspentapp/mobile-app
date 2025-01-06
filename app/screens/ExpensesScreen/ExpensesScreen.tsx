@@ -1,27 +1,21 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useMemo, useRef, useState } from "react"
 import {
   Animated,
-  BackHandler, Dimensions, FlatList, Image, ImageStyle,
-  Pressable, SafeAreaView, ScrollView,
+  BackHandler,
+  Dimensions,
+  ScrollView,
   TextInput,
-  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
-import { Button, Icon, Text } from "app/components"
-import { colors, spacing, typography } from "app/theme"
-import { useHeader } from "app/utils/useHeader"
+import { Icon } from "app/components"
+import { colors, spacing } from "app/theme"
 import { useStore } from "app/store"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
-import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import {
   BottomSheetModal,
-  BottomSheetTextInput,
-  BottomSheetView
 } from "@gorhom/bottom-sheet"
-import { logger, randomId } from "@nozbe/watermelondb/utils/common"
-import { Tag } from "app/components/Tag"
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
 import { useFocusEffect } from "@react-navigation/native"
@@ -32,7 +26,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useCategoriesStore } from "app/store/CategoriesStore"
 import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
 import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
-
+import * as Crypto from 'expo-crypto';
+const logger = require('pino')()
 
 type BottomSheetTextInputRef = TextInput;
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
@@ -80,12 +75,13 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       description: note,
       value: parseInt(expenseValue),
       recurrent: false,
-      date: date,
+      date,
       type: "",
-      id: randomId()
+      id: Crypto.randomUUID()
     }
 
     addExpense(expense)
+
     logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
     bottomSheetModalRef.current?.close();
     setDate(format(new Date, 'yyyy-MM-dd'))
