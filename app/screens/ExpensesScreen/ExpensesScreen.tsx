@@ -163,6 +163,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         handleSheetChanges={handleSheetChanges}
         firstTextInputRef={firstTextInputRef}
         secondTextInputRef={secondTextInputRef}
+        expenseValue={expenseValue}
         setExpenseValue={setExpenseValue}
         setNote={setNote}
         handleKeyboardEnter={handleKeyboardEnter}
@@ -202,7 +203,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           autoscrollToTopThreshold: undefined,
         }}
       >
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <CategoryCard
             key={category.id}
             category={category}

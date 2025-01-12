@@ -15,6 +15,7 @@ type Props = {
   handleSheetChanges: (index: number) => void,
   firstTextInputRef: RefObject<TextInput>,
   secondTextInputRef: RefObject<TextInput>,
+  expenseValue: string,
   setExpenseValue: Dispatch<SetStateAction<string>>,
   setNote: Dispatch<SetStateAction<string>>,
   handleKeyboardEnter: () => void,
@@ -30,6 +31,7 @@ export const NewExpenseModal = ({
                            handleSheetChanges,
                            firstTextInputRef,
                            secondTextInputRef,
+                           expenseValue,
                            setExpenseValue,
                            setNote,
                            handleKeyboardEnter,
@@ -61,6 +63,7 @@ export const NewExpenseModal = ({
             ref={firstTextInputRef as any}
             style={$modalExpenseInput}
             inputMode="numeric"
+            keyboardType="number-pad"
             returnKeyType="next"
             autoComplete="off"
             placeholderTextColor={colors.palette.neutral200}
@@ -69,11 +72,21 @@ export const NewExpenseModal = ({
             cursorColor={colors.palette.primary500}
             maxFontSizeMultiplier={0}
             maxLength={8}
-            onChangeText={(value) => setExpenseValue(value)}
             blurOnSubmit={false}
             onSubmitEditing={() => {
               secondTextInputRef.current?.focus()
             }}
+
+            onChangeText={(text) => {
+              // Only allow digits
+              if (/^\d+$/.test(text)) {
+                setExpenseValue(text);
+              } else if (text === '') {
+                // Allow empty input for deletion
+                setExpenseValue('');
+              }
+            }}
+            value={expenseValue}
           />
 
           {/* todo dynamic currency selection */}
@@ -166,10 +179,14 @@ const $modalExpenseInput: TextStyle = {
   marginBottom: spacing.lg,
   fontFamily: typography.primary.normal,
   fontSize: 46,
-  lineHeight: 28,
+  lineHeight: 56, // Should be larger than fontSize
   minWidth: 48,
   color: colors.palette.neutral700,
   backgroundColor: colors.palette.neutral100,
+  includeFontPadding: false, // Add this to prevent padding issues
+  padding: 0, // Add this to ensure no extra padding
+  textAlignVertical: 'center', // Add this for better vertical alignment
+  height: 60, // Add a fixed height to prevent shifting
 }
 
 const $modalNoteInput: TextStyle = {

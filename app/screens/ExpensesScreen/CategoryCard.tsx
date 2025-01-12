@@ -1,12 +1,10 @@
 import React, { useCallback } from "react"
-import { Animated, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { Category } from "app/models/Category"
 import { useExpensesStore } from "app/store/ExpensesStore"
 import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import { AccordionItem } from "app/components/AccordionItem"
-import { Icon } from "app/components"
-import { useAnimatedStyle, withTiming } from "react-native-reanimated"
 import ArrowIconAnimated from "app/screens/ExpensesScreen/ArrowIconAnimated"
 
 type Props = {
@@ -16,7 +14,7 @@ type Props = {
 
 const CategoryCard = ({ category, onHeightChange }: Props) => {
   const { expenses } = useExpensesStore()
-  const filtredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
+  const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
   const [isExpanded, setExpanded] = React.useState(false)
 
   const onLayout = useCallback((event) => {
@@ -44,8 +42,8 @@ const CategoryCard = ({ category, onHeightChange }: Props) => {
             mass: 0.8
           }}
         >
-          {filtredExpenses.length > 0 ? (
-            filtredExpenses.map(expense => (
+          {filteredExpenses.length > 0 ? (
+            filteredExpenses.map(expense => (
               <ExpenseCard expense={expense} key={expense.id} category={category} />
             ))) : (
               <Text style={$normalText}>
