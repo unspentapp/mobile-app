@@ -6,19 +6,16 @@ import { isToday } from "date-fns"
 import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
-import React, { Dispatch, RefObject, SetStateAction } from "react"
+import React, { Dispatch, RefObject, SetStateAction, useRef } from "react"
 import { useCategoriesStore } from "app/store/CategoriesStore"
 import { BottomSheetBackground } from "app/components/BottomSheetBackground"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
   handleSheetChanges: (index: number) => void,
-  firstTextInputRef: RefObject<TextInput>,
-  secondTextInputRef: RefObject<TextInput>,
   expenseValue: string,
   setExpenseValue: Dispatch<SetStateAction<string>>,
   setNote: Dispatch<SetStateAction<string>>,
-  handleKeyboardEnter: () => void,
   date: string,
   setDateModalToggle: Dispatch<SetStateAction<boolean>>,
   selectedCategory: string,
@@ -26,15 +23,14 @@ type Props = {
   handleAddExpense: () => void,
 }
 
+type BottomSheetTextInputRef = TextInput;
+
 export const NewExpenseModal = ({
                            bottomSheetModalRef,
                            handleSheetChanges,
-                           firstTextInputRef,
-                           secondTextInputRef,
                            expenseValue,
                            setExpenseValue,
                            setNote,
-                           handleKeyboardEnter,
                            date,
                            setDateModalToggle,
                            selectedCategory,
@@ -43,6 +39,13 @@ export const NewExpenseModal = ({
 
   } : Props) => {
   const { categories } = useCategoriesStore()
+
+  const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
+  const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
+
+  const handleKeyboardEnter = () => {
+    if (selectedCategory) handleAddExpense()
+  }
 
   return (
     <BottomSheetModal

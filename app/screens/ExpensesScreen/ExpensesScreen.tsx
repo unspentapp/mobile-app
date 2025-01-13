@@ -4,7 +4,6 @@ import {
   BackHandler,
   Dimensions,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -29,7 +28,7 @@ import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
 import * as Crypto from 'expo-crypto';
 const logger = require('pino')()
 
-type BottomSheetTextInputRef = TextInput;
+
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
 
 export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
@@ -47,7 +46,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       leftIcon: "menu",
       rightIcon: "settings",
       onRightPress: goSettings,
-  }, [logout])*/
+  }, [logout]) */
 
   const userName = "Amie"
 
@@ -88,9 +87,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     setSelectedCategory("")
   }
 
-  const handleKeyboardEnter = () => {
-    if (selectedCategory) handleAddExpense()
-  }
+
 
   const handleSheetChanges = (index: number) => {
     if (index === 0) {
@@ -103,8 +100,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     console.log('IS ADD EXPENSE MODAL OPEN', isExpenseModalOpen);
   };
 
-  const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
-  const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
+
 
 
   useFocusEffect(
@@ -130,7 +126,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     return categories.filter(category => category.id === expense.categoryId)[0]
   }
 
-  const { expenses, addExpense, removeExpense } = useExpensesStore()
+  const { expenses, addExpense, removeExpense, totalExpenses } = useExpensesStore()
   const { categories } = useCategoriesStore()
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
@@ -161,12 +157,9 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       <NewExpenseModal
         bottomSheetModalRef={bottomSheetModalRef}
         handleSheetChanges={handleSheetChanges}
-        firstTextInputRef={firstTextInputRef}
-        secondTextInputRef={secondTextInputRef}
         expenseValue={expenseValue}
         setExpenseValue={setExpenseValue}
         setNote={setNote}
-        handleKeyboardEnter={handleKeyboardEnter}
         date={date}
         setDateModalToggle={setDateModalToggle}
         selectedCategory={selectedCategory}
@@ -208,6 +201,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
             key={category.id}
             category={category}
             onHeightChange={(height: number) => setContainerHeight(height)}
+            totalExpenses={totalExpenses}
           />
         ))}
       </ScrollView>
