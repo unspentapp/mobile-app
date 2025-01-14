@@ -30,10 +30,11 @@ import * as Linking from "expo-linking"
 import { AppNavigator, useNavigationPersistence } from "./navigators"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { useStore } from "./store"
-import { ErrorBoundary } from "./screens/ErrorScreen/ErrorBoundary"
+import { ErrorBoundary } from "app/screens"
 import * as storage from "./utils/storage"
 import { customFontsToLoad } from "./theme"
 import Config from "./config"
+import Toast from "react-native-toast-message"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -113,6 +114,7 @@ function App(props: AppProps) {
               initialState={initialNavigationState}
               onStateChange={onNavigationStateChange}
             />
+            <Toast/>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>

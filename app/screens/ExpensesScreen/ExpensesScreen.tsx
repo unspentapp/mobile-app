@@ -1,63 +1,55 @@
-import React, { FC, useCallback, useRef, useState } from "react"
+import React, { FC, useCallback, useMemo, useRef, useState } from "react"
 import {
-  Pressable,
-  TextInput,
-  TextStyle,
+  Animated,
+  BackHandler,
+  Dimensions,
+  ScrollView,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
-import { Button, Icon, Text } from "app/components"
-import { colors, spacing, typography } from "app/theme"
-import { useHeader } from "app/utils/useHeader"
+import { Icon } from "app/components"
+import { colors, spacing } from "app/theme"
 import { useStore } from "app/store"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
-import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import {
   BottomSheetModal,
-  BottomSheetTextInput,
-  BottomSheetView
 } from "@gorhom/bottom-sheet"
-import { logger } from "@nozbe/watermelondb/utils/common"
-import { Tag } from "app/components/Tag"
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
-import { isToday } from "date-fns"
+import { useFocusEffect } from "@react-navigation/native"
+import { Expense } from "app/models/Expense"
+import { useExpensesStore } from "app/store/ExpensesStore"
+import { DynamicHeader } from "app/components/DynamicHeader"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useCategoriesStore } from "app/store/CategoriesStore"
+import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
+import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
+import * as Crypto from 'expo-crypto';
+const logger = require('pino')()
 
 
-type BottomSheetTextInputRef = TextInput;
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
 
 export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const { navigation } = props
   const logout = useStore((state) => state.logout)
 
+  // value for dynamic header
+  const scrollOffsetY = useRef(new Animated.Value(0)).current;
+
   function goSettings() {
     navigation.navigate("Settings")
   }
 
-  useHeader({
+/*  useHeader({
       leftIcon: "menu",
       rightIcon: "settings",
       onRightPress: goSettings,
-  }, [logout])
+  }, [logout]) */
 
-  const [expenseValue, setExpenseValue] = useState<string>("")
-  const [note, setNote] = useState<string>("")
-  const [date, setDate] = useState<string>(format(new Date, 'yyyy-MM-dd'))
-  const [dateModalToggle, setDateModalToggle] = useState(false)
+  const userName = "Amie"
 
-  // todo dynamic category selection
-  const [category, setCategory] = useState<boolean>(true)
-
-  const handleAddExpense = () => {
-    logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}`)
-    bottomSheetModalRef.current?.close();
-  }
-
-  const handleKeyboardEnter = () => {
-    if (category) handleAddExpense()
-  }
 
   /* Bottom Sheet Modal ref */
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -67,18 +59,94 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) setDate(format(new Date, 'yyyy-MM-dd'))
-    console.log('handleSheetChanges', index);
-  }, []);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
+  const [dateModalToggle, setDateModalToggle] = useState(false)
 
-  const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
-  const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
+  const [expenseValue, setExpenseValue] = useState<string>("")
+  const [note, setNote] = useState<string>("")
+  const [date, setDate] = useState<string>(format(new Date, 'yyyy-MM-dd'))
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+
+
+  const handleAddExpense = () => {
+    const expense: Expense = {
+      categoryId: selectedCategory.toString(),
+      description: note,
+      value: parseInt(expenseValue),
+      recurrent: false,
+      date,
+      type: "",
+      id: Crypto.randomUUID()
+    }
+
+    addExpense(expense)
+
+    logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
+    bottomSheetModalRef.current?.close();
+    setDate(format(new Date, 'yyyy-MM-dd'))
+    setSelectedCategory("")
+  }
+
+
+
+  const handleSheetChanges = (index: number) => {
+    if (index === 0) {
+      setDate(format(new Date, 'yyyy-MM-dd'))
+      setSelectedCategory("")
+      setIsExpenseModalOpen(false)
+    }
+    else if (index === -1) setIsExpenseModalOpen(true)
+    console.log('handleSheetChanges', index);
+    console.log('IS ADD EXPENSE MODAL OPEN', isExpenseModalOpen);
+  };
+
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        bottomSheetModalRef.current?.close();
+        setDateModalToggle(false)
+
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      );
+
+      return () => subscription.remove();
+    }, [dateModalToggle, isExpenseModalOpen])
+  );
+
+  const getCategoryName = (expense: Expense) => {
+    if (expense.categoryId === "") return ""
+    return categories.filter(category => category.id === expense.categoryId)[0]
+  }
+
+  const { expenses, addExpense, removeExpense, totalExpenses } = useExpensesStore()
+  const { categories } = useCategoriesStore()
+
+  const [containerHeight, setContainerHeight] = useState<number>(0);
+  const [cardHeights, setCardHeights] = useState<Record<string, number>>({});
+  const { height: screenHeight } = Dimensions.get('window');
+  const totalCardsHeight = useMemo(() =>
+      Object.values(cardHeights).reduce((sum, height) => sum + height, 0),
+    [cardHeights]
+  );
+
+
+
+  const { bottom } = useSafeAreaInsets()
+
+  const tabBarSpacing = bottom + 55
+  const scrollViewRef = useRef<ScrollView>(null)
 
 
   return (
     <View style={$container}>
-
       <CalendarModal
         visible={dateModalToggle}
         onClose={() => setDateModalToggle(false)}
@@ -86,150 +154,78 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         setDate={setDate}
       />
 
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        onChange={handleSheetChanges}
-        handleIndicatorStyle={$modalIndicator}
-        keyboardBehavior="fillParent"
-        android_keyboardInputMode="adjustResize"
+      <NewExpenseModal
+        bottomSheetModalRef={bottomSheetModalRef}
+        handleSheetChanges={handleSheetChanges}
+        expenseValue={expenseValue}
+        setExpenseValue={setExpenseValue}
+        setNote={setNote}
+        date={date}
+        setDateModalToggle={setDateModalToggle}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        handleAddExpense={handleAddExpense}
+      />
 
-      >
 
-        <BottomSheetView style={$bottomSheetContainer}>
-          <Text>Add new expense</Text>
-          <View style={$inputContainer}>
-            <BottomSheetTextInput
-              ref={firstTextInputRef as any}
-              style={$modalExpenseInput}
-              inputMode="numeric"
-              returnKeyType="next"
-              autoComplete="off"
-              placeholderTextColor={colors.palette.neutral200}
-              autoCorrect={false}
-              autoFocus={true}
-              cursorColor={colors.palette.primary500}
-              maxFontSizeMultiplier={0}
-              maxLength={8}
-              onChangeText={(value) => setExpenseValue(value)}
-              blurOnSubmit={false}
-              onSubmitEditing={() => {
-                secondTextInputRef.current?.focus()
-              }}
-            />
-
-            {/* todo dynamic currency selection */}
-            <Text style={$euroSymbol} numberOfLines={1}>
-              €
-            </Text>
-          </View>
-
-          <View style={$noteInputContainer}>
-            <Icon icon="edit" color={colors.palette.neutral400} />
-
-            <BottomSheetTextInput
-              ref={secondTextInputRef as any}
-              style={$modalNoteInput}
-              textAlign="left"
-              inputMode="text"
-              returnKeyType="done"
-              cursorColor={colors.palette.primary500}
-              placeholder="Add a note"
-              placeholderTextColor={colors.palette.neutral400}
-              maxFontSizeMultiplier={0}
-              maxLength={40}
-              onChangeText={(value) => setNote(value)}
-              onSubmitEditing={handleKeyboardEnter}
-            />
-          </View>
-
-          <View style={$bottomContainer}>
-            <Pressable style={$calendarContainer} onPress={() => setDateModalToggle(true)}>
-              <Icon icon={"calendar"} color={colors.palette.primary500} />
-              <Text
-                style={$calendarText}
-                preset="formLabel"
-                text={isToday(new Date(date)) ? 'Today' : format(new Date(date), 'eee do MMM, yyyy')}
-              />
-
-            </Pressable>
-
-            <Text style={$categoryText} preset="formLabel" tx={"addExpenseModal.categoryLabel"} />
-            <View style={$categoriesContainer}>
-              <Tag />
-              <Tag />
-              <Tag />
-              <Tag />
-              <Tag />
-            </View>
-
-            <Button text="Add Expense" onPress={handleAddExpense} preset="filled" />
-          </View>
-        </BottomSheetView>
-      </BottomSheetModal>
-
-      <View style={$topContainer}>
-        <Text
+      {/* <Text
           testID="expenses-heading"
           style={$expensesHeading}
-          tx="expensesScreen.title"
+          text={`expensesScreen.title ${userName}`}
           preset="heading"
-        />
-      </View>
-      <View style={$expensesContainer}>
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-        <ExpenseCard name={"Grocery"} value={55} />
-      </View>
+        /> */}
 
-      <TouchableOpacity style={$roundButton} onPress={handlePresentModalPress}>
+
+      <DynamicHeader value={scrollOffsetY} name={userName} />
+      <ScrollView
+        style={$scrollViewContainer}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: 250 + spacing.lg,
+          paddingHorizontal: spacing.lg,
+          minHeight: totalCardsHeight + screenHeight - tabBarSpacing
+        }}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollOffsetY}}}],
+          {useNativeDriver: false}
+        )}
+        ref={scrollViewRef}
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: undefined,
+        }}
+      >
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            category={category}
+            onHeightChange={(height: number) => setContainerHeight(height)}
+            totalExpenses={totalExpenses}
+          />
+        ))}
+      </ScrollView>
+
+      <TouchableOpacity style={[$roundButton, {  bottom: spacing.lg + bottom,}]} onPress={handlePresentModalPress}>
         <Icon icon={"plus"} color={colors.palette.neutral100} />
       </TouchableOpacity>
+
     </View>
   )
 }
 
-/* COMMON */
-const $categoryText: TextStyle = {
-  fontFamily: typography.primary.medium,
-}
 
-
-const $bottomContainer: ViewStyle = {
-  flexGrow: 1,
-  width: '100%',
-  justifyContent: "flex-end",
-  paddingHorizontal: spacing.lg,
-}
 
 const $container: ViewStyle = {
-  flex: 1,
+  // flex: 1,
   backgroundColor: colors.background,
-}
-
-const $topContainer: ViewStyle = {
-  justifyContent: "flex-start",
-  paddingHorizontal: spacing.lg,
-}
-
-const $expensesHeading: TextStyle = {
-  marginBottom: spacing.md,
-}
-
-const $expensesContainer: ViewStyle = {
-  flex: 1,
-  flexShrink: 1,
-  flexGrow: 1,
-  justifyContent: "flex-start",
-  paddingHorizontal: spacing.lg,
-
+  // backgroundColor: 'blue' // test!
 }
 
 const $roundButton: ViewStyle = {
   position: "absolute",
   right: spacing.lg,
-  bottom: spacing.lg,
+  elevation: 3, // android shadow
   height: 56,
   width: 56,
   padding: 20,
@@ -237,94 +233,28 @@ const $roundButton: ViewStyle = {
   backgroundColor: colors.palette.primary500,
   alignItems: "center",
   justifyContent: "center",
+  zIndex: 1,
+  // iOS shadow
+  shadowColor: "#000", // For iOS shadow
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
 }
 
-/*
-* Bottom Sheet Modal
-* */
-const $bottomSheetContainer : ViewStyle = {
-  flex: 1,
-  padding: 10,
-  alignItems: 'center',
+const $scrollViewContainer: ViewStyle = {
+  // backgroundColor: "red",
+  // paddingTop: 250 + spacing.lg, // 250 is for the header animation
+  // paddingHorizontal: spacing.lg,
+  // paddingVertical: spacing.md,
 }
 
-const $modalIndicator: ViewStyle = {
-  backgroundColor: colors.palette.primary500,
-}
 
-const $modalExpenseInput: TextStyle = {
-  alignSelf: "stretch",
-  textAlign: "center",
-  marginTop: spacing.xs,
-  marginBottom: 10,
-  borderRadius: 10,
-  fontFamily: typography.primary.normal,
-  fontSize: 46,
-  lineHeight: 28,
-  minWidth: 48,
-  color: colors.palette.neutral700,
-  backgroundColor: colors.palette.neutral100,
-}
 
-const $modalNoteInput: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 16,
-  color: colors.palette.neutral700,
-  width: "100%",
-}
 
-const $inputContainer: ViewStyle = {
-  flexDirection: "row",
-  gap: spacing.xs,
-  alignItems: "center",
-  justifyContent: "flex-start",
-}
 
-const $euroSymbol: TextStyle = {
-  fontSize: 46,
-  color: colors.palette.neutral700,
-  fontFamily: typography.primary.normal,
-  paddingTop: spacing.xl,
-}
 
-const $noteInputContainer: ViewStyle = {
-  flexDirection: 'row',
-  gap: spacing.xs,
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  borderWidth: 2,
-  borderColor: colors.palette.neutral200,
-  marginTop: 8,
-  marginBottom: 10,
-  borderRadius: 10,
-  paddingHorizontal: spacing.sm,
-  paddingVertical: spacing.xs,
-  minWidth: "50%",
-  maxWidth: "90%"
-}
 
-const $categoriesContainer: ViewStyle = {
-  marginVertical: spacing.md,
-  flexDirection: "row",
-  gap: 14,
-  alignItems: "center",
-  justifyContent: "flex-start",
-  flexWrap: "wrap",
-}
 
-const $calendarContainer: ViewStyle = {
-  flexDirection: "row",
-  gap: spacing.xs,
-  justifyContent: "flex-start",
-  alignItems: "center",
-  paddingVertical: spacing.xs,
-  paddingHorizontal: spacing.sm,
-  marginBottom: spacing.xs,
-  borderWidth: 1,
-  borderColor: colors.palette.primary500,
-  borderRadius: 8,
-}
 
-const $calendarText: TextStyle = {
-  color: colors.palette.primary500,
-}
+
+

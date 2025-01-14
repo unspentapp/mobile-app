@@ -1,0 +1,481 @@
+{
+  "expenses": [
+    {
+      "id": "e001",
+      "description": "Monthly Rent",
+      "value": 1200.00,
+      "categoryId": "1",
+      "date": "2024-01-01",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e002",
+      "description": "Electricity Bill",
+      "value": 85.50,
+      "categoryId": "1",
+      "date": "2024-01-05",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e003",
+      "description": "Winter Jacket",
+      "value": 129.99,
+      "categoryId": "2",
+      "date": "2024-01-07",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e004",
+      "description": "Bus Pass",
+      "value": 75.00,
+      "categoryId": "3",
+      "date": "2024-01-01",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e005",
+      "description": "Weekly Groceries",
+      "value": 120.45,
+      "categoryId": "4",
+      "date": "2024-01-08",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e006",
+      "description": "Movie Night",
+      "value": 35.00,
+      "categoryId": "5",
+      "date": "2024-01-10",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e007",
+      "description": "Internet Bill",
+      "value": 65.00,
+      "categoryId": "1",
+      "date": "2024-01-15",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e008",
+      "description": "New Shoes",
+      "value": 89.99,
+      "categoryId": "2",
+      "date": "2024-01-16",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e009",
+      "description": "Gas",
+      "value": 45.00,
+      "categoryId": "3",
+      "date": "2024-01-17",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e010",
+      "description": "Fresh Produce",
+      "value": 35.67,
+      "categoryId": "4",
+      "date": "2024-01-18",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e011",
+      "description": "Concert Tickets",
+      "value": 150.00,
+      "categoryId": "5",
+      "date": "2024-01-20",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e012",
+      "description": "Home Insurance",
+      "value": 95.00,
+      "categoryId": "1",
+      "date": "2024-01-22",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e013",
+      "description": "T-Shirts",
+      "value": 45.00,
+      "categoryId": "2",
+      "date": "2024-01-23",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e014",
+      "description": "Car Maintenance",
+      "value": 250.00,
+      "categoryId": "3",
+      "date": "2024-01-25",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e015",
+      "description": "Bulk Shopping",
+      "value": 200.00,
+      "categoryId": "4",
+      "date": "2024-01-26",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e016",
+      "description": "Home Repairs",
+      "value": 180.00,
+      "categoryId": "1",
+      "date": "2024-02-01",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e017",
+      "description": "Winter Boots",
+      "value": 145.00,
+      "categoryId": "2",
+      "date": "2024-02-02",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e018",
+      "description": "Parking Pass",
+      "value": 50.00,
+      "categoryId": "3",
+      "date": "2024-02-03",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e019",
+      "description": "Weekly Groceries",
+      "value": 115.75,
+      "categoryId": "4",
+      "date": "2024-02-05",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e020",
+      "description": "Gym Membership",
+      "value": 55.00,
+      "categoryId": "5",
+      "date": "2024-02-06",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e021",
+      "description": "Water Bill",
+      "value": 45.00,
+      "categoryId": "1",
+      "date": "2024-02-08",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e022",
+      "description": "Jeans",
+      "value": 79.99,
+      "categoryId": "2",
+      "date": "2024-02-10",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e023",
+      "description": "Taxi Ride",
+      "value": 25.00,
+      "categoryId": "3",
+      "date": "2024-02-12",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e024",
+      "description": "Snacks",
+      "value": 15.99,
+      "categoryId": "4",
+      "date": "2024-02-13",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e025",
+      "description": "Restaurant Dinner",
+      "value": 85.00,
+      "categoryId": "5",
+      "date": "2024-02-14",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e026",
+      "description": "Phone Bill",
+      "value": 70.00,
+      "categoryId": "1",
+      "date": "2024-02-15",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e027",
+      "description": "Socks",
+      "value": 12.99,
+      "categoryId": "2",
+      "date": "2024-02-16",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e028",
+      "description": "Train Ticket",
+      "value": 30.00,
+      "categoryId": "3",
+      "date": "2024-02-18",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e029",
+      "description": "Weekly Groceries",
+      "value": 125.45,
+      "categoryId": "4",
+      "date": "2024-02-19",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e030",
+      "description": "Coffee Shop",
+      "value": 18.50,
+      "categoryId": "5",
+      "date": "2024-02-20",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e031",
+      "description": "Security System",
+      "value": 299.99,
+      "categoryId": "1",
+      "date": "2024-02-22",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e032",
+      "description": "Gloves",
+      "value": 25.00,
+      "categoryId": "2",
+      "date": "2024-02-23",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e033",
+      "description": "Car Insurance",
+      "value": 120.00,
+      "categoryId": "3",
+      "date": "2024-02-25",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e034",
+      "description": "Fresh Produce",
+      "value": 45.75,
+      "categoryId": "4",
+      "date": "2024-02-26",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e035",
+      "description": "Movie Streaming",
+      "value": 15.99,
+      "categoryId": "5",
+      "date": "2024-02-28",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e036",
+      "description": "Cleaning Service",
+      "value": 150.00,
+      "categoryId": "1",
+      "date": "2024-03-01",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e037",
+      "description": "Dress Shirt",
+      "value": 55.00,
+      "categoryId": "2",
+      "date": "2024-03-02",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e038",
+      "description": "Bike Repair",
+      "value": 75.00,
+      "categoryId": "3",
+      "date": "2024-03-04",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e039",
+      "description": "Weekly Groceries",
+      "value": 118.99,
+      "categoryId": "4",
+      "date": "2024-03-05",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e040",
+      "description": "Concert Tickets",
+      "value": 180.00,
+      "categoryId": "5",
+      "date": "2024-03-07",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e041",
+      "description": "Air Conditioning Repair",
+      "value": 250.00,
+      "categoryId": "1",
+      "date": "2024-03-08",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e042",
+      "description": "Belt",
+      "value": 35.00,
+      "categoryId": "2",
+      "date": "2024-03-10",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e043",
+      "description": "Gas",
+      "value": 48.50,
+      "categoryId": "3",
+      "date": "2024-03-12",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e044",
+      "description": "Bulk Shopping",
+      "value": 225.75,
+      "categoryId": "4",
+      "date": "2024-03-13",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e045",
+      "description": "Gaming Subscription",
+      "value": 14.99,
+      "categoryId": "5",
+      "date": "2024-03-15",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e046",
+      "description": "Internet Upgrade",
+      "value": 89.99,
+      "categoryId": "1",
+      "date": "2024-03-16",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "i001",
+      "description": "Stock dividend",
+      "value": 150.00,
+      "categoryId": "5",
+      "date": "2024-12-10T16:20:00Z",
+      "recurrent": false,
+      "type": "income"
+    },
+    {
+      "id": "e047",
+      "description": "Rain Jacket",
+      "value": 95.00,
+      "categoryId": "2",
+      "date": "2024-03-18",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e048",
+      "description": "Parking Fee",
+      "value": 15.00,
+      "categoryId": "3",
+      "date": "2024-03-19",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e049",
+      "description": "Weekly Groceries",
+      "value": 122.50,
+      "categoryId": "4",
+      "date": "2024-03-20",
+      "recurrent": true,
+      "type": "expense"
+    },
+    {
+      "id": "e050",
+      "description": "Spa Day",
+      "value": 200.00,
+      "categoryId": "5",
+      "date": "2024-03-22",
+      "recurrent": false,
+      "type": "expense"
+    },
+    {
+      "id": "e051",
+      "description": "Overtime pay",
+      "value": 280.00,
+      "categoryId": "5",
+      "date": "2024-12-15T13:45:00Z",
+      "recurrent": false,
+      "type": "income"
+    },
+    {
+      "id": "e052",
+      "description": "Side gig",
+      "value": 350.00,
+      "categoryId": "5",
+      "date": "2024-12-05T10:00:00Z",
+      "recurrent": false,
+      "type": "income"
+    }
+  ]
+}

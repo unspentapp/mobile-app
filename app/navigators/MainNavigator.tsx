@@ -44,7 +44,7 @@ export function MainNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarStyle: [$tabBar, { height: bottom + 70 }],
+        tabBarStyle: [$tabBar, { height: bottom + 55 }],
         tabBarActiveTintColor: colors.text,
         tabBarInactiveTintColor: colors.text,
         tabBarLabelStyle: $tabBarLabel,
@@ -60,7 +60,7 @@ export function MainNavigator() {
           tabBarShowLabel: false,
           tabBarLabel: translate("mainNavigator.expensesTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="home" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="home" color={focused ? colors.tint : undefined} size={25} />
           ),
         }}
       />
@@ -73,7 +73,7 @@ export function MainNavigator() {
           tabBarShowLabel: false,
           tabBarLabel: translate("mainNavigator.analyticsTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="chart" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="chart" color={focused ? colors.tint : undefined} size={25} />
           ),
         }}
       />
@@ -86,7 +86,7 @@ export function MainNavigator() {
           tabBarShowLabel: false,
           tabBarLabel: translate("mainNavigator.settingsTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="settings" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="settings" color={focused ? colors.tint : undefined} size={25} />
           ),
         }}
       />
@@ -100,7 +100,7 @@ const $tabBar: ViewStyle = {
 }
 
 const $tabBarItem: ViewStyle = {
-  paddingTop: spacing.md,
+  paddingTop: spacing.sm,
 }
 
 const $tabBarLabel: TextStyle = {

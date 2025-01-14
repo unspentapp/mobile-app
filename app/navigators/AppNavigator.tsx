@@ -8,11 +8,11 @@ import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
-  NavigatorScreenParams,
+  NavigatorScreenParams, useFocusEffect,
 } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
-import React from "react"
-import { useColorScheme } from "react-native"
+import React, { useCallback, useEffect, useRef } from "react"
+import { BackHandler, useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 // import { DemoTabParamList } from "./DemoNavigator"
@@ -20,6 +20,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { useStore, isAuthenticatedSelector } from "app/store";
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
+import { StatusBar } from "expo-status-bar"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -37,11 +38,7 @@ import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 export type AppStackParamList = {
   Welcome: undefined
   Login: undefined
-  // Demo: NavigatorScreenParams<DemoTabParamList>
   Main: NavigatorScreenParams<MainTabParamList>
-  DateSelect: undefined
-  // 🔥 Your screens go here
-  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -65,11 +62,11 @@ const AppStack = () => {
   return (
     <RootStack.Navigator
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      initialRouteName={isAuthenticated ? "Main" : "Login"}
     >
       {isAuthenticated ? (
         <>
-          <RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} />
+          {/*<RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} />*/}
           <RootStack.Screen name="Main" component={MainNavigator} />
         </>
       ) : (
@@ -95,7 +92,8 @@ export const AppNavigator = (props: NavigationProps) => {
   return (
     <NavigationContainer
       ref={navigationRef}
-      theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      theme={DefaultTheme}
+      // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       {...props}
     >
       <AppStack />
