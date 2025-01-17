@@ -1,14 +1,13 @@
-/*
 import { Database } from "@nozbe/watermelondb";
 import database from "../../../db"
 import AuthSession from "../../../db/models/AuthSession"
 import * as Crypto from 'expo-crypto';
 import SecureStore from "expo-secure-store";
-import { aesjs } from 'aes-js';
+import aesjs from 'aes-js';
 
-/!**
+/**
  * AnyFunction, MaybePromisify, SupportedStorage type taken from node_modules/@supabase/auth-js/src/lib/types.ts for reference
- *!/
+ */
 
 type AnyFunction = (...args: any[]) => any;
 type MaybePromisify<T> = T | Promise<T>;
@@ -43,7 +42,7 @@ class SupabaseClientStorage implements SupportedStorageTypes {
     return SupabaseClientStorage.instance;
   }
 
-  getItem(key: string): MaybePromisify<string | null> {
+  /*getItem(key: string): MaybePromisify<string | null> {
     return this.db
       .get<AuthSession>("auth_session")
       .find(key)
@@ -52,9 +51,9 @@ class SupabaseClientStorage implements SupportedStorageTypes {
         return decryptedValue;
       })
       .catch(() => null);
-  }
+  }*/
 
-  async setItem(key: string, value: string): Promise<void> {
+  /*async setItem(key: string, value: string): Promise<void> {
     const encryptedValue = await this._encrypt(key, value);
     await this.db.write(async () => {
       await this.db
@@ -65,15 +64,53 @@ class SupabaseClientStorage implements SupportedStorageTypes {
         })
         .catch((error) => {});
     });
-  }
+  }*/
 
-  async removeItem(key: string): Promise<void> {
+  /*async removeItem(key: string): Promise<void> {
     try {
       const session = await this.db.get<AuthSession>("auth_session").find(key);
       if (session) {
         await this.db.write(async () => {
           await session.destroyPermanently();
           await SecureStore.deleteItemAsync(key);
+        });
+      }
+    } catch (error) {}
+  }*/
+
+  async setItem(key: string, value: string): Promise<void> {
+    await this.db.write(async () => {
+      await this.db
+        .get<AuthSession>("auth_session")
+        .create((record) => {
+          record._raw.id = key; // set key as row id this will help in get and remove item with passed key argument by supabase
+          record.session = value; // set value to session field
+        })
+        .catch((error) => {});
+    });
+  }
+
+  getItem(key: string): MaybePromisify<string | null> {
+    // from auth_session table find collection for passed key
+    return this.db
+      .get<AuthSession>("auth_session")
+      .find(key)
+      .then((result) => {
+        // just return value of session
+        if (result.session) return result.session;
+        else return null;
+      })
+      .catch(() => null);
+  }
+
+  async removeItem(key: string): Promise<void> {
+    try {
+      // find a collection with key
+      const session = await this.db.get<AuthSession>("auth_session").find(key);
+      if (session) {
+        await this.db.write(async () => {
+          // delete that collection if exist
+          await session.destroyPermanently();
         });
       }
     } catch (error) {}
@@ -114,8 +151,8 @@ class SupabaseClientStorage implements SupportedStorageTypes {
     const decryptedBytes = aesCtr.decrypt(aesjs.utils.hex.toBytes(value));
 
     // Convert our bytes back into text
-    var decryptedValue = aesjs.utils.utf8.fromBytes(decryptedBytes);
-    return decryptedValue;
+    const decryptedValue = aesjs.utils.utf8.fromBytes(decryptedBytes)
+    return decryptedValue
   }
 
 }
@@ -125,4 +162,3 @@ const clientAuthStorageInstance = SupabaseClientStorage.getInstance();
 
 
 export default clientAuthStorageInstance;
-*/

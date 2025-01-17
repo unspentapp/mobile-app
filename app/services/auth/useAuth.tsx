@@ -7,6 +7,7 @@ import React, {
 } from "react"
 import { Session, supabase } from "./supabase"
 import { AuthResponse, AuthTokenResponsePassword } from "@supabase/supabase-js"
+import { logger } from "@nozbe/watermelondb/utils/common"
 
 type AuthState = {
   isAuthenticated: boolean
@@ -98,9 +99,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         password,
       })
 
-      /*if (result.data?.session?.access_token) {
+      if (result.data?.session?.access_token) {
         setToken(result.data.session.access_token)
-      }*/
+      }
 
       return result
     },

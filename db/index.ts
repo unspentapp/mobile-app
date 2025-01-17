@@ -1,4 +1,3 @@
-/*
 import { Database } from "@nozbe/watermelondb";
 import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 
@@ -25,4 +24,3 @@ const database = new Database({
 });
 
 export default database;
-*/

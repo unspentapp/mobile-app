@@ -1,4 +1,3 @@
-/*
 import { appSchema, tableSchema } from "@nozbe/watermelondb";
 
 export default appSchema({
@@ -10,4 +9,3 @@ export default appSchema({
     }),
   ],
 });
-*/

@@ -69,6 +69,7 @@
         },
         "android": {
           "usesCleartextTraffic": true
+          // "kotlinVersion": "1.5.20"
         }
       }
     ],
