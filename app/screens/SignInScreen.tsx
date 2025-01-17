@@ -5,14 +5,16 @@ import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
+import Toast from "react-native-toast-message"
+import hide = Toast.hide
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const LoginScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
   const { signIn, signUp } = useAuth()
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("test@test.com")
+  const [password, setPassword] = useState("testtest")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
@@ -43,9 +45,9 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
 
     // Make a request to your server to get an authentication token.
     // If successful, reset the fields and set the token.
-    const result = await signUp({ email, password })
-
+    const result = await signIn({ email, password })
     if (result !== null ) {
+      console.log("LOGGED IN")
       setIsSubmitted(false)
       setPassword("")
       setEmail("")

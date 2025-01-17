@@ -196,17 +196,22 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           autoscrollToTopThreshold: undefined,
         }}
       >
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <CategoryCard
             key={category.id}
             category={category}
             onHeightChange={(height: number) => setContainerHeight(height)}
             totalExpenses={totalExpenses}
+            animationDelay={index * 50}
           />
         ))}
       </ScrollView>
 
-      <TouchableOpacity style={[$roundButton, {  bottom: spacing.lg + bottom,}]} onPress={handlePresentModalPress}>
+      <TouchableOpacity
+        style={[$roundButton, {  bottom: spacing.lg + bottom,}]}
+        onPress={handlePresentModalPress}
+        testID="addExpenseButton"
+        >
         <Icon icon={"plus"} color={colors.palette.neutral100} />
       </TouchableOpacity>
 

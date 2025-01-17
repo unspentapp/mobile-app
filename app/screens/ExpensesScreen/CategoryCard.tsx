@@ -12,9 +12,10 @@ type Props = {
   category: Category,
   totalExpenses: number,
   onHeightChange: any,
+  animationDelay?: number,
 }
 
-const CategoryCard = ({ category, onHeightChange, totalExpenses }: Props) => {
+const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay }: Props) => {
   const { expenses } = useExpensesStore()
   const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
   const totalExpensesPerCategory = filteredExpenses.reduce((total, expense) => total + expense.value, 0)
@@ -35,7 +36,7 @@ const CategoryCard = ({ category, onHeightChange, totalExpenses }: Props) => {
             {category.label}
           </Text>
           <View style={$progressBarContainer}>
-            <ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} />
+            <ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} animationDelay={animationDelay} />
           </View>
         </View>
         <ArrowIconAnimated  value={isExpanded}/>
