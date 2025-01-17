@@ -46,7 +46,7 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
     // Make a request to your server to get an authentication token.
     // If successful, reset the fields and set the token.
     const result = await signIn({ email, password })
-    if (result !== null ) {
+    if (result.data.session !== null ) {
       console.log("LOGGED IN")
       setIsSubmitted(false)
       setPassword("")

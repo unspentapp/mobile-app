@@ -1,7 +1,7 @@
 import Config from "app/config"
 import { createClient } from "@supabase/supabase-js"
 import { AppState } from "react-native"
-import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
+// import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const supabase = createClient(

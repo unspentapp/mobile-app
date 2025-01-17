@@ -2,7 +2,7 @@
   "name": "Unspent",
   "description": "The app which helps you to save money.",
   "slug": "unspent_app",
-  "scheme": "unspent_app",
+  "scheme": "com.unspentapp",
   "version": "1.0.0",
   "orientation": "portrait",
   "icon": "./assets/images/app-icon-all.png",
@@ -68,6 +68,7 @@
           ]
         },
         "android": {
+          "usesCleartextTraffic": true
         }
       }
     ],
