@@ -18,9 +18,10 @@ import Config from "../config"
 // import { DemoTabParamList } from "./DemoNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
-import { useStore, isAuthenticatedSelector } from "app/store";
+// import { useStore, isAuthenticatedSelector } from "app/store";
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { StatusBar } from "expo-status-bar"
+import { useAuth } from "app/services/auth/useAuth"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -57,7 +58,7 @@ const RootStack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = () => {
   // use a selector to pick only that value
-  const isAuthenticated = useStore(isAuthenticatedSelector)
+  const { isAuthenticated } = useAuth()
 
   return (
     <RootStack.Navigator

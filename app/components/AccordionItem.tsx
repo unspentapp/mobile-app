@@ -6,7 +6,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated"
-import { spacing } from "app/theme"
 
 type Props = {
   isExpanded: boolean
@@ -63,7 +62,6 @@ export const AccordionItem = ({
 const $wrapper: ViewStyle = {
   position: "absolute",
   width: "100%",
-  paddingTop: spacing.md,
 }
 
 const $animatedView: ViewStyle = {

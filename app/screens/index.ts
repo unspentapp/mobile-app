@@ -1,6 +1,6 @@
 export * from "./WelcomeScreen"
 
-export * from "./LoginScreen"
+export * from "./SignInScreen"
 
 export * from "./ErrorScreen/ErrorBoundary"
 

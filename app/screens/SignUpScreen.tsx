@@ -1,3 +1,4 @@
+/*
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
@@ -142,3 +143,4 @@ const $textField: ViewStyle = {
 const $tapButton: ViewStyle = {
   marginTop: spacing.xs,
 }
+*/

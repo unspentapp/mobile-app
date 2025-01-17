@@ -1,5 +1,6 @@
 {
   "name": "Unspent",
+  "description": "The app which helps you to save money.",
   "slug": "unspent_app",
   "scheme": "unspent_app",
   "version": "1.0.0",

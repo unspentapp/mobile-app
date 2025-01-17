@@ -29,12 +29,14 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 import * as Linking from "expo-linking"
 import { AppNavigator, useNavigationPersistence } from "./navigators"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
-import { useStore } from "./store"
+// import { useStore } from "./store"
 import { ErrorBoundary } from "app/screens"
 import * as storage from "./utils/storage"
 import { customFontsToLoad } from "./theme"
 import Config from "./config"
 import Toast from "react-native-toast-message"
+import { AuthProvider } from "app/services/auth/useAuth"
+import { useStore } from "zustand/react"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -49,9 +51,9 @@ const config = {
     Welcome: "welcome",
     Main: {
       screens: {
-        DemoShowroom: {
-          path: "showroom/:queryIndex?/:itemIndex?",
-        },
+        // DemoShowroom: {
+        //   path: "showroom/:queryIndex?/:itemIndex?",
+        // },
         Expenses: {
           screens: {
               Expenses: "expenses",
@@ -81,12 +83,16 @@ function App(props: AppProps) {
 
   const [areFontsLoaded, fontLoadError] = useFonts(customFontsToLoad)
 
-  const rehydrated = useStore((state) => state._hasHydrated)
-  useEffect(() => {
+  // const rehydrated = useStore((state) => state._hasHydrated)
+  /*useEffect(() => {
     if (rehydrated) {
       setTimeout(hideSplashScreen, 500)
     }
-  }, [rehydrated])
+  }, [rehydrated])*/
+
+  useEffect(() => {
+    setTimeout(hideSplashScreen, 2000)
+  }, [])
 
   // Before we show the app, we have to wait for our state to be ready.
   // In the meantime, don't render anything. This will be the background
@@ -94,7 +100,7 @@ function App(props: AppProps) {
   // In iOS: application:didFinishLaunchingWithOptions:
   // In Android: https://stackoverflow.com/a/45838109/204044
   // You can replace with your own loading component if you wish.
-  if (!rehydrated || !isNavigationStateRestored || (!areFontsLoaded && !fontLoadError)) {
+  if (!isNavigationStateRestored || (!areFontsLoaded && !fontLoadError)) {
     return null
   }
 
@@ -105,20 +111,22 @@ function App(props: AppProps) {
 
   // otherwise, we're ready to render the app
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <ErrorBoundary catchErrors={Config.catchErrors}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <AppNavigator
-              linking={linking}
-              initialState={initialNavigationState}
-              onStateChange={onNavigationStateChange}
-            />
-            <Toast/>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </ErrorBoundary>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <ErrorBoundary catchErrors={Config.catchErrors}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <AppNavigator
+                linking={linking}
+                initialState={initialNavigationState}
+                onStateChange={onNavigationStateChange}
+              />
+              <Toast position="bottom" autoHide={true} visibilityTime={3} />
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </ErrorBoundary>
+      </SafeAreaProvider>
+    </AuthProvider>
   )
 }
 
