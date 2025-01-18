@@ -36,7 +36,7 @@ import { customFontsToLoad } from "./theme"
 import Config from "./config"
 import Toast from "react-native-toast-message"
 import { AuthProvider } from "app/services/auth/useAuth"
-import { useStore } from "zustand/react"
+import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -79,7 +79,7 @@ function App(props: AppProps) {
     initialNavigationState,
     onNavigationStateChange,
     isRestored: isNavigationStateRestored,
-  } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
+  } = useNavigationPersistence(clientAuthStorageInstance, NAVIGATION_PERSISTENCE_KEY)
 
   const [areFontsLoaded, fontLoadError] = useFonts(customFontsToLoad)
 

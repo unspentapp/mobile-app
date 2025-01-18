@@ -1,3 +1,4 @@
+/*
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -35,3 +36,4 @@ export const useStore = create<RootStore>()(
 );
 
 export const useAuthenticationStore = () => useStore(useShallow(authenticationStoreSelector));
+*/

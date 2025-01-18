@@ -1,3 +1,4 @@
+/*
 import { create } from "zustand"
 import { Category } from "app/models/Category"
 import { getCategories } from "assets/data"
@@ -21,7 +22,7 @@ export const useCategoriesStore = create<CategoriesState>((set) => ({
       categories: state.categories.filter((categoryToBeRemoved) => categoryToBeRemoved.id !== category.id),
     }
   }),
-  /* editCategory: (updatedCategory: Category) => set((state) => {
+  /!* editCategory: (updatedCategory: Category) => set((state) => {
     const oldCategory = state.categories.find((e) => e.id === updatedCategory.id);
 
     return {
@@ -29,5 +30,5 @@ export const useCategoriesStore = create<CategoriesState>((set) => ({
         e.id === updatedCategory.id ? updatedCategory : e
       ),
     };
-  }), */
-}))
+  }), *!/
+}))*/

@@ -7,8 +7,8 @@ import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
 import React, { Dispatch, RefObject, SetStateAction, useRef } from "react"
-import { useCategoriesStore } from "app/store/CategoriesStore"
 import { BottomSheetBackground } from "app/components/BottomSheetBackground"
+import { getCategories } from "assets/data"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -38,7 +38,7 @@ export const NewExpenseModal = ({
                            handleAddExpense
 
   } : Props) => {
-  const { categories } = useCategoriesStore()
+  const categories = getCategories()
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);

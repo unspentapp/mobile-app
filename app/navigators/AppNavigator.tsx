@@ -76,7 +76,7 @@ const AppStack = () => {
         </>
       ) : (
         <>
-          <RootStack.Screen name="Login" component={Screens.SignUpScreen} />
+          <RootStack.Screen name="Login" component={Screens.SignInScreen} />
         </>
       )}
 

@@ -1,3 +1,4 @@
+/*
 import { Expense } from "app/models/Expense"
 import { create } from "zustand"
 import { getExpenses } from "assets/data"
@@ -36,4 +37,4 @@ export const useExpensesStore = create<ExpensesState>((set) => ({
       totalExpenses: state.totalExpenses + valueDifference
     };
   }),
-}))
+}))*/

@@ -10,6 +10,7 @@ import type { PersistNavigationConfig } from "../config/config.base"
 import { useIsMounted } from "../utils/useIsMounted"
 import type { AppStackParamList, NavigationProps } from "./AppNavigator"
 import { logger } from "@nozbe/watermelondb/utils/common"
+import { SupportedStorage } from "@supabase/supabase-js"
 
 
 
@@ -114,7 +115,7 @@ function navigationRestoredDefaultState(persistNavigation: PersistNavigationConf
  * @param {string} persistenceKey - The key to use for storing the navigation state.
  * @returns {object} - The navigation state and persistence functions.
  */
-export function useNavigationPersistence(storage: Storage, persistenceKey: string) {
+export function useNavigationPersistence(storage: SupportedStorage, persistenceKey: string) {
   const [initialNavigationState, setInitialNavigationState] =
     useState<NavigationProps["initialState"]>()
   const isMounted = useIsMounted()
