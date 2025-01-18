@@ -3,8 +3,8 @@ import * as Application from "expo-application"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
 import { Button, ListItem, Screen, Text } from "app/components"
 import { colors, spacing } from "app/theme"
-import { useStore } from "app/store"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
+import { useAuth } from "app/services/auth/useAuth"
 
 /**
  * @param {string} url - The URL to open in the browser.
@@ -14,10 +14,9 @@ import { MainTabScreenProps } from "app/navigators/MainNavigator"
 //   Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
 // }
 
-export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function SettingsScreen(
-  _props,
-) {
-  const logout = useStore((state) => state.logout)
+export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function SettingsScreen(_props) {
+
+  const { signOut } = useAuth()
 
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
@@ -44,7 +43,7 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
 
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
-{/*      <Text
+      {/*      <Text
         style={$reportBugsLink}
         tx="demoDebugScreen.reportBugs"
         onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
@@ -105,7 +104,7 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
         <Text style={$hint} tx={`settingsScreen.${Platform.OS}ReactotronHint` as const} />
       </View>
       <View style={$buttonContainer}>
-        <Button style={$button} tx="common.logOut" onPress={logout} />
+        <Button style={$button} tx="common.logOut" onPress={signOut} />
       </View>
     </Screen>
   )

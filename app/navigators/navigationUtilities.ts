@@ -9,10 +9,10 @@ import Config from "../config"
 import type { PersistNavigationConfig } from "../config/config.base"
 import { useIsMounted } from "../utils/useIsMounted"
 import type { AppStackParamList, NavigationProps } from "./AppNavigator"
+import { logger } from "@nozbe/watermelondb/utils/common"
+import { SupportedStorage } from "@supabase/supabase-js"
 
-import * as storage from "../utils/storage"
 
-type Storage = typeof storage
 
 /**
  * Reference to the root App Navigator.
@@ -115,7 +115,7 @@ function navigationRestoredDefaultState(persistNavigation: PersistNavigationConf
  * @param {string} persistenceKey - The key to use for storing the navigation state.
  * @returns {object} - The navigation state and persistence functions.
  */
-export function useNavigationPersistence(storage: Storage, persistenceKey: string) {
+export function useNavigationPersistence(storage: SupportedStorage, persistenceKey: string) {
   const [initialNavigationState, setInitialNavigationState] =
     useState<NavigationProps["initialState"]>()
   const isMounted = useIsMounted()
@@ -141,7 +141,9 @@ export function useNavigationPersistence(storage: Storage, persistenceKey: strin
       routeNameRef.current = currentRouteName as keyof AppStackParamList
 
       // Persist state to storage
-      storage.save(persistenceKey, state)
+      // todo persist navigation
+      // storage.save(persistenceKey, state)
+      logger.log(persistenceKey, state)
     }
   }
 
@@ -151,8 +153,9 @@ export function useNavigationPersistence(storage: Storage, persistenceKey: strin
 
       // Only restore the state if app has not started from a deep link
       if (!initialUrl) {
-        const state = (await storage.load(persistenceKey)) as NavigationProps["initialState"] | null
-        if (state) setInitialNavigationState(state)
+        // todo persist navigation
+        // const state = (await storage.load(persistenceKey)) as NavigationProps["initialState"] | null
+        // if (state) setInitialNavigationState(state)
       }
     } finally {
       if (isMounted()) setIsRestored(true)

@@ -10,7 +10,6 @@ import {
 } from "react-native"
 import { Icon } from "app/components"
 import { colors, spacing } from "app/theme"
-import { useStore } from "app/store"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import {
   BottomSheetModal,
@@ -19,13 +18,12 @@ import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
 import { useFocusEffect } from "@react-navigation/native"
 import { Expense } from "app/models/Expense"
-import { useExpensesStore } from "app/store/ExpensesStore"
 import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useCategoriesStore } from "app/store/CategoriesStore"
 import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
 import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
 import * as Crypto from 'expo-crypto';
+import { getCategories, getExpenses } from "assets/data"
 const logger = require('pino')()
 
 
@@ -33,7 +31,7 @@ interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
 
 export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const { navigation } = props
-  const logout = useStore((state) => state.logout)
+  // const logout = useStore((state) => state.logout)
 
   // value for dynamic header
   const scrollOffsetY = useRef(new Animated.Value(0)).current;
@@ -79,7 +77,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       id: Crypto.randomUUID()
     }
 
-    addExpense(expense)
+    addExpense()
 
     logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
     bottomSheetModalRef.current?.close();
@@ -126,8 +124,11 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     return categories.filter(category => category.id === expense.categoryId)[0]
   }
 
-  const { expenses, addExpense, removeExpense, totalExpenses } = useExpensesStore()
-  const { categories } = useCategoriesStore()
+
+  const addExpense = () => {}
+  const totalExpenses = 1245
+
+  const categories = getCategories()
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
   const [cardHeights, setCardHeights] = useState<Record<string, number>>({});
@@ -196,17 +197,22 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           autoscrollToTopThreshold: undefined,
         }}
       >
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <CategoryCard
             key={category.id}
             category={category}
             onHeightChange={(height: number) => setContainerHeight(height)}
             totalExpenses={totalExpenses}
+            animationDelay={index * 50}
           />
         ))}
       </ScrollView>
 
-      <TouchableOpacity style={[$roundButton, {  bottom: spacing.lg + bottom,}]} onPress={handlePresentModalPress}>
+      <TouchableOpacity
+        style={[$roundButton, {  bottom: spacing.lg + bottom,}]}
+        onPress={handlePresentModalPress}
+        testID="addExpenseButton"
+        >
         <Icon icon={"plus"} color={colors.palette.neutral100} />
       </TouchableOpacity>
 

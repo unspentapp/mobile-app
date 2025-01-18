@@ -40,7 +40,7 @@ export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
       extrapolate: 'clamp',
     }), []);
 
-  const { totalExpenses } = useExpensesStore()
+  const totalExpenses = 4250
 
   return (
     <Animated.View

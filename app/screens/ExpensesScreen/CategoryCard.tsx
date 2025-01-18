@@ -1,24 +1,25 @@
-import React, { useCallback, useMemo } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { Category } from "app/models/Category"
-import { useExpensesStore } from "app/store/ExpensesStore"
 import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import { AccordionItem } from "app/components/AccordionItem"
 import ArrowIconAnimated from "app/screens/ExpensesScreen/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
+import { getExpenses } from "assets/data"
 
 type Props = {
   category: Category,
   totalExpenses: number,
   onHeightChange: any,
+  animationDelay?: number,
 }
 
-const CategoryCard = ({ category, onHeightChange, totalExpenses }: Props) => {
-  const { expenses } = useExpensesStore()
+const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay }: Props) => {
+  const expenses = getExpenses()
   const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
   const totalExpensesPerCategory = filteredExpenses.reduce((total, expense) => total + expense.value, 0)
-  const [isExpanded, setExpanded] = React.useState(false)
+  const [isExpanded, setExpanded] = useState(false)
 
   const onLayout = useCallback((event) => {
     const { height } = event.nativeEvent.layout;
@@ -35,7 +36,7 @@ const CategoryCard = ({ category, onHeightChange, totalExpenses }: Props) => {
             {category.label}
           </Text>
           <View style={$progressBarContainer}>
-            <ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} />
+            <ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} animationDelay={animationDelay} />
           </View>
         </View>
         <ArrowIconAnimated  value={isExpanded}/>

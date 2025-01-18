@@ -1,3 +1,4 @@
+/*
 import { StateCreator } from "zustand";
 import { RootStore } from "./RootStore";
 
@@ -38,3 +39,4 @@ export const validationErrorSelector = (state: RootStore) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.authEmail)) return "must be a valid email address";
   return "";
 };
+*/

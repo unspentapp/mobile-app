@@ -3,7 +3,6 @@ import { View, ViewStyle } from "react-native"
 import { Text, Screen } from "app/components"
 import { colors, spacing } from "app/theme"
 import { useHeader } from "app/utils/useHeader"
-import { useStore } from "app/store"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 
 
@@ -13,7 +12,7 @@ export const AnalyticsScreen: FC<AnalyticsScreenProps> = (
   _props,
 ) => {
   const { navigation } = _props
-  const logout = useStore((state) => state.logout)
+  // const logout = useStore((state) => state.logout)
 
   /* COMMON */
   function goSettings() {
@@ -24,7 +23,7 @@ export const AnalyticsScreen: FC<AnalyticsScreenProps> = (
       leftIcon: "menu",
       rightIcon: "settings",
       onRightPress: goSettings,
-  }, [logout])
+  }, [])
 
   return (
 

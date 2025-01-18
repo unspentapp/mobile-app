@@ -1,53 +1,56 @@
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
+import { TextInput, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
-import { useAuthenticationStore, useStore, validationErrorSelector } from "app/store"
+// import { useStore, validationErrorSelector } from "app/store"
+import { useAuth } from "app/services/auth/useAuth"
+import { logger } from "@nozbe/watermelondb/utils/common"
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
-export const LoginScreen: FC<LoginScreenProps> = () => {
+export const SignUpScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
+  const { signUp } = useAuth()
 
-  const [authPassword, setAuthPassword] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [attemptsCount, setAttemptsCount] = useState(0)
 
-  // pick several values & actions from the AuthenticationStore
-  const { authEmail, setAuthEmail, setAuthToken } = useAuthenticationStore();
   // we can also use multiple hooks
-  const validationError = useStore(validationErrorSelector);
+  // const validationError = useStore(validationErrorSelector);
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
-    setAuthEmail("ignite@infinite.red")
-    setAuthPassword("ign1teIsAwes0m3")
+    setEmail("ignite@infinite.red")
+    setPassword("ign1teIsAwes0m3")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
-      setAuthPassword("")
-      setAuthEmail("")
+      setPassword("")
+      setEmail("")
     }
-  }, [])
+  }, [])*/
 
-  const error = isSubmitted ? validationError : ""
+  // const error = isSubmitted ? validationError : ""
 
-  function login() {
+  const signup = async () => {
     setIsSubmitted(true)
-    setAttemptsCount(attemptsCount + 1)
 
-    if (validationError) return
+    // if (validationError) return
 
     // Make a request to your server to get an authentication token.
     // If successful, reset the fields and set the token.
-    setIsSubmitted(false)
-    setAuthPassword("")
-    setAuthEmail("")
+    const result = await signUp({ email, password })
+    if (result.data.session !== null ) {
+      // todo test!!
+      logger.log("[SIGNED UP] Token: " + result.data.session.access_token)
+      setIsSubmitted(false)
+      setPassword("")
+      setEmail("")
+    }
 
-    // We'll mock this with a fake token.
-    setAuthToken(String(Date.now()))
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -72,46 +75,54 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen.logIn" preset="heading" style={$logIn} />
-      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} />
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
+      <Text
+        testID="login-heading"
+        tx="signUpScreen.title"
+        preset="heading"
+        style={$logIn} />
+      <Text
+        tx="signUpScreen.enterDetails"
+        preset="subheading"
+        style={$enterDetails}
+      />
+      {/*{attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}*/}
 
       <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
+        value={email}
+        onChangeText={setEmail}
         containerStyle={$textField}
         autoCapitalize="none"
         autoComplete="email"
         autoCorrect={false}
         keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
-        helper={error}
-        status={error ? "error" : undefined}
+        labelTx="signUpScreen.emailFieldLabel"
+        placeholderTx="signUpScreen.emailFieldPlaceholder"
+        // helper={error}
+        // status={error ? "error" : undefined}
         onSubmitEditing={() => authPasswordInput.current?.focus()}
       />
 
       <TextField
         ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
+        value={password}
+        onChangeText={setPassword}
         containerStyle={$textField}
         autoCapitalize="none"
         autoComplete="password"
         autoCorrect={false}
         secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen.passwordFieldPlaceholder"
-        onSubmitEditing={login}
+        labelTx="signUpScreen.passwordFieldLabel"
+        placeholderTx="signUpScreen.passwordFieldPlaceholder"
+        onSubmitEditing={signup}
         RightAccessory={PasswordRightAccessory}
       />
 
        <Button
         testID="login-button"
-        tx="loginScreen.tapToLogIn"
+        tx="signUpScreen.tapToSignUp"
         style={$tapButton}
-        preset="reversed"
-        onPress={login}
+        preset="filled"
+        onPress={signup}
       />
     </Screen>
   )
@@ -136,7 +147,11 @@ const $hint: TextStyle = {
 }
 
 const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
+  marginBottom: spacing.md,
+}
+
+const $forgotPassword: TextStyle = {
+  marginBottom: spacing.xl,
 }
 
 const $tapButton: ViewStyle = {

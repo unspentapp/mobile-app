@@ -1,7 +1,8 @@
 {
   "name": "Unspent",
+  "description": "The app which helps you to save money.",
   "slug": "unspent_app",
-  "scheme": "unspent_app",
+  "scheme": "com.unspentapp",
   "version": "1.0.0",
   "orientation": "portrait",
   "icon": "./assets/images/app-icon-all.png",
@@ -24,11 +25,6 @@
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
       "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
-    },
-    "splash": {
-      "image": "./assets/images/splash-logo-android-universal.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#222222"
     }
   },
   "ios": {
@@ -53,11 +49,12 @@
   },
   "plugins": [
     "expo-localization",
+    "expo-secure-store",
     [
       "expo-build-properties",
       {
+        "newArchEnabled": true,
         "ios": {
-          "newArchEnabled": false,
           "extraPods": [
             {
               "name": "simdjson",
@@ -71,7 +68,8 @@
           ]
         },
         "android": {
-          "newArchEnabled": false
+          "usesCleartextTraffic": true
+          // "kotlinVersion": "1.5.20"
         }
       }
     ],
