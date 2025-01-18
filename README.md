@@ -6,17 +6,32 @@ Welcome to the Unspent App build in public. This repository documents the develo
 
 ## Tech Stack (for now)
 - [React Native](https://reactnative.dev/)
-- [Ignite](https://github.com/infinitered/ignite)
-- [Zustand](https://github.com/pmndrs/zustand)
-- [WatermelonDB](https://github.com/Nozbe/WatermelonDB)
+- [Ignite](https://github.com/infinitered/ignite): React Native + Expo boilerplate
+- [WatermelonDB](https://github.com/Nozbe/WatermelonDB): local database + sync
+- [Supabase](https://supabase.com): authentication and data persistence
+- ~~[Zustand](https://github.com/pmndrs/zustand)~~
 
 ## Build Journey
 
 **Next Steps:**
-- Remove that awful black space at the bottom of the calendar
-- Implement the app basic logic and local storage for temporary persistence
-- ~~Polish the expense input screen~~
-- ~~Implement the home screen (expenses list view)~~
+- [ ] Internationalization (i18n): Replace hardcoded text with dynamic translation keys to support multiple languages
+- [ ] persist session data with watermelondb
+- [x] ~~Implement the app basic logic and local storage for temporary persistence~~
+- [x] ~~Polish the expense input screen~~
+- [x] ~~Implement the home screen (expenses list view)~~
+
+### January 18th, 2025
+- Bumped Expo to v52 and cleaned up all deps 📦
+
+- Finally got WatermelonDB up and running 🎉 I must say, this was quite a journey! This task took several days due to unclear documentation and complex setup requirements
+
+- Dropped Zustand from the codebase ⚡️ Plot twist: turns out WatermelonDB's observables are all we need for state management. It handles re-renders like a boss when props update. Kinda sad to let Zustand go (was hyped to try it), but hey - saving it for the web app (spoiler? 👀)
+
+- Shipped auth flow with Supabase 🔐 Got basic signin/signup screens working. They're pretty barebones right now and need some UI love, but the core functionality is solid
+
+- Last but not least, decided to spice up these build-in-public updates with a more fun tone - as you can probably tell from this post! 🎨 No more dry tech updates, let's keep it real and enjoyable!
+
+<img src="docs%2Fresources%2F2025-01-18.png" width="200"/>
 
 ### January 13th, 2025
 Added home screen functionality with categorized expense tracking. The current implementation includes a progress bar showing each category's percentage of total expenses. In future updates, this will be updated to display spending against allocated category budgets. While the basic functionality is in place, the UI/UX will be further refined.
