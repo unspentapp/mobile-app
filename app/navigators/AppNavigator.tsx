@@ -62,7 +62,11 @@ const AppStack = () => {
 
   return (
     <RootStack.Navigator
-      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
+      screenOptions={{
+        headerShown: false,
+        navigationBarColor: colors.background,
+        statusBarHidden: true,
+    }}
       initialRouteName={isAuthenticated ? "Main" : "Login"}
     >
       {isAuthenticated ? (
@@ -72,7 +76,7 @@ const AppStack = () => {
         </>
       ) : (
         <>
-          <RootStack.Screen name="Login" component={Screens.LoginScreen} />
+          <RootStack.Screen name="Login" component={Screens.SignUpScreen} />
         </>
       )}
 

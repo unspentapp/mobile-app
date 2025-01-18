@@ -1,15 +1,16 @@
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
+import { TextInput, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
+import { logger } from "@nozbe/watermelondb/utils/common"
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
-export const LoginScreen: FC<LoginScreenProps> = () => {
+export const SignInScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
-  const { signIn, signUp } = useAuth()
+  const { signIn } = useAuth()
 
   const [email, setEmail] = useState("test@test.com")
   const [password, setPassword] = useState("testtest")
@@ -45,7 +46,8 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
     // If successful, reset the fields and set the token.
     const result = await signIn({ email, password })
     if (result.data.session !== null ) {
-      console.log("LOGGED IN")
+      // todo test!!
+      logger.log("[LOGGED IN] Token: " + result.data.session.access_token)
       setIsSubmitted(false)
       setPassword("")
       setEmail("")
@@ -75,9 +77,18 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen.logIn" preset="heading" style={$logIn} />
-      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} />
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
+      <Text
+        testID="login-heading"
+        tx="signInScreen.title"
+        preset="heading"
+        style={$logIn}
+      />
+      <Text
+        tx="signInScreen.enterDetails"
+        preset="subheading"
+        style={$enterDetails}
+      />
+      {/*{attemptsCount > 2 && <Text tx="signInScreen.hint" size="sm" weight="light" style={$hint} />}*/}
 
       <TextField
         value={email}
@@ -87,8 +98,8 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
         autoComplete="email"
         autoCorrect={false}
         keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
+        labelTx="signInScreen.emailFieldLabel"
+        placeholderTx="signInScreen.emailFieldPlaceholder"
         // helper={error}
         // status={error ? "error" : undefined}
         onSubmitEditing={() => authPasswordInput.current?.focus()}
@@ -103,17 +114,28 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
         autoComplete="password"
         autoCorrect={false}
         secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen.passwordFieldPlaceholder"
+        labelTx="signInScreen.passwordFieldLabel"
+        placeholderTx="signInScreen.passwordFieldPlaceholder"
         onSubmitEditing={login}
         RightAccessory={PasswordRightAccessory}
       />
 
+      <TouchableOpacity
+        // todo: implement forgot password screen
+        onPress={() => logger.log("Forgot password")}
+      >
+        <Text
+          tx="signInScreen.forgotPassword"
+          preset="formHelper"
+          style={$forgotPassword}
+        />
+      </TouchableOpacity>
+
        <Button
-        testID="login-button"
-        tx="loginScreen.tapToLogIn"
+        testID="signIn-button"
+        tx="signInScreen.tapToLogIn"
         style={$tapButton}
-        preset="reversed"
+        preset="filled"
         onPress={login}
       />
     </Screen>
@@ -139,7 +161,11 @@ const $hint: TextStyle = {
 }
 
 const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
+  marginBottom: spacing.md,
+}
+
+const $forgotPassword: TextStyle = {
+  marginBottom: spacing.xl,
 }
 
 const $tapButton: ViewStyle = {

@@ -54,7 +54,6 @@ export function MainNavigator() {
 
       <Tab.Screen
         name="ExpensesNavigator"
-
         component={ExpensesNavigator}
         options={{
           tabBarShowLabel: false,
