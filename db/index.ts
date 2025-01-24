@@ -8,8 +8,7 @@ import AuthSession from "./models/AuthSession";
 const adapter = new SQLiteAdapter({
   schema,
   migrations,
-
-  jsi: true,
+  jsi: false,
   onSetUpError: (error) => {
     // Database failed to load -- offer the user to reload the app or log out
     console.log("DATABASE SETUP ERROR", error);
@@ -18,9 +17,7 @@ const adapter = new SQLiteAdapter({
 
 const database = new Database({
   adapter,
-  modelClasses: [AuthSession
-  // add other models here
-  ],
+  modelClasses: [AuthSession],
 });
 
 export default database;

@@ -39,6 +39,7 @@ const en = {
     emailFieldPlaceholder: "Email",
     passwordFieldPlaceholder: "Password",
     tapToLogIn: "Login",
+    loading: "Logging in...",
     forgotPassword: "Forgot your password?",
   },
   signUpScreen: {
@@ -49,6 +50,7 @@ const en = {
     passwordFieldLabel: "Password",
     emailFieldPlaceholder: "Email",
     passwordFieldPlaceholder: "Password",
+    loading: "Creating account...",
     tapToSignUp: "Create account",
   },
   mainNavigator: {

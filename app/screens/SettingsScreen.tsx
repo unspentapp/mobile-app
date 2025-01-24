@@ -5,6 +5,8 @@ import { Button, ListItem, Screen, Text } from "app/components"
 import { colors, spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
+import database from "../../db"
+import { logger } from "@nozbe/watermelondb/utils/common"
 
 /**
  * @param {string} url - The URL to open in the browser.
@@ -17,6 +19,17 @@ import { useAuth } from "app/services/auth/useAuth"
 export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function SettingsScreen(_props) {
 
   const { signOut } = useAuth()
+
+  const wipeDB = async () => {
+    await database.write(async () => {
+      await database.unsafeResetDatabase();
+    });
+  }
+  const fetchAuthSessionRecords = async () => {
+    const results = await database.collections.get('auth_session').query().fetch()
+    const sessionData = JSON.parse(results[0]._raw.session)
+    logger.log(sessionData)
+  }
 
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
@@ -105,6 +118,12 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
       </View>
       <View style={$buttonContainer}>
         <Button style={$button} tx="common.logOut" onPress={signOut} />
+      </View>
+      <View style={$buttonContainer}>
+        <Button preset="reversed" text="Fetch Auth Data" onPress={fetchAuthSessionRecords} />
+      </View>
+      <View style={$buttonContainer}>
+        <Button preset="filled" text="Wipe Database Data" onPress={wipeDB} />
       </View>
     </Screen>
   )

@@ -5,14 +5,14 @@ import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
-import { logger } from "@nozbe/watermelondb/utils/common"
+import { log } from "../utils/logger"
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignInScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
   const { signIn } = useAuth()
 
-  const [email, setEmail] = useState("test@test.com")
+  const [email, setEmail] = useState("test4@test.com")
   const [password, setPassword] = useState("testtest")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -47,10 +47,10 @@ export const SignInScreen: FC<LoginScreenProps> = () => {
     const result = await signIn({ email, password })
     if (result.data.session !== null ) {
       // todo test!!
-      logger.log("[LOGGED IN] Token: " + result.data.session.access_token)
-      setIsSubmitted(false)
+      log.info("SIGNED IN with email " + result.data.session.user.email)
       setPassword("")
       setEmail("")
+      setIsSubmitted(false)
     }
 
   }
@@ -77,17 +77,8 @@ export const SignInScreen: FC<LoginScreenProps> = () => {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text
-        testID="login-heading"
-        tx="signInScreen.title"
-        preset="heading"
-        style={$logIn}
-      />
-      <Text
-        tx="signInScreen.enterDetails"
-        preset="subheading"
-        style={$enterDetails}
-      />
+      <Text testID="login-heading" tx={"signInScreen.title"} preset="heading" style={$logIn} />
+      <Text tx="signInScreen.enterDetails" preset="subheading" style={$enterDetails} />
       {/*{attemptsCount > 2 && <Text tx="signInScreen.hint" size="sm" weight="light" style={$hint} />}*/}
 
       <TextField
@@ -124,16 +115,12 @@ export const SignInScreen: FC<LoginScreenProps> = () => {
         // todo: implement forgot password screen
         onPress={() => logger.log("Forgot password")}
       >
-        <Text
-          tx="signInScreen.forgotPassword"
-          preset="formHelper"
-          style={$forgotPassword}
-        />
+        <Text tx="signInScreen.forgotPassword" preset="formHelper" style={$forgotPassword} />
       </TouchableOpacity>
 
-       <Button
+      <Button
         testID="signIn-button"
-        tx="signInScreen.tapToLogIn"
+        tx={isSubmitted ? "signInScreen.loading" : "signInScreen.tapToLogIn"}
         style={$tapButton}
         preset="filled"
         onPress={login}
