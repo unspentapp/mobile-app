@@ -10,7 +10,7 @@ interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignUpScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
-  const { signUp } = useAuth()
+  const { isAuthenticated, signUp, token } = useAuth()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -44,8 +44,6 @@ export const SignUpScreen: FC<LoginScreenProps> = () => {
     // If successful, reset the fields and set the token.
     const result = await signUp({ email, password })
     if (result.data.session !== null ) {
-      // todo test!!
-      logger.log("[SIGNED UP] Token: " + result.data.session.access_token)
       setIsSubmitted(false)
       setPassword("")
       setEmail("")

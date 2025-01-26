@@ -22,8 +22,9 @@
     "baseUrl": ".",
     "paths": {
       "app/*": [
-        "./app/*"
+        "./app/*",
       ],
+      "@nozbe/watermelondb/*": ["../../src/*"],
       "assets/*": [
         "./assets/*"
       ]
@@ -45,8 +46,8 @@
     "types",
     "plugins",
     "app.config.ts",
-    "nativewind-env.d.ts",
-    "declarations.d.ts"
+    "declarations.d.ts",
+    "../../src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

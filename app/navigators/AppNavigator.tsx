@@ -22,6 +22,7 @@ import { colors } from "app/theme"
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { StatusBar } from "expo-status-bar"
 import { useAuth } from "app/services/auth/useAuth"
+import { logger } from "@nozbe/watermelondb/utils/common"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
