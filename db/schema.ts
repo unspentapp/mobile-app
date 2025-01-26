@@ -5,46 +5,42 @@ export default appSchema({
   tables: [
     tableSchema({
       name: "auth_session",
-      columns: [{ name: "session", type: "string" }],
+      columns: [{
+        name: "session",
+        type: "string"
+      }],
+    }),
+    // todo add all fields needed
+    tableSchema({
+      name: "transactions",
+      columns: [
+        { name: "user_id", type: "string" },
+        { name: "category_id", type: "string" },
+        { name: "amount", type: "number" },
+        // { name: "date", type: "string" },
+        { name: "description", type: "string" },
+        // { name: "is_recurring", type: "boolean" },
+        // { name: "receipt_url", type: "string", isOptional: true },
+        { name: "created_at", type: "number" },
+        { name: "updated_at", type: "number" },
+      ]
     }),
     tableSchema({
-        name: "categories",
-        columns
+      name: "users",
+      columns: [
+        { name: "username", type: "string" },
+        { name: "email", type: "string" },
+        { name: "avatar_url", type: "string", isOptional: true },
+        { name: "preferences", type: "string", isOptional: true },
+        { name: "created_at", type: "number" },
+        { name: "updated_at", type: "number" },
+      ]
     })
   ],
 });
 
 
-
-// Database Setup
-const adapter = new SQLiteAdapter({
-  schema: {
-    categories: `
-      id TEXT PRIMARY KEY,
-      name TEXT,
-      type TEXT,
-      user_id TEXT,
-      is_default INTEGER,
-      icon TEXT,
-      color TEXT
-    `,
-    transactions: `
-      id TEXT PRIMARY KEY,
-      amount REAL,
-      date TEXT,
-      description TEXT,
-      category_id TEXT,
-      FOREIGN KEY(category_id) REFERENCES categories(id)
-    `
-  }
-})
-
-const database = new Database({
-  adapter,
-  modelClasses: [Category, Transaction]
-})
-
-// Sync Function
+/* // Sync Function
 async function syncWithSupabase(userId: string) {
   await synchronize({
     database,
@@ -117,11 +113,4 @@ function useTransactionOperations(userId: string) {
   }
 
   return { addTransaction }
-}
-
-export {
-  database,
-  syncWithSupabase,
-  useCategoryOperations,
-  useTransactionOperations
-}
+} */

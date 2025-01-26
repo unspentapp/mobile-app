@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { Category } from "app/models/Category"
@@ -7,6 +7,9 @@ import { AccordionItem } from "app/components/AccordionItem"
 import ArrowIconAnimated from "app/screens/ExpensesScreen/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
 import { getExpenses } from "assets/data"
+import database from "../../../db"
+import { Model, Q } from "@nozbe/watermelondb"
+import TransactionModel from "../../../db/models/TransactionModel"
 
 type Props = {
   category: Category,
@@ -16,9 +19,24 @@ type Props = {
 }
 
 const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay }: Props) => {
-  const expenses = getExpenses()
-  const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
-  const totalExpensesPerCategory = filteredExpenses.reduce((total, expense) => total + expense.value, 0)
+
+
+
+  const filteredExpenses = async (): Promise<Model[]> => {
+    const results = await database.collections.get('auth_session').query().fetch();
+    const userId = JSON.parse(results[0]._raw.session.user_id);
+
+    return await database.get('transactions')
+      .query(Q.where('user_id', userId))
+      .fetch();
+  };
+
+  useEffect(() => {
+    filteredExpenses()
+  }, [])
+
+  // const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
+  // const totalExpensesPerCategory = filteredExpenses.reduce((total, expense) => total + expense.value, 0)
   const [isExpanded, setExpanded] = useState(false)
 
   const onLayout = useCallback((event) => {
@@ -36,7 +54,8 @@ const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay 
             {category.label}
           </Text>
           <View style={$progressBarContainer}>
-            <ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} animationDelay={animationDelay} />
+            {/*<ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} animationDelay={animationDelay} />*/}
+            <ProgressBar numerator={220} denominator={4000} animationDelay={animationDelay} />
           </View>
         </View>
         <ArrowIconAnimated  value={isExpanded}/>

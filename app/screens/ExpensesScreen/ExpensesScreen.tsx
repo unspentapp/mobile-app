@@ -22,14 +22,17 @@ import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
 import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
-import * as Crypto from 'expo-crypto';
-import { getCategories, getExpenses } from "assets/data"
-const logger = require('pino')()
+import { getCategories } from "assets/data"
+import { TransactionDataI } from "db/useWmStorage"
+import { log } from "app/utils/logger"
+import { useWmStorage } from "../../../db/useWmStorage"
+import { supabase } from "app/services/auth/supabase"
 
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
 
 export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
+
   const { navigation } = props
   // const logout = useStore((state) => state.logout)
 
@@ -64,27 +67,6 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const [note, setNote] = useState<string>("")
   const [date, setDate] = useState<string>(format(new Date, 'yyyy-MM-dd'))
   const [selectedCategory, setSelectedCategory] = useState<string>("")
-
-
-  const handleAddExpense = () => {
-    const expense: Expense = {
-      categoryId: selectedCategory.toString(),
-      description: note,
-      value: parseInt(expenseValue),
-      recurrent: false,
-      date,
-      type: "",
-      id: Crypto.randomUUID()
-    }
-
-    addExpense()
-
-    logger.log(`Expenses added: ${note} - ${expenseValue} €, ${date}, Category: ${selectedCategory}`)
-    bottomSheetModalRef.current?.close();
-    setDate(format(new Date, 'yyyy-MM-dd'))
-    setSelectedCategory("")
-  }
-
 
 
   const handleSheetChanges = (index: number) => {
@@ -124,8 +106,6 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     return categories.filter(category => category.id === expense.categoryId)[0]
   }
 
-
-  const addExpense = () => {}
   const totalExpenses = 1245
 
   const categories = getCategories()
@@ -144,6 +124,31 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
 
   const tabBarSpacing = bottom + 55
   const scrollViewRef = useRef<ScrollView>(null)
+
+  const { saveTransaction } = useWmStorage()
+
+  const handleAddExpense = async () => {
+    const { data : { session } } = await supabase.auth.getSession()
+
+    if (session == null) return // display error to user
+
+    const newTransaction : TransactionDataI = {
+      userId: session.user.id,
+      description: note,
+      amount: parseFloat(expenseValue),
+      categoryId: selectedCategory
+    }
+
+    try {
+      await saveTransaction(newTransaction)
+    } catch (e) {
+      // handle error
+    } finally {
+      bottomSheetModalRef.current?.close();
+      setDate(format(new Date, 'yyyy-MM-dd'))
+      setSelectedCategory("")
+    }
+  };
 
 
   return (

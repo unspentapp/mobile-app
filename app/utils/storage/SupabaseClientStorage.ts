@@ -1,6 +1,6 @@
 import { Database } from "@nozbe/watermelondb";
 import database from "../../../db"
-import AuthSession from "../../../db/models/AuthSession"
+import AuthSessionModel from "../../../db/models/AuthSessionModel"
 import * as Crypto from 'expo-crypto';
 import * as SecureStore from "expo-secure-store";
 import aesjs from 'aes-js';
@@ -58,94 +58,10 @@ class SupabaseClientStorage implements SupportedStorageTypes {
 
   private readonly MASTER_KEY_ALIAS = 'auth_master_key';
 
-  /*async setItem(key: string, value: string): Promise<void> {
-    await this.db.write(async () => {
-      await this.db
-        .get<AuthSession>("auth_session")
-        .create((record) => {
-          record._raw.id = key; // set key as row id this will help in get and remove item with passed key argument by supabase
-          record.session = value; // set value to session field
-          console.log("[SET ROW] " + " key:" + key + " value: " + value)
-        })
-        .catch((error) => {
-          wmLog.log(`Error saving auth session (key: ${key}) from storage: `, error);
-        });
-    });
-  }
-
-  getItem(key: string): MaybePromisify<string | null> {
-    // from auth_session table find collection for passed key
-    return this.db
-      .get<AuthSession>("auth_session")
-      .find(key)
-      .then((result) => {
-        // just return value of session
-        wmLog.log("[GET ROW] " + key + " " + result.session)
-        return result?.session || null
-      })
-      .catch((error) => {
-        wmLog.log(`Error retrieving auth session (key: ${key}) from storage: `, error);
-      });
-  }
-
-  async removeItem(key: string): Promise<void> {
-    try {
-      // find a collection with key
-      const session = await this.db.get<AuthSession>("auth_session").find(key);
-      if (session) {
-        await this.db.write(async () => {
-          // delete that collection if exist
-          await session.destroyPermanently();
-        });
-      }
-    } catch (error) {
-      wmLog.error(`Error removing auth session (key: ${key}) from storage: `, error);
-    }
-  }*/
-
-  /*private async _encrypt(key: string, value: string) {
-    // 128-bit key
-    const encryptionKey = Crypto.getRandomValues(new Uint8Array(16));
-
-    // convert the value to bytes (UTF-8 to Uint8Array.)
-    const valueBytes = aesjs.utils.utf8.toBytes(value);
-    // counter CTR
-    const aesCtr = new aesjs.ModeOfOperation.ctr(encryptionKey);
-
-    // converting encryption key to hex string and storing in secure store
-    await SecureStore.setItemAsync(
-      key,
-      aesjs.utils.hex.fromBytes(encryptionKey)
-    );
-
-    // encrypt the value bytes
-    const encryptedBytes = aesCtr.encrypt(valueBytes);
-    // convert encrypted bytes to hex string
-    const encryptedValue = aesjs.utils.hex.fromBytes(encryptedBytes);
-
-    return encryptedValue;
-  }
-
-  private async _decrypt(key: string, value: string) {
-    // retrive hex key from secure store
-    const encryptionKey = await SecureStore.getItemAsync(key);
-    if (!encryptionKey) {
-      return null;
-    }
-    const encryptedKeyInBytes = aesjs.utils.hex.toBytes(encryptionKey);
-    // counter CTR
-    const aesCtr = new aesjs.ModeOfOperation.ctr(encryptedKeyInBytes);
-    const decryptedBytes = aesCtr.decrypt(aesjs.utils.hex.toBytes(value));
-
-    // Convert our bytes back into text
-    const decryptedValue = aesjs.utils.utf8.fromBytes(decryptedBytes)
-    return decryptedValue
-  }*/
-
-    async getItem(key: string): Promise<string | null> {
+  async getItem(key: string): Promise<string | null> {
     try {
       // First check if the record exists
-      const collection = this.db.get<AuthSession>("auth_session");
+      const collection = this.db.get<AuthSessionModel>("auth_session");
       const records = await collection.query().fetch();
       const record = records.find(r => r.id === key);
 
@@ -161,14 +77,14 @@ class SupabaseClientStorage implements SupportedStorageTypes {
       wmLog.error(`Error retrieving session (key: ${key}):`, error);
       return null;
     }
-  }
+}
 
   async setItem(key: string, value: string): Promise<void> {
     try {
       const encryptedValue = await this._encrypt(value);
 
       await this.db.write(async () => {
-        const collection = this.db.get<AuthSession>("auth_session");
+        const collection = this.db.get<AuthSessionModel>("auth_session");
         const records = await collection.query().fetch();
         const existingRecord = records.find(r => r.id === key);
 
@@ -189,7 +105,7 @@ class SupabaseClientStorage implements SupportedStorageTypes {
       });
 
       // Verify the record was created/updated
-      const verifyRecord = await this.db.get<AuthSession>("auth_session")
+      const verifyRecord = await this.db.get<AuthSessionModel>("auth_session")
         .query()
         .fetch()
         .then(records => records.find(r => r.id === key));
@@ -214,7 +130,7 @@ class SupabaseClientStorage implements SupportedStorageTypes {
 
   async removeItem(key: string): Promise<void> {
     try {
-      const collection = this.db.get<AuthSession>("auth_session");
+      const collection = this.db.get<AuthSessionModel>("auth_session");
       const records = await collection.query().fetch();
       const record = records.find(r => r.id === key);
 
@@ -250,11 +166,16 @@ class SupabaseClientStorage implements SupportedStorageTypes {
     }
   }
 
+  /**
+   * See aes-js docs https://github.com/ricmoo/aes-js/blob/master/README.md#ctr---counter-recommended
+  * */
   private async _encrypt(value: string): Promise<string> {
     try {
       const masterKey = await this.getMasterKey();
       const iv = Crypto.getRandomValues(new Uint8Array(16));
       const valueBytes = aesjs.utils.utf8.toBytes(value);
+
+      // eslint-disable-next-line new-cap
       const aesCtr = new aesjs.ModeOfOperation.ctr(masterKey, new aesjs.Counter(iv));
       const encryptedBytes = aesCtr.encrypt(valueBytes);
 
@@ -276,6 +197,7 @@ class SupabaseClientStorage implements SupportedStorageTypes {
       const iv = combined.slice(0, 16);
       const encryptedBytes = combined.slice(16);
 
+      // eslint-disable-next-line new-cap
       const aesCtr = new aesjs.ModeOfOperation.ctr(masterKey, new aesjs.Counter(iv));
       const decryptedBytes = aesCtr.decrypt(encryptedBytes);
 

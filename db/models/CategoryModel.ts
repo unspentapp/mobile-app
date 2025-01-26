@@ -1,7 +1,9 @@
+/*
 import { Model } from "@nozbe/watermelondb";
-import { text } from "@nozbe/watermelondb/decorators";
+import { field, text } from "@nozbe/watermelondb/decorators"
 
-class Category extends Model {
+// todo
+export default class Category extends Model {
   static table = 'categories'
 
   @field('id') id
@@ -13,3 +15,4 @@ class Category extends Model {
   @field('color') color
   @field('updated_at') updatedAt
 }
+*/

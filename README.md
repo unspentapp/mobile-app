@@ -15,10 +15,19 @@ Welcome to the Unspent App build in public. This repository documents the develo
 
 **Next Steps:**
 - [ ] Internationalization (i18n): Replace hardcoded text with dynamic translation keys to support multiple languages
-- [ ] persist session data with watermelondb
+- [ ] persist session data with watermelondb (WIP)
 - [x] ~~Implement the app basic logic and local storage for temporary persistence~~
 - [x] ~~Polish the expense input screen~~
 - [x] ~~Implement the home screen (expenses list view)~~
+
+### January 26th, 2025
+- Just squashed some bugs 🐛 and conquered Typescript's tricky terrain  
+- Watermelon DB is now fully operational, with user sessions encrypted and decrypted like a secret agent's diary! 🕵️‍♀️
+- We've implemented the full transaction lifecycle - saving, updating, and deleting on WMdb.
+- Android emulator debugging? Total nightmare 😭 After two days of digital detective work, Android Studio App Inspector emerged as our debugging superhero. 🦸‍♂️
+
+<img src="docs%2Fresources%2F2025-01-26.png" width="500"/>
+
 
 ### January 18th, 2025
 - Bumped Expo to v52 and cleaned up all deps 📦

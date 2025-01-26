@@ -9,8 +9,8 @@ import database from "../../db"
 import { logger } from "@nozbe/watermelondb/utils/common"
 
 /**
- * @param {string} url - The URL to open in the browser.
  * @returns {void} - No return value.
+ * @param _props
  */
 // function openLinkInBrowser(url: string) {
 //   Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))

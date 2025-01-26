@@ -1,5 +1,6 @@
 import { Q } from '@nozbe/watermelondb'
 import { addMonths, startOfMonth, endOfMonth } from 'date-fns'
+import database from "../../db"
 import { log } from "../utils/logger"
 
 export interface Transaction {
