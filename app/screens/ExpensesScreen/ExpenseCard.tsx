@@ -1,21 +1,23 @@
-/* eslint-disable react/jsx-key, react-native/no-inline-styles */
 import React from "react"
 import { ListItem, Text } from "app/components"
 import { GestureResponderEvent, TextStyle, ViewStyle } from "react-native"
-import { Expense } from "app/models/Expense"
-import { Category } from "app/models/Category"
+import { log } from "app/utils/logger"
+import CategoryModel from "../../../db/models/CategoryModel"
+import TransactionModel from "../../../db/models/TransactionModel"
 
 interface Props {
-  expense: Expense;
-  category: Category;
+  expense: TransactionModel;
+  category: CategoryModel
   onPress?: (event: GestureResponderEvent) => void
 }
 
 export const ExpenseCard = (props: Props) => {
+  log.info(props.expense.amount, props.expense.description)
+
   return (
     <ListItem
       LeftComponent={<Text style={$textValue1}>{props.expense.description}</Text>}
-      RightComponent={<Text style={$textValue}>{props.expense.value} €</Text>}
+      RightComponent={<Text style={$textValue}>{props.expense.amount} €</Text>}
       bottomSeparator={true}
       onLongPress={props.onPress}
       style={$itemList}

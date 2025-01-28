@@ -29,9 +29,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 import * as Linking from "expo-linking"
 import { AppNavigator, useNavigationPersistence } from "./navigators"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
-// import { useStore } from "./store"
 import { ErrorBoundary } from "app/screens"
-import * as storage from "./utils/storage"
 import { customFontsToLoad } from "./theme"
 import Config from "./config"
 import Toast from "react-native-toast-message"
@@ -79,10 +77,11 @@ function App(props: AppProps) {
     initialNavigationState,
     onNavigationStateChange,
     isRestored: isNavigationStateRestored,
-  } = useNavigationPersistence(clientAuthStorageInstance, NAVIGATION_PERSISTENCE_KEY)
+  } = useNavigationPersistence(clientAuthStorageInstance , NAVIGATION_PERSISTENCE_KEY)
 
   const [areFontsLoaded, fontLoadError] = useFonts(customFontsToLoad)
 
+  // todo
   // const rehydrated = useStore((state) => state._hasHydrated)
   /*useEffect(() => {
     if (rehydrated) {
@@ -100,7 +99,7 @@ function App(props: AppProps) {
   // In iOS: application:didFinishLaunchingWithOptions:
   // In Android: https://stackoverflow.com/a/45838109/204044
   // You can replace with your own loading component if you wish.
-  if (!isNavigationStateRestored || (!areFontsLoaded && !fontLoadError)) {
+  if (!isNavigationStateRestored || (!areFontsLoaded && !fontLoadError)) { //  todo add hasHydrated or something like that
     return null
   }
 

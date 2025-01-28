@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   Animated,
   BackHandler,
@@ -27,6 +27,7 @@ import { TransactionDataI } from "db/useWmStorage"
 import { log } from "app/utils/logger"
 import { useWmStorage } from "../../../db/useWmStorage"
 import { supabase } from "app/services/auth/supabase"
+import database from "../../../db"
 
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
@@ -128,12 +129,14 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   const { saveTransaction } = useWmStorage()
 
   const handleAddExpense = async () => {
-    const { data : { session } } = await supabase.auth.getSession()
+    const userId = await database.localStorage.get("USER_ID")
 
-    if (session == null) return // display error to user
+    // todo display error to user (I could try to retrieve from supabase if online)
+    // const { data : { session } } = await supabase.auth.getSession()
+    if (userId == null) return
 
     const newTransaction : TransactionDataI = {
-      userId: session.user.id,
+      userId: userId,
       description: note,
       amount: parseFloat(expenseValue),
       categoryId: selectedCategory
@@ -142,13 +145,16 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
     try {
       await saveTransaction(newTransaction)
     } catch (e) {
-      // handle error
+      // todo handle error
     } finally {
       bottomSheetModalRef.current?.close();
       setDate(format(new Date, 'yyyy-MM-dd'))
       setSelectedCategory("")
+      setExpenseValue("")
     }
   };
+
+
 
 
   return (

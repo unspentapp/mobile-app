@@ -10,6 +10,7 @@ import type { PersistNavigationConfig } from "../config/config.base"
 import { useIsMounted } from "../utils/useIsMounted"
 import type { AppStackParamList, NavigationProps } from "./AppNavigator"
 import { logger } from "@nozbe/watermelondb/utils/common"
+import database from "../../db"
 import { SupportedStorage } from "@supabase/supabase-js"
 
 
@@ -17,7 +18,7 @@ import { SupportedStorage } from "@supabase/supabase-js"
 /**
  * Reference to the root App Navigator.
  *
- * If needed, you can use this to access the navigation object outside of a
+ * If needed, you can use this to access the navigation object outside a
  * `NavigationContainer` context. However, it's recommended to use the `useNavigation` hook whenever possible.
  * @see [Navigating Without Navigation Prop]{@link https://reactnavigation.org/docs/navigating-without-navigation-prop/}
  *
@@ -111,7 +112,6 @@ function navigationRestoredDefaultState(persistNavigation: PersistNavigationConf
 
 /**
  * Custom hook for persisting navigation state.
- * @param {Storage} storage - The storage utility to use.
  * @param {string} persistenceKey - The key to use for storing the navigation state.
  * @returns {object} - The navigation state and persistence functions.
  */
@@ -125,7 +125,7 @@ export function useNavigationPersistence(storage: SupportedStorage, persistenceK
 
   const routeNameRef = useRef<keyof AppStackParamList | undefined>()
 
-  const onNavigationStateChange = (state: NavigationState | undefined) => {
+  const onNavigationStateChange = async (state: NavigationState | undefined) => {
     const previousRouteName = routeNameRef.current
     if (state !== undefined) {
       const currentRouteName = getActiveRouteName(state)
@@ -142,8 +142,9 @@ export function useNavigationPersistence(storage: SupportedStorage, persistenceK
 
       // Persist state to storage
       // todo persist navigation
+      await database.localStorage.set(persistenceKey, state)
       // storage.save(persistenceKey, state)
-      logger.log(persistenceKey, state)
+      logger.log(`NAVIGATION SET: key: ${persistenceKey} >> STATE: ${state}`)
     }
   }
 
@@ -154,8 +155,13 @@ export function useNavigationPersistence(storage: SupportedStorage, persistenceK
       // Only restore the state if app has not started from a deep link
       if (!initialUrl) {
         // todo persist navigation
+        const state = (await database.localStorage.get(persistenceKey)) as NavigationProps["initialState"] | null
+        logger.log(state)
+
         // const state = (await storage.load(persistenceKey)) as NavigationProps["initialState"] | null
-        // if (state) setInitialNavigationState(state)
+        if (state) setInitialNavigationState(state)
+        logger.log(`NAVIGATION RESTORED: key: ${persistenceKey} >> STATE: ${state}`)
+
       }
     } finally {
       if (isMounted()) setIsRestored(true)

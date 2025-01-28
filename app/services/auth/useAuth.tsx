@@ -7,7 +7,7 @@ import React, {
 } from "react"
 import { Session, supabase } from "./supabase"
 import { AuthResponse, AuthTokenResponsePassword } from "@supabase/supabase-js"
-import { logger } from "@nozbe/watermelondb/utils/common"
+import database from "../../../db"
 
 type AuthState = {
   isAuthenticated: boolean
@@ -56,13 +56,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       switch (event) {
         case "SIGNED_OUT":
+          await database.localStorage.remove("USER_ID")
           setToken(undefined)
           break
         case "INITIAL_SESSION":
         case "SIGNED_IN":
+          await database.localStorage.set("USER_ID", session?.user.id)
+          break
         case "TOKEN_REFRESHED":
           setToken(session?.access_token)
           break

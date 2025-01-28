@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
-import { log } from "app/utils/logger";
+import { useCallback } from "react"
+import { log } from "app/utils/logger"
 import database from "./index"
 import TransactionModel from "./models/TransactionModel"
+import { Q } from "@nozbe/watermelondb"
 
 export interface TransactionDataI {
   userId: string;
@@ -10,7 +11,37 @@ export interface TransactionDataI {
   categoryId?: string;
 }
 
+export interface getTransactionFiltersI {
+  userId: string;
+  startDate?: Date | undefined;
+  endDate?: Date | undefined;
+  category?: string;
+}
+
 export const useWmStorage = () => {
+  // Retrieve transactions
+  const getTransactions = useCallback(async (filters : getTransactionFiltersI) => {
+    try {
+      const transactionsCollection = database.get('transactions');
+      let query = transactionsCollection.query(
+        Q.where('user_id', filters.userId)
+      );
+
+      if (filters.startDate && filters.endDate) {
+        query = query.extend(Q.between('created_at', filters.startDate, filters.endDate));
+      }
+
+      if (filters.category) {
+        query = query.extend(Q.where('category', filters.category));
+      }
+
+      return await query.fetch();
+    } catch (error) {
+      log.error('Error fetching transactions', error);
+      throw error;
+    }
+  }, []);
+
   // Save a new transaction
   const saveTransaction = useCallback(async (transactionData : TransactionDataI) => {
     try {
@@ -70,6 +101,7 @@ export const useWmStorage = () => {
   }, []);
 
   return {
+    getTransactions,
     saveTransaction,
     updateTransaction,
     deleteTransaction

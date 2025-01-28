@@ -15,14 +15,10 @@ import React, { useCallback, useEffect, useRef } from "react"
 import { BackHandler, useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
-// import { DemoTabParamList } from "./DemoNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
-// import { useStore, isAuthenticatedSelector } from "app/store";
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
-import { StatusBar } from "expo-status-bar"
 import { useAuth } from "app/services/auth/useAuth"
-import { logger } from "@nozbe/watermelondb/utils/common"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator

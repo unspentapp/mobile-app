@@ -16,6 +16,7 @@ Welcome to the Unspent App build in public. This repository documents the develo
 **Next Steps:**
 - [ ] Internationalization (i18n): Replace hardcoded text with dynamic translation keys to support multiple languages
 - [ ] persist session data with watermelondb (WIP)
+- [ ] rethink git branch management
 - [x] ~~Implement the app basic logic and local storage for temporary persistence~~
 - [x] ~~Polish the expense input screen~~
 - [x] ~~Implement the home screen (expenses list view)~~

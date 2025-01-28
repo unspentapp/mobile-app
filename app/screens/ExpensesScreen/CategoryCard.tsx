@@ -10,6 +10,8 @@ import { getExpenses } from "assets/data"
 import database from "../../../db"
 import { Model, Q } from "@nozbe/watermelondb"
 import TransactionModel from "../../../db/models/TransactionModel"
+import { useWmStorage } from "../../../db/useWmStorage"
+import { log } from "app/utils/logger"
 
 type Props = {
   category: Category,
@@ -19,20 +21,24 @@ type Props = {
 }
 
 const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay }: Props) => {
+  let filteredExpenses = []
+  const { getTransactions } = useWmStorage()
 
+  const getThisMonthTransactions = async () => {
+    const userId : string = await database.localStorage.get("USER_ID")
 
+    if (userId == null) return
 
-  const filteredExpenses = async (): Promise<Model[]> => {
-    const results = await database.collections.get('auth_session').query().fetch();
-    const userId = JSON.parse(results[0]._raw.session.user_id);
+    const filters = {
+      userId,
+    }
 
-    return await database.get('transactions')
-      .query(Q.where('user_id', userId))
-      .fetch();
-  };
+    filteredExpenses = await getTransactions(filters)
+    // filteredExpenses = transactions.filter((transaction : TransactionModel) => transaction.categoryId === category.id)
+  }
 
   useEffect(() => {
-    filteredExpenses()
+    getThisMonthTransactions()
   }, [])
 
   // const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)

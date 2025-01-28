@@ -1,4 +1,4 @@
-import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
+import React, { ComponentType, FC, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { AppStackScreenProps } from "../navigators"
@@ -6,9 +6,9 @@ import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
 import { log } from "../utils/logger"
-interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
+interface SignInScreenProps extends AppStackScreenProps<"Login"> {}
 
-export const SignInScreen: FC<LoginScreenProps> = () => {
+export const SignInScreen: FC<SignInScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
   const { signIn } = useAuth()
 
