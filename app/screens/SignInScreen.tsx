@@ -113,7 +113,7 @@ export const SignInScreen: FC<SignInScreenProps> = () => {
 
       <TouchableOpacity
         // todo: implement forgot password screen
-        onPress={() => logger.log("Forgot password")}
+        onPress={() => log.info("Forgot password")}
       >
         <Text tx="signInScreen.forgotPassword" preset="formHelper" style={$forgotPassword} />
       </TouchableOpacity>

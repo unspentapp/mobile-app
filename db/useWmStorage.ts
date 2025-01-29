@@ -9,6 +9,8 @@ export interface TransactionDataI {
   amount: number;
   description: string;
   categoryId?: string;
+  type: "expense" | "income";
+  date: Date;
 }
 
 export interface getTransactionFiltersI {
@@ -51,6 +53,8 @@ export const useWmStorage = () => {
           transaction.amount = transactionData.amount;
           transaction.description = transactionData.description;
           transaction.categoryId = transactionData.categoryId;
+          transaction.type = transactionData.type;
+          transaction.date = transactionData.date
         });
 
         log.debug(`Transaction added: ${newTransaction.id}`);

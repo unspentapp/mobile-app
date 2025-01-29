@@ -19,6 +19,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
+import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -69,7 +70,19 @@ const AppStack = () => {
       {isAuthenticated ? (
         <>
           {/*<RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} />*/}
-          <RootStack.Screen name="Main" component={MainNavigator} />
+          <RootStack.Screen
+            name="Main"
+            component={MainNavigator}
+          />
+          <RootStack.Screen
+            name="AllTransactions"
+            component={AllTransactionsScreen}
+            options={{
+              statusBarColor: colors.background,
+              statusBarStyle: "dark",
+              statusBarHidden: false,
+            }}
+          />
         </>
       ) : (
         <>

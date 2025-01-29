@@ -60,6 +60,7 @@ const en = {
   },
   expensesScreen: {
     title: "Hello",
+    seeAll: "See all"
   },
   settingsScreen: {
     howTo: "HOW TO",
@@ -90,6 +91,9 @@ const en = {
   analyticsScreen: {
     title: "Analytics",
   },
+  allTransactionsScreen: {
+    title: "Transactions",
+  }
 }
 
 export default en

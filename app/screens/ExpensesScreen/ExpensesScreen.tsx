@@ -3,12 +3,12 @@ import {
   Animated,
   BackHandler,
   Dimensions,
-  ScrollView,
+  ScrollView, TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
-import { Icon } from "app/components"
+import { Icon, Text } from "app/components"
 import { colors, spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import {
@@ -139,7 +139,9 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       userId: userId,
       description: note,
       amount: parseFloat(expenseValue),
-      categoryId: selectedCategory
+      categoryId: selectedCategory,
+      type: "expense",
+      date: new Date(date)
     }
 
     try {
@@ -155,7 +157,9 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
   };
 
 
-
+  function goAlltransactions() {
+    navigation.navigate("AllTransactions")
+  }
 
   return (
     <View style={$container}>
@@ -208,6 +212,14 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           autoscrollToTopThreshold: undefined,
         }}
       >
+        <View style={$seeAllButtonContainer}>
+          <TouchableOpacity
+            // todo: implement forgot password screen
+            onPress={(goAlltransactions)}
+          >
+            <Text tx="expensesScreen.seeAll" preset="formHelper" style={$goToTransactions} />
+          </TouchableOpacity>
+        </View>
         {categories.map((category, index) => (
           <CategoryCard
             key={category.id}
@@ -265,6 +277,14 @@ const $scrollViewContainer: ViewStyle = {
   // paddingVertical: spacing.md,
 }
 
+const $goToTransactions: TextStyle = {
+  marginBottom: spacing.lg,
+}
+
+const $seeAllButtonContainer: ViewStyle = {
+  width: '100%',
+  alignItems: "flex-end",
+}
 
 
 
