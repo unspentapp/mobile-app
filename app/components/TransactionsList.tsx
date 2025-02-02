@@ -1,18 +1,25 @@
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../db"
 import RowItem from "app/components/RowItem"
 import { Q } from "@nozbe/watermelondb"
 import { TransactionDataI } from "../../db/useWmStorage"
-import { getWeek, getWeekOfMonth, startOfWeek } from "date-fns"
+import { endOfYear, getWeekOfMonth, startOfYear } from "date-fns"
 import format from "date-fns/format"
-import { SectionList, TextStyle, View, ViewStyle } from "react-native"
+import { ScrollView, SectionList, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
+import Animated, {
+  FadeIn,
+  Layout,
+  withSpring
+} from 'react-native-reanimated'
 
 
 export interface Props {
   transactions: TransactionDataI[]
+  selectedYear: number
+  setSelectedYear: (selectedYear: number) => void
 }
 
 interface MonthlyStats {
@@ -25,7 +32,58 @@ interface WeeklyStats {
   totalExpenses: number;
 }
 
-const TransactionsList = ({ transactions } : Props) => {
+interface YearTab {
+  year: number
+  hasTransactions: boolean
+}
+
+const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Props) => {
+  const scrollViewRef = useRef<ScrollView>(null)
+  const [availableYears, setAvailableYears] = useState<YearTab[]>([])
+
+  // Fetch available years with transactions
+  useEffect(() => {
+    const fetchAvailableYears = async () => {
+      const allTransactions = await database.get('transactions')
+        .query(Q.sortBy('transaction_at', Q.desc))
+        .fetch()
+
+      const years = new Set<number>()
+      allTransactions.forEach(transaction => {
+        years.add(new Date(transaction.transactionAt).getFullYear())
+      })
+
+      const yearTabs = Array.from(years)
+        .sort((a, b) => a-b)
+        .map(year => ({
+          year,
+          hasTransactions: true
+        }))
+
+      setAvailableYears(yearTabs)
+    }
+
+    fetchAvailableYears()
+  }, [])
+
+  // Scroll to selected year on first render and when years change
+  useEffect(() => {
+    if (availableYears.length > 0 && scrollViewRef.current) {
+      // Find the index of the current year
+      const currentYearIndex = availableYears.findIndex(({ year }) => year === selectedYear)
+      if (currentYearIndex !== -1) {
+        // Add a small delay to ensure layout is complete
+        setTimeout(() => {
+          scrollViewRef.current?.scrollTo({
+            x: currentYearIndex * 100, // Approximate width of each tab
+            animated: true
+          })
+        }, 100)
+      }
+    }
+  }, [availableYears, selectedYear])
+
+
   // Transform and group transactions by month and week
   const prepareSections = (transactions) => {
     const monthlyStats: { [key: string]: MonthlyStats } = {};
@@ -78,6 +136,46 @@ const TransactionsList = ({ transactions } : Props) => {
     return Object.values(grouped);
   };
 
+
+  const renderYearTabs = () => {
+    if (availableYears.length <= 1) return null
+
+    return (
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={$yearTabsContainer}
+        contentContainerStyle={$yearTabsContent}
+      >
+        {availableYears.map(({ year }) => (
+          <Animated.View
+            key={year}
+            entering={FadeIn}
+            layout={Layout.springify()}
+          >
+            <TouchableOpacity
+              style={[
+                $yearTab,
+                year === selectedYear && $yearTabSelected
+              ]}
+              onPress={() => setSelectedYear(year)}
+            >
+              <Animated.Text
+                style={[
+                  $yearTabText,
+                  year === selectedYear && $yearTabTextSelected
+                ]}
+              >
+                {year}
+              </Animated.Text>
+            </TouchableOpacity>
+          </Animated.View>
+        ))}
+      </ScrollView>
+    )
+  }
+
   const renderSectionHeader = ({ section }) => {
     // Only render month name for the first week of the month
     const weeklyBalance = section.weeklyStats.totalIncome - section.weeklyStats.totalExpenses;
@@ -116,32 +214,83 @@ const TransactionsList = ({ transactions } : Props) => {
   const sections = prepareSections(transactions);
 
   return (
-    <SectionList
-      style={$sectionContainer}
-      sections={sections}
-      keyExtractor={(item, index) => item.id + index}
-      renderSectionHeader={renderSectionHeader}
-      renderItem={renderItem}
-      ListEmptyComponent={<Text preset={"formHelper"} tx={"allTransactionsScreen.noItems"}/>}
-      showsVerticalScrollIndicator={false}
-      initialNumToRender={30}
-      SectionSeparatorComponent={() => <View style={$sectionSeparator} />}
-      renderSectionFooter={() => <View style={$sectionFooter} />}
-    />
-  );
+    <View style={$container}>
+      {renderYearTabs()}
+      <SectionList
+        style={$sectionContainer}
+        sections={sections}
+        keyExtractor={(item, index) => item.id + index}
+        renderSectionHeader={renderSectionHeader}
+        renderItem={renderItem}
+        ListEmptyComponent={<Text preset={"formHelper"} tx={"allTransactionsScreen.noItems"} style={$noItems}/>}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={30}
+        SectionSeparatorComponent={() => <View style={$sectionSeparator} />}
+        renderSectionFooter={() => <View style={$sectionFooter} />}
+      />
+    </View>
+  )
 };
 
-const enhance = withObservables([], () => ({
-  transactions: database.get('transactions').query(
-    Q.sortBy('transaction_at', Q.desc)
-  ),
-}));
+const enhance = withObservables(["selectedYear"], ({ selectedYear }) => {
+  const startDate = startOfYear(new Date(selectedYear, 0, 1))
+  const endDate = endOfYear(new Date(selectedYear, 11, 31))
+  console.log(selectedYear, startDate, endDate)
+
+  return {
+    transactions: database.get('transactions').query(
+      Q.where('transaction_at', Q.gte(startDate.getTime())),
+      Q.where('transaction_at', Q.lte(new Date(endDate).getTime())),
+      Q.sortBy('transaction_at', Q.desc),
+    ),
+  }
+})
 
 export default enhance(TransactionsList);
 
+const $container: ViewStyle = {
+  flex: 1,
+}
+
+const $noItems: TextStyle = {
+  padding: spacing.lg,
+
+}
+
+/*const $yearTabsContainer: ViewStyle = {
+  maxHeight: 50,
+}
+
+const $yearTabsContent: ViewStyle = {
+  flexDirection: "row-reverse",
+}
+
+const $yearTab: ViewStyle = {
+  paddingVertical: spacing.sm,
+  paddingHorizontal: spacing.md,
+  marginRight: spacing.sm,
+  borderRadius: spacing.md,
+}
+
+const $yearTabSelected: ViewStyle = {
+  backgroundColor: colors.palette.primary100,
+  borderWidth: 1,
+  borderColor: colors.palette.primary500,
+}*/
+
+const $yearTabText: TextStyle = {
+  fontFamily: typography.primary.medium,
+  fontSize: 16,
+  color: colors.textDim,
+}
+
+const $yearTabTextSelected: TextStyle = {
+  color: colors.palette.primary500,
+}
 
 const $sectionContainer: ViewStyle = {
   flex: 1,
+  paddingHorizontal: spacing.sm,
 };
 
 const $sectionHeader: ViewStyle = {
@@ -184,11 +333,11 @@ const $sectionFooter: ViewStyle = {
   height: spacing.sm,
 };
 
-const $monthHeader: ViewStyle = {
+/*const $monthHeader: ViewStyle = {
   paddingTop: spacing.md,
   paddingHorizontal: spacing.md,
   backgroundColor: colors.background,
-};
+};*/
 
 const $monthHeaderText: TextStyle = {
   paddingTop: spacing.lg,
@@ -204,10 +353,34 @@ const $statValue: TextStyle = {
   fontSize: 14,
 };
 
+/*
 const $incomeText: TextStyle = {
   color: colors.palette.secondary400,
 };
 
 const $expenseText: TextStyle = {
   color: colors.palette.angry500,
-};
+};*/
+
+// Update styles to ensure consistent tab width and better scrolling
+const $yearTabsContainer: ViewStyle = {
+  maxHeight: 50,
+}
+
+const $yearTabsContent: ViewStyle = {
+  flexDirection: 'row',
+}
+
+const $yearTab: ViewStyle = {
+  paddingVertical: spacing.sm,
+  paddingHorizontal: spacing.md,
+  marginRight: spacing.sm,
+  borderRadius: spacing.sm,
+  alignItems: 'center', // Center the text
+}
+
+const $yearTabSelected: ViewStyle = {
+  backgroundColor: colors.palette.primary100,
+  borderWidth: 1,
+  borderColor: colors.palette.primary500,
+}

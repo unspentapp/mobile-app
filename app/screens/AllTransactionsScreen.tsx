@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
 import { Text, Screen } from "app/components"
 import { spacing } from "app/theme"
@@ -10,6 +10,8 @@ import { goBack, NavigationProps } from "app/navigators"
 interface AllTransactionsScreenProps extends NavigationProps {}
 
 export const AllTransactionsScreen: FC<AllTransactionsScreenProps> = () => {
+  const currentYear = new Date().getFullYear()
+  const [selectedYear, setSelectedYear] = useState(currentYear)
 
   useHeader({
       leftIcon: "back",
@@ -24,7 +26,10 @@ export const AllTransactionsScreen: FC<AllTransactionsScreenProps> = () => {
       </View>
 
       <View style={$listContainer}>
-        <EnhancedTransactionsList />
+        <EnhancedTransactionsList
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+        />
       </View>
     </Screen>
   )
@@ -42,7 +47,6 @@ const $topContainer: ViewStyle = {
 
 const $listContainer: ViewStyle = {
   flex: 1,
-  paddingHorizontal: spacing.sm,
   paddingVertical: spacing.md,
 }
 

@@ -5,14 +5,12 @@
  * and a "main" flow which the user will use once logged in.
  */
 import {
-  DarkTheme,
   DefaultTheme,
   NavigationContainer,
-  NavigatorScreenParams, useFocusEffect,
+  NavigatorScreenParams,
 } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
-import React, { useCallback, useEffect, useRef } from "react"
-import { BackHandler, useColorScheme } from "react-native"
+import React from "react"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
@@ -38,6 +36,7 @@ export type AppStackParamList = {
   Welcome: undefined
   Login: undefined
   Main: NavigatorScreenParams<MainTabParamList>
+  AllTransactions: undefined
 }
 
 /**
@@ -100,7 +99,7 @@ export interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = (props: NavigationProps) => {
-  const colorScheme = useColorScheme()
+  // const colorScheme = useColorScheme()
 
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 

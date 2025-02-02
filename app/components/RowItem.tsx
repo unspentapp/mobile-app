@@ -19,7 +19,7 @@ const RowItem = ({ data } : RowItemProps) => {
     <View>
       <TouchableOpacity style={$container}>
         <View style={$leftContainer}>
-          <Text style={$description}>
+          <Text style={$description} numberOfLines={1}>
             {data.description}
           </Text>
 
@@ -54,16 +54,17 @@ const $container: ViewStyle = {
 }
 
 const $leftContainer: ViewStyle = {
+  flex: 1,
   paddingVertical: spacing.md,
 }
 
 const $description: TextStyle = {
   textTransform: "capitalize",
-  fontSize: 16
+  fontSize: 16,
+  marginRight: spacing.md,
 }
 
 const $date: TextStyle = {
-  paddingHorizontal: spacing.sm,
   color: colors.textDim,
   fontSize: 12
 }

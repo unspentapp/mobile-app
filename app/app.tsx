@@ -56,7 +56,8 @@ const config = {
           }
         },
       }
-    }
+    },
+    AllTransactions: "AllTransactions",
   },
 }
 
