@@ -35,6 +35,7 @@ import Config from "./config"
 import Toast from "react-native-toast-message"
 import { AuthProvider } from "app/services/auth/useAuth"
 import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
+import toastConfig from "app/config/toastConfig"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -49,14 +50,11 @@ const config = {
     Welcome: "welcome",
     Main: {
       screens: {
-        // DemoShowroom: {
-        //   path: "showroom/:queryIndex?/:itemIndex?",
-        // },
         Expenses: {
           screens: {
               Expenses: "expenses",
           }
-        }
+        },
       }
     }
   },
@@ -115,12 +113,12 @@ function App(props: AppProps) {
         <ErrorBoundary catchErrors={Config.catchErrors}>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <BottomSheetModalProvider>
+              <Toast position="top" autoHide={true} visibilityTime={3} config={toastConfig}/>
               <AppNavigator
                 linking={linking}
                 initialState={initialNavigationState}
                 onStateChange={onNavigationStateChange}
               />
-              <Toast position="bottom" autoHide={true} visibilityTime={3} />
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </ErrorBoundary>

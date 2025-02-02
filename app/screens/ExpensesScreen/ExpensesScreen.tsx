@@ -28,6 +28,7 @@ import { log } from "app/utils/logger"
 import { useWmStorage } from "../../../db/useWmStorage"
 import { supabase } from "app/services/auth/supabase"
 import database from "../../../db"
+import Toast from "react-native-toast-message"
 
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
@@ -141,14 +142,22 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       amount: parseFloat(expenseValue),
       categoryId: selectedCategory,
       type: "expense",
-      date: new Date(date)
+      transactionAt: new Date(date),
+      isRecurring: false,
     }
+
+    console.log(JSON.stringify(newTransaction))
 
     try {
       await saveTransaction(newTransaction)
     } catch (e) {
       // todo handle error
     } finally {
+      Toast.show({
+        type: "success",
+        text1: "Transaction Added",
+        text2: "Your transaction has been added successfully.",
+      })
       bottomSheetModalRef.current?.close();
       setDate(format(new Date, 'yyyy-MM-dd'))
       setSelectedCategory("")
@@ -214,10 +223,9 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       >
         <View style={$seeAllButtonContainer}>
           <TouchableOpacity
-            // todo: implement forgot password screen
-            onPress={(goAlltransactions)}
+            onPress={goAlltransactions}
           >
-            <Text tx="expensesScreen.seeAll" preset="formHelper" style={$goToTransactions} />
+            <Text tx="expensesScreen.seeAll" preset="formLabel" style={$goToTransactions} />
           </TouchableOpacity>
         </View>
         {categories.map((category, index) => (
@@ -232,7 +240,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
       </ScrollView>
 
       <TouchableOpacity
-        style={[$roundButton, {  bottom: spacing.lg + bottom,}]}
+        style={[$roundButton, { bottom: spacing.lg + bottom }]}
         onPress={handlePresentModalPress}
         testID="addExpenseButton"
         >

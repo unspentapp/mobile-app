@@ -5,12 +5,14 @@ import TransactionModel from "./models/TransactionModel"
 import { Q } from "@nozbe/watermelondb"
 
 export interface TransactionDataI {
+  id: string
   userId: string;
   amount: number;
   description: string;
   categoryId?: string;
   type: "expense" | "income";
-  date: Date;
+  transactionAt: Date;
+  isRecurring: boolean;
 }
 
 export interface getTransactionFiltersI {
@@ -54,10 +56,12 @@ export const useWmStorage = () => {
           transaction.description = transactionData.description;
           transaction.categoryId = transactionData.categoryId;
           transaction.type = transactionData.type;
-          transaction.date = transactionData.date
+          transaction.transactionAt = transactionData.transactionAt;
+          transaction.isRecurring = transactionData.isRecurring;
         });
 
         log.debug(`Transaction added: ${newTransaction.id}`);
+        log.debug(newTransaction.transactionAt);
         return newTransaction;
       });
     } catch (error) {

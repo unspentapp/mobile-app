@@ -93,6 +93,7 @@ const en = {
   },
   allTransactionsScreen: {
     title: "Transactions",
+    noItems: "No transaction found."
   }
 }
 

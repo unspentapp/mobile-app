@@ -43,6 +43,7 @@ export function ExpensesNavigator() {
           headerShown: false,
           statusBarColor: colors.background,
           statusBarStyle: "dark",
+          statusBarHidden: false,
         }}
       />
 
