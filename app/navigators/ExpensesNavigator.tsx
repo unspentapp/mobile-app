@@ -1,7 +1,7 @@
 import { CompositeScreenProps } from "@react-navigation/native"
 import React from "react"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-import { ExpensesScreen } from "app/screens/ExpensesScreen/ExpensesScreen"
+import { HomeScreen } from "app/screens/ExpensesScreen/HomeScreen"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { colors } from "app/theme"
 import { StatusBar } from "expo-status-bar"
@@ -38,7 +38,7 @@ export function ExpensesNavigator() {
     <ExpensesStack.Navigator>
       <ExpensesStack.Screen
         name="Expenses"
-        component={ExpensesScreen}
+        component={HomeScreen}
         options={{
           headerShown: false,
           statusBarColor: colors.background,

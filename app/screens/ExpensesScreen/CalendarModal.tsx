@@ -50,8 +50,7 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
           <View style={$dragIndicator} />
           <Calendar
             theme={{
-              backgroundColor: colors.background,
-              calendarBackground: colors.background,
+              backgroundColor: "red", // todo not working
               arrowColor: colors.palette.primary500,
               todayTextColor: colors.palette.primary500,
               textDayFontFamily: typography.fonts.spaceGrotesk.normal,
@@ -99,7 +98,7 @@ const $androidBlur: ViewStyle = {
 }
 
 const $calendarView: ViewStyle = {
-  maxHeight: '60%',
+  height: '60%',
   paddingBottom: 100,
   // todo cannot set calendar to backgroundColor: colors.background
   backgroundColor: "white",

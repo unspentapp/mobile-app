@@ -5,7 +5,7 @@ import TransactionModel from "./models/TransactionModel"
 import { Q } from "@nozbe/watermelondb"
 
 export interface TransactionDataI {
-  id: string
+  id?: string
   userId: string;
   amount: number;
   description: string;

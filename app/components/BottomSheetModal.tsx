@@ -1,3 +1,4 @@
+/*
 import React, { forwardRef } from "react"
 import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet"
 import { Text } from "app/components/Text"
@@ -38,4 +39,4 @@ const BottomSheetModal = () => {
   )
 }
 
-export default BottomSheetModal
+export default BottomSheetModal*/

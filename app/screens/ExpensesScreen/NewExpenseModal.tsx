@@ -6,9 +6,12 @@ import { isToday } from "date-fns"
 import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
-import React, { Dispatch, RefObject, SetStateAction, useRef } from "react"
+import React, { Dispatch, RefObject, SetStateAction, useCallback, useRef, useState } from "react"
 import { BottomSheetBackground } from "app/components/BottomSheetBackground"
 import { getCategories } from "assets/data"
+import database from "../../../db"
+import { TransactionDataI, useWmStorage } from "../../../db/useWmStorage"
+import Toast from "react-native-toast-message"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -17,6 +20,7 @@ type Props = {
   setExpenseValue: Dispatch<SetStateAction<string>>,
   setNote: Dispatch<SetStateAction<string>>,
   date: string,
+  setDate: Dispatch<SetStateAction<string>>,
   setDateModalToggle: Dispatch<SetStateAction<boolean>>,
   selectedCategory: string,
   setSelectedCategory: Dispatch<SetStateAction<string>>,
@@ -28,16 +32,25 @@ type BottomSheetTextInputRef = TextInput;
 export const NewExpenseModal = ({
                            bottomSheetModalRef,
                            handleSheetChanges,
-                           expenseValue,
-                           setExpenseValue,
-                           setNote,
+                           //expenseValue,
+                           // setExpenseValue,
+                           //setNote,
                            date,
+                           setDate,
                            setDateModalToggle,
                            selectedCategory,
                            setSelectedCategory,
                            handleAddExpense
 
   } : Props) => {
+  const [expenseValue, setExpenseValue] = useState("")
+  const [note, setNote] = useState("")
+
+  const [selectedCategory, setSelectedCategory] = useState("")
+
+  const { saveTransaction } = useWmStorage()
+
+
   const categories = getCategories()
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
@@ -46,6 +59,49 @@ export const NewExpenseModal = ({
   const handleKeyboardEnter = () => {
     if (selectedCategory) handleAddExpense()
   }
+
+
+
+  const handleAddExpense = useCallback(async () => {
+    const userId = await database.localStorage.get("USER_ID")
+
+    if (!userId || !note.trim() || !expenseValue.trim()) {
+      return
+    }
+
+    const newTransaction: TransactionDataI = {
+      userId: userId as string,
+      description: note.trim(),
+      amount: parseFloat(expenseValue),
+      categoryId: selectedCategory,
+      type: "expense",
+      transactionAt: new Date(date),
+      isRecurring: false,
+    }
+
+    try {
+      await saveTransaction(newTransaction)
+      Toast.show({
+        type: "success",
+        text1: "Transaction Added",
+        text2: "Your transaction has been added successfully.",
+      })
+      resetForm()
+    } catch (error) {
+      // TODO: Add error handling
+      console.error('Failed to save transaction:', error)
+    }
+  }, [note, expenseValue, selectedCategory, date, saveTransaction])
+
+  const resetForm = useCallback(() => {
+    bottomSheetModalRef.current?.close()
+    setDate(format(new Date(), 'yyyy-MM-dd'))
+    setSelectedCategory("")
+    setExpenseValue("")
+    setNote("")
+  }, [])
+
+
 
   return (
     <BottomSheetModal

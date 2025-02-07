@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useMemo, useRef, useState } from "react"
 import {
   Animated,
   BackHandler,
@@ -17,169 +17,81 @@ import {
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 import format from "date-fns/format"
 import { useFocusEffect } from "@react-navigation/native"
-import { Expense } from "app/models/Expense"
 import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
 import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
 import { getCategories } from "assets/data"
 import { TransactionDataI } from "db/useWmStorage"
-import { log } from "app/utils/logger"
 import { useWmStorage } from "../../../db/useWmStorage"
-import { supabase } from "app/services/auth/supabase"
 import database from "../../../db"
 import Toast from "react-native-toast-message"
+import AddTransactionModal from "app/screens/ExpensesScreen/AddTransactionModal"
 
+
+const HEADER_HEIGHT = 250
+const ROUND_BUTTON_SIZE = 56
+const USERNAME = "Amie"
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {}
 
-export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
-
+export const HomeScreen: FC<ExpensesScreenProps> = (props) => {
   const { navigation } = props
-  // const logout = useStore((state) => state.logout)
 
-  // value for dynamic header
-  const scrollOffsetY = useRef(new Animated.Value(0)).current;
+  // Refs
+  const scrollOffsetY = useRef(new Animated.Value(0)).current // value for dynamic header
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const scrollViewRef = useRef<ScrollView>(null)
 
-  function goSettings() {
-    navigation.navigate("Settings")
-  }
-
-/*  useHeader({
-      leftIcon: "menu",
-      rightIcon: "settings",
-      onRightPress: goSettings,
-  }, [logout]) */
-
-  const userName = "Amie"
-
-
-  /* Bottom Sheet Modal ref */
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  /* Bottom Sheet Modal callbacks */
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
+  // States
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
-  const [dateModalToggle, setDateModalToggle] = useState(false)
 
-  const [expenseValue, setExpenseValue] = useState<string>("")
-  const [note, setNote] = useState<string>("")
-  const [date, setDate] = useState<string>(format(new Date, 'yyyy-MM-dd'))
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [cardHeights, setCardHeights] = useState<Record<string, number>>({})
 
-
-  const handleSheetChanges = (index: number) => {
-    if (index === 0) {
-      setDate(format(new Date, 'yyyy-MM-dd'))
-      setSelectedCategory("")
-      setIsExpenseModalOpen(false)
-    }
-    else if (index === -1) setIsExpenseModalOpen(true)
-    console.log('handleSheetChanges', index);
-    console.log('IS ADD EXPENSE MODAL OPEN', isExpenseModalOpen);
-  };
+  // Hooks
+  const { bottom } = useSafeAreaInsets()
+  const { height: screenHeight } = Dimensions.get('window')
 
 
-
-
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        bottomSheetModalRef.current?.close();
-        setDateModalToggle(false)
-
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress
-      );
-
-      return () => subscription.remove();
-    }, [dateModalToggle, isExpenseModalOpen])
-  );
-
-  const getCategoryName = (expense: Expense) => {
-    if (expense.categoryId === "") return ""
-    return categories.filter(category => category.id === expense.categoryId)[0]
-  }
-
-  const totalExpenses = 1245
-
-  const categories = getCategories()
-
-  const [containerHeight, setContainerHeight] = useState<number>(0);
-  const [cardHeights, setCardHeights] = useState<Record<string, number>>({});
-  const { height: screenHeight } = Dimensions.get('window');
+  // Memoized values
+  const categories = useMemo(() => getCategories(), [])
   const totalCardsHeight = useMemo(() =>
       Object.values(cardHeights).reduce((sum, height) => sum + height, 0),
     [cardHeights]
-  );
+  )
 
-
-
-  const { bottom } = useSafeAreaInsets()
-
+  // Constants
   const tabBarSpacing = bottom + 55
-  const scrollViewRef = useRef<ScrollView>(null)
+  const totalExpenses = 1245
 
-  const { saveTransaction } = useWmStorage()
+  // Handlers
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present()
+  }, [])
 
-  const handleAddExpense = async () => {
-    const userId = await database.localStorage.get("USER_ID")
-
-    // todo display error to user (I could try to retrieve from supabase if online)
-    // const { data : { session } } = await supabase.auth.getSession()
-    if (userId == null) return
-
-    const newTransaction : TransactionDataI = {
-      userId: userId,
-      description: note,
-      amount: parseFloat(expenseValue),
-      categoryId: selectedCategory,
-      type: "expense",
-      transactionAt: new Date(date),
-      isRecurring: false,
+  const handleSheetChanges = useCallback((index: number) => {
+    if (index === 0) {
+      setIsExpenseModalOpen(false)
+    } else if (index === -1) {
+      setIsExpenseModalOpen(true)
     }
-
-    console.log(JSON.stringify(newTransaction))
-
-    try {
-      await saveTransaction(newTransaction)
-    } catch (e) {
-      // todo handle error
-    } finally {
-      Toast.show({
-        type: "success",
-        text1: "Transaction Added",
-        text2: "Your transaction has been added successfully.",
-      })
-      bottomSheetModalRef.current?.close();
-      setDate(format(new Date, 'yyyy-MM-dd'))
-      setSelectedCategory("")
-      setExpenseValue("")
-    }
-  };
+  }, [])
 
 
-  function goAlltransactions() {
-    navigation.navigate("AllTransactions")
-  }
+  // Navigation
+  const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
+
 
   return (
     <View style={$container}>
-      <CalendarModal
+      {/*<CalendarModal
         visible={dateModalToggle}
         onClose={() => setDateModalToggle(false)}
         date={date}
         setDate={setDate}
-      />
+      />*/}
 
-      <NewExpenseModal
+      {/*<NewExpenseModal
         bottomSheetModalRef={bottomSheetModalRef}
         handleSheetChanges={handleSheetChanges}
         expenseValue={expenseValue}
@@ -190,6 +102,21 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         handleAddExpense={handleAddExpense}
+        handleAddIncome={handleAddExpense}
+      />*/}
+      <AddTransactionModal
+        bottomSheetModalRef={bottomSheetModalRef}
+        handleSheetChanges={handleSheetChanges}
+        //expenseValue={expenseValue}
+        //setExpenseValue={setExpenseValue}
+        //setNote={setNote}
+        // date={date}
+        // setDate={setDate}
+        // setDateModalToggle={setDateModalToggle}
+        //selectedCategory={selectedCategory}
+       // setSelectedCategory={setSelectedCategory}
+        //handleAddExpense={handleAddExpense}
+        // handleAddIncome={handleAddExpense}
       />
 
 
@@ -201,13 +128,13 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
         /> */}
 
 
-      <DynamicHeader value={scrollOffsetY} name={userName} />
+      <DynamicHeader value={scrollOffsetY} name={USERNAME} />
       <ScrollView
         style={$scrollViewContainer}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: 250 + spacing.lg,
+          paddingTop: HEADER_HEIGHT + spacing.lg,
           paddingHorizontal: spacing.lg,
           minHeight: totalCardsHeight + screenHeight - tabBarSpacing
         }}
@@ -221,9 +148,9 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           autoscrollToTopThreshold: undefined,
         }}
       >
-        <View style={$seeAllButtonContainer}>
+        <View style={$goToTransactionsContainer}>
           <TouchableOpacity
-            onPress={goAlltransactions}
+            onPress={navigateToAllTransactions}
           >
             <Text tx="expensesScreen.seeAll" preset="formLabel" style={$goToTransactions} />
           </TouchableOpacity>
@@ -232,7 +159,7 @@ export const ExpensesScreen: FC<ExpensesScreenProps> = (props) => {
           <CategoryCard
             key={category.id}
             category={category}
-            onHeightChange={(height: number) => setContainerHeight(height)}
+            onHeightChange={(height: number) => setCardHeights(prev => ({ ...prev, [category.id]: height }))}
             totalExpenses={totalExpenses}
             animationDelay={index * 50}
           />
@@ -263,10 +190,10 @@ const $roundButton: ViewStyle = {
   position: "absolute",
   right: spacing.lg,
   elevation: 3, // android shadow
-  height: 56,
-  width: 56,
+  height: ROUND_BUTTON_SIZE,
+  width: ROUND_BUTTON_SIZE,
   padding: 20,
-  borderRadius: 50,
+  borderRadius: ROUND_BUTTON_SIZE / 2,
   backgroundColor: colors.palette.primary500,
   alignItems: "center",
   justifyContent: "center",
@@ -289,7 +216,7 @@ const $goToTransactions: TextStyle = {
   marginBottom: spacing.lg,
 }
 
-const $seeAllButtonContainer: ViewStyle = {
+const $goToTransactionsContainer: ViewStyle = {
   width: '100%',
   alignItems: "flex-end",
 }

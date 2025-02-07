@@ -8,7 +8,7 @@ export * from "./ErrorScreen/ErrorBoundary"
 
 
 /* MAIN SCREENS */
-export * from "./ExpensesScreen/ExpensesScreen"
+export * from "./ExpensesScreen/HomeScreen"
 
 export * from "./AnalyticsScreen"
 
