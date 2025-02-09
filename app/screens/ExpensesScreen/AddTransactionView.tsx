@@ -8,6 +8,11 @@ import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
 import { getCategories } from "assets/data"
 import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
+import { CategoryDataI } from "../../../db/useWmStorage"
+import database from "../../../db"
+import { Q } from "@nozbe/watermelondb"
+import categoryCard from "app/screens/ExpensesScreen/CategoryCard"
+import CategoryModel from "../../../db/models/CategoryModel"
 
 
 
@@ -35,12 +40,42 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   const [selectedCategory, setSelectedCategory] = useState("")
   const [dateModalToggle, setDateModalToggle] = useState(false)
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  const [categories, setCategories] = useState<CategoryModel[]>([])
 
-  const categories = useMemo(() => getCategories(), [])
+  // const categories = useMemo(() => getCategories(), [])
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const lastIndexRef = useRef(index);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await database.get('categories')
+        .query(Q.sortBy('name', Q.asc))
+        .fetch()
+
+      // todo map CategoryModel in CategoryDataI
+      /*const years = new Set<number>()
+      categories.forEach(transaction => {
+        const year = new Date(transaction.transactionAt).getFullYear()
+
+        if (year >= 2000) {
+          years.add(year)
+        }
+      })
+
+      const yearTabs = Array.from(years)
+        .sort((a, b) => a - b)
+        .map(year => ({
+          year,
+          hasTransactions: true
+        }))*/
+
+      setCategories(categories)
+    }
+
+    fetchCategories()
+  }, [])
 
   const handleAddTransaction = useCallback(() => {
     onAddTransaction(expenseValue, note, selectedCategory, date, type)
@@ -149,7 +184,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
               {categories.map(category => (
                 <Tag
                   id={category.id}
-                  label={category.label}
+                  label={category.name}
                   key={category.id}
                   onSelect={() => {
                     if (selectedCategory === category.id) setSelectedCategory("")

@@ -1,51 +1,27 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import React, { useCallback, useState } from "react"
+import { LayoutChangeEvent, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
-import { Category } from "app/models/Category"
-import { ExpenseCard } from "app/screens/ExpensesScreen/ExpenseCard"
 import { AccordionItem } from "app/components/AccordionItem"
 import ArrowIconAnimated from "app/screens/ExpensesScreen/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
-import { getExpenses } from "assets/data"
-import database from "../../../db"
-import { Model, Q } from "@nozbe/watermelondb"
-import TransactionModel from "../../../db/models/TransactionModel"
-import { useWmStorage } from "../../../db/useWmStorage"
-import { log } from "app/utils/logger"
+import { TransactionDataI } from "../../../db/useWmStorage"
+import RowItem from "app/components/RowItem"
 
 type Props = {
-  category: Category,
+  categoryId: string,
+  categoryName: string,
+  transactions: TransactionDataI[],
   totalExpenses: number,
   onHeightChange: any,
   animationDelay?: number,
 }
 
-const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay }: Props) => {
-  let filteredExpenses = []
-  const { getTransactions } = useWmStorage()
+const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, onHeightChange, animationDelay }: Props) => {
 
-  const getThisMonthTransactions = async () => {
-    const userId : string = await database.localStorage.get("USER_ID")
-
-    if (userId == null) return
-
-    const filters = {
-      userId,
-    }
-
-    filteredExpenses = await getTransactions(filters)
-    // filteredExpenses = transactions.filter((transaction : TransactionModel) => transaction.categoryId === category.id)
-  }
-
-  useEffect(() => {
-    getThisMonthTransactions()
-  }, [])
-
-  // const filteredExpenses = expenses.filter((expense) => expense.categoryId === category.id)
-  // const totalExpensesPerCategory = filteredExpenses.reduce((total, expense) => total + expense.value, 0)
+  const totalExpensesPerCategory = transactions.reduce((total, transaction) => total + transaction.amount, 0)
   const [isExpanded, setExpanded] = useState(false)
 
-  const onLayout = useCallback((event) => {
+  const onLayout = useCallback((event : LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout;
     onHeightChange(height);
   }, [onHeightChange]);
@@ -56,12 +32,11 @@ const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay 
     <View onLayout={onLayout} style={$cardContainer}>
       <TouchableOpacity  onPress={() => setExpanded(!isExpanded)} style={$labelContainer}>
         <View style={$cardDescriptionContainer}>
-          <Text style={$title}>
-            {category.label}
+          <Text style={[$title, categoryId === "unknown" ? { color: colors.textDim } : null]}>
+            {categoryName}
           </Text>
           <View style={$progressBarContainer}>
-            {/*<ProgressBar numerator={Math.round(totalExpensesPerCategory)} denominator={4000} animationDelay={animationDelay} />*/}
-            <ProgressBar numerator={220} denominator={4000} animationDelay={animationDelay} />
+            <ProgressBar numerator={totalExpensesPerCategory} denominator={totalExpenses} animationDelay={animationDelay} />
           </View>
         </View>
         <ArrowIconAnimated  value={isExpanded}/>
@@ -76,9 +51,13 @@ const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay 
             mass: 0.8
           }}
         >
-          {filteredExpenses.length > 0 ? (
-            filteredExpenses.map(expense => (
-              <ExpenseCard expense={expense} key={expense.id} category={category} />
+          {transactions.length > 0 ? (
+            transactions.map(transaction => (
+              <RowItem
+                data={transaction}
+                key={transaction.id}
+              />
+              // <ExpenseCard transaction={transaction} key={transaction.id} />
             ))) : (
               <Text style={$normalText}>
                 No expenses found.
@@ -91,7 +70,6 @@ const CategoryCard = ({ category, onHeightChange, totalExpenses, animationDelay 
 }
 
 export default CategoryCard
-
 
 const $cardContainer: ViewStyle = {
   justifyContent: 'center',

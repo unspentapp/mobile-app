@@ -1,5 +1,6 @@
 import { appSchema, tableSchema } from "@nozbe/watermelondb";
 
+
 export default appSchema({
   version: 1,
   tables: [
@@ -10,12 +11,12 @@ export default appSchema({
         type: "string"
       }],
     }),
-    // todo add all fields needed
+    // todo add indexes
     tableSchema({
       name: "transactions",
       columns: [
         { name: "user_id", type: "string" },
-        { name: "category_id", type: "string" },
+        { name: "category_id", type: "string", isIndexed: true},
         { name: "amount", type: "number" },
         { name: "transaction_at", type: "number" },
         { name: "description", type: "string" },
@@ -36,9 +37,25 @@ export default appSchema({
         { name: "created_at", type: "number" },
         { name: "updated_at", type: "number" },
       ]
+    }),
+    tableSchema({
+      name: "categories",
+      columns: [
+        { name: "user_id", type: "string" },
+        { name: "name", type: "string" },
+        { name: "type", type: "string" },
+        { name: "is_default", type: "boolean" },
+        { name: "icon", type: "string", isOptional: true },
+        { name: "color", type: "string", isOptional: true },
+        { name: "created_at", type: "number" },
+        { name: "updated_at", type: "number" },
+      ]
     })
   ],
 });
+
+
+
 
 
 /* // Sync Function

@@ -4,20 +4,21 @@ import { GestureResponderEvent, TextStyle, ViewStyle } from "react-native"
 import { log } from "app/utils/logger"
 import CategoryModel from "../../../db/models/CategoryModel"
 import TransactionModel from "../../../db/models/TransactionModel"
+import { CategoryDataI } from "../../../db/useWmStorage"
 
 interface Props {
-  expense: TransactionModel;
-  category: CategoryModel
+  transaction: TransactionModel;
+  // category: CategoryDataI
   onPress?: (event: GestureResponderEvent) => void
 }
 
 export const ExpenseCard = (props: Props) => {
-  log.info(props.expense.amount, props.expense.description)
+  log.info(props.transaction.amount, props.transaction.description)
 
   return (
     <ListItem
-      LeftComponent={<Text style={$textValue1}>{props.expense.description}</Text>}
-      RightComponent={<Text style={$textValue}>{props.expense.amount} €</Text>}
+      LeftComponent={<Text style={$textValue1}>{props.transaction.description}</Text>}
+      RightComponent={<Text style={$textValue}>{props.transaction.amount} €</Text>}
       bottomSeparator={true}
       onLongPress={props.onPress}
       style={$itemList}

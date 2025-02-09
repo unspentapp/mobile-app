@@ -8,13 +8,14 @@ import { useExpensesStore } from "app/store/ExpensesStore"
 interface DynamicHeaderProps {
   value: Animated.Value,
   name: string,
+  totalExpenses: number
 }
 
 const HEADER_MAX_HEIGHT = 250;
 const HEADER_MIN_HEIGHT = 80;
 const SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
+export const DynamicHeader = ({value, name, totalExpenses}: DynamicHeaderProps) => {
   const animatedHeaderHeight = value.interpolate({
     inputRange: [0, SCROLL_DISTANCE],
     outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
@@ -39,8 +40,6 @@ export const DynamicHeader = ({value, name}: DynamicHeaderProps) => {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     }), []);
-
-  const totalExpenses = 4250
 
   return (
     <Animated.View

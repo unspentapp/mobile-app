@@ -47,7 +47,6 @@ const $container: ViewStyle = {
   position: "relative",
   width: '100%',
   height: 56,
-  paddingHorizontal: spacing.sm,
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",

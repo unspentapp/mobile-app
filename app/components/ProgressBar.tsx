@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { View, Text, ViewStyle, TextStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
@@ -38,7 +38,7 @@ export const ProgressBar = (props: StatsCardProps) => {
   } = props
 
   const showProgressBar = denominator !== undefined
-  const [containerWidth, setContainerWidth] = React.useState(0)
+  const [containerWidth, setContainerWidth] = useState(0)
 
   // Calculate progress and percentage
   const progress = showProgressBar ? numerator / denominator : 0
@@ -52,7 +52,7 @@ export const ProgressBar = (props: StatsCardProps) => {
     ? containerWidth * progress
     : 0
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Animate progress on mount with spring effect
     progressAnimation.value = withDelay(
       animationDelay,
@@ -84,7 +84,7 @@ export const ProgressBar = (props: StatsCardProps) => {
         />
       </View>
       <View style={$content}>
-        <Text style={$percentageText}>{numerator} € / {percentage}%</Text>
+        <Text style={$percentageText}> Spent: {numerator} € / {percentage}%</Text>
       </View>
     </View>
   )

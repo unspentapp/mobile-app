@@ -3,6 +3,7 @@ import { log } from "app/utils/logger"
 import database from "./index"
 import TransactionModel from "./models/TransactionModel"
 import { Q } from "@nozbe/watermelondb"
+import { date, field, readonly } from "@nozbe/watermelondb/decorators"
 
 export interface TransactionDataI {
   id?: string
@@ -20,6 +21,16 @@ export interface getTransactionFiltersI {
   startDate?: Date | undefined;
   endDate?: Date | undefined;
   category?: string;
+}
+
+export interface CategoryDataI {
+  id?: string
+  userId?: string
+  name: string
+  type: "expense" | "income"
+  isDefault: boolean
+  icon?: string
+  color?: string
 }
 
 export const useWmStorage = () => {

@@ -1,10 +1,15 @@
 import { Model } from "@nozbe/watermelondb";
-import { field, date, readonly } from "@nozbe/watermelondb/decorators"
+import { field, date, readonly, relation } from "@nozbe/watermelondb/decorators"
 
 
 // todo add all the fields needed
 export default class TransactionModel extends Model {
   static table = 'transactions'
+  static associations = {
+    categories: {type: "belongs_to", key: "category_id"}
+  }
+
+  @relation("categories", "category_id") category
 
   @field('user_id') userId?: string
   @field('amount') amount!: number

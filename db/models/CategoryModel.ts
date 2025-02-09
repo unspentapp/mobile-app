@@ -1,16 +1,21 @@
 import { Model } from "@nozbe/watermelondb";
-import { field, text } from "@nozbe/watermelondb/decorators"
+import { children, date, field, readonly } from "@nozbe/watermelondb/decorators"
 
 // todo
 export default class CategoryModel extends Model {
   static table = 'categories'
+  static associations = {
+    transactions: {type: 'has_many', foreignKey: 'category_id'},
+  }
 
-  @field('id') id
-  @field('user_id') userId
-  @field('name') name
-  @field('type') type
-  @field('is_default') isDefault
-  @field('icon') icon
-  @field('color') color
-  @field('updated_at') updatedAt
+  @children("transactions") transactions
+
+  @field('user_id') userId?: string
+  @field('name') name!: string
+  @field('type') type!: "expense" | "income"
+  @field('is_default') isDefault!: boolean
+  @field('icon') icon?: string
+  @field('color') color?: string
+  @readonly @date('updated_at') updatedAt?: number
+  @readonly @date('createdAt') createdAt?: number
 }

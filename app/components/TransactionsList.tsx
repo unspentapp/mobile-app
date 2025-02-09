@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../db"
 import RowItem from "app/components/RowItem"
 import { Q } from "@nozbe/watermelondb"
-import { TransactionDataI } from "../../db/useWmStorage"
+import { CategoryDataI, TransactionDataI } from "../../db/useWmStorage"
 import { endOfYear, getWeekOfMonth, startOfYear } from "date-fns"
 import format from "date-fns/format"
 import { ScrollView, SectionList, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
@@ -13,10 +13,12 @@ import Animated, {
   FadeIn,
   LinearTransition,
 } from "react-native-reanimated"
+import TransactionModel from "../../db/models/TransactionModel"
 
 
 export interface Props {
   transactions: TransactionDataI[]
+  categories: CategoryDataI[]
   selectedYear: number
   setSelectedYear: (selectedYear: number) => void
 }
@@ -36,7 +38,7 @@ interface YearTab {
   hasTransactions: boolean
 }
 
-const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Props) => {
+const TransactionsList = ({ transactions, categories, selectedYear, setSelectedYear } : Props) => {
   const scrollViewRef = useRef<ScrollView>(null)
   const [availableYears, setAvailableYears] = useState<YearTab[]>([])
 
@@ -49,11 +51,15 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
 
       const years = new Set<number>()
       allTransactions.forEach(transaction => {
-        years.add(new Date(transaction.transactionAt).getFullYear())
+        const year = new Date(transaction.transactionAt).getFullYear()
+
+        if (year >= 2000) {
+          years.add(year)
+        }
       })
 
       const yearTabs = Array.from(years)
-        .sort((a, b) => a-b)
+        .sort((a, b) => a - b)
         .map(year => ({
           year,
           hasTransactions: true
@@ -135,15 +141,22 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
     return Object.values(grouped);
   };
 
+  const categoriesMap = useMemo(() => {
+    return categories.reduce((acc, category) => {
+      acc[category.id] = category;
+      return acc;
+    }, {});
+  }, [categories]);
+
   const renderYearTabs = () => {
-    if (availableYears.length <= 1) return null
+    if (availableYears.length === 0) return null
 
     return (
       <ScrollView
         ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={$yearTabsContainer}
+        style={[$yearTabsContainer, availableYears.length < 4 ? { marginLeft: spacing.lg } : { marginLeft: 0 }]}
         contentContainerStyle={$yearTabsContent}
       >
         {availableYears.map(({ year }) => (
@@ -203,17 +216,23 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
     );
   }
 
-  const renderItem = ({ item, index, section }) => (
-    <View style={[
-      $itemWrapper,
-      index === 0 && $itemWrapperFirst,
-      index === section.data.length - 1 && $itemWrapperLast,
-      /* dynamically change color base on category color */
-      { borderColor: colors.palette.primary500 }
-    ]}>
-      <RowItem data={item} />
-    </View>
-  );
+  const renderItem = ({ item, index, section }) => {
+    const category = categoriesMap[item.categoryId];
+    const categoryColor = category?.color || colors.palette.primary500;
+
+    return (
+      <View style={[
+        $itemWrapper,
+        index === 0 && $itemWrapperFirst,
+        index === section.data.length - 1 && $itemWrapperLast,
+        { borderColor: categoryColor }
+      ]}>
+        <RowItem
+          data={item}
+        />
+      </View>
+    );
+  };
 
   const sections = prepareSections(transactions);
 
@@ -243,10 +262,11 @@ const enhance = withObservables(["selectedYear"], ({ selectedYear }) => {
 
   return {
     transactions: database.get('transactions').query(
-      Q.where('transaction_at', Q.gte(startDate.getTime())),
+      Q.where('transaction_at', Q.gte(new Date(startDate).getTime())),
       Q.where('transaction_at', Q.lte(new Date(endDate).getTime())),
       Q.sortBy('transaction_at', Q.desc),
     ),
+    categories: database.get('categories').query()
   }
 })
 
@@ -295,18 +315,19 @@ const $sectionHeaderText: TextStyle = {
 
 const $itemWrapper: ViewStyle = {
   marginHorizontal: spacing.md,
+  paddingHorizontal: spacing.sm,
   backgroundColor: "white",
   borderLeftWidth: 5,
 };
 
 const $itemWrapperFirst: ViewStyle = {
-  borderTopRightRadius: spacing.xs,
-  borderTopLeftRadius: spacing.xs,
+  borderTopRightRadius: spacing.xxs,
+  borderTopLeftRadius: spacing.xxs,
 };
 
 const $itemWrapperLast: ViewStyle = {
-  borderBottomRightRadius: spacing.xs,
-  borderBottomLeftRadius: spacing.xs,
+  borderBottomRightRadius: spacing.xxs,
+  borderBottomLeftRadius: spacing.xxs,
 };
 
 const $sectionSeparator: ViewStyle = {
@@ -354,7 +375,7 @@ const $yearTab: ViewStyle = {
   paddingVertical: spacing.sm,
   paddingHorizontal: spacing.md,
   marginRight: spacing.sm,
-  borderRadius: spacing.sm,
+  borderRadius: spacing.xxs,
   alignItems: 'center', // Center the text
 }
 

@@ -5,6 +5,7 @@ import schema from "./schema";
 import migrations from "./migrations";
 import AuthSessionModel from "./models/AuthSessionModel";
 import TransactionModel from "./models/TransactionModel"
+import CategoryModel from "./models/CategoryModel"
 
 const adapter = new SQLiteAdapter({
   schema,
@@ -18,7 +19,7 @@ const adapter = new SQLiteAdapter({
 
 const database = new Database({
   adapter,
-  modelClasses: [AuthSessionModel, TransactionModel],
+  modelClasses: [AuthSessionModel, TransactionModel, CategoryModel],
 });
 
 export default database;
