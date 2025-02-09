@@ -18,6 +18,7 @@ import { colors } from "app/theme"
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen"
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -110,7 +111,9 @@ export const AppNavigator = (props: NavigationProps) => {
       // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       {...props}
     >
-      <AppStack />
+      <BottomSheetModalProvider>
+        <AppStack />
+      </BottomSheetModalProvider>
     </NavigationContainer>
   )
 }

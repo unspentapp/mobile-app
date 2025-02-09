@@ -1,23 +1,28 @@
-import React, { useEffect, useState } from "react"
+import React, { Dispatch, useEffect, useState } from "react"
 import { LayoutChangeEvent, View, ViewStyle } from "react-native"
-import { Text } from "app/components/Text"
 import { colors, spacing } from "app/theme"
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 import TabBarButton from "app/components/TabBarButton"
+import { IconTypes } from "app/components/Icon"
 
-const AnimatedTabIndicator = ({ index, setIndex }) => {
+type TabIndicatorProps = {
+  index: number,
+  setIndex: Dispatch<React.SetStateAction<number>>
+}
+
+const AnimatedTabIndicator = ({ index, setIndex } : TabIndicatorProps) => {
   const [dimensions, setDimensions] = useState({ height: 40, width: 250 })
 
   const routes = [
     {
       index: 0,
-      name: "Add Expense",
+      label: "New Expense",
       testID: "tabBarExpense",
       icon: "expense"
     },
     {
       index: 1,
-      name: "Add Income",
+      label: "New Income",
       testID: "tabBarIncome",
       icon: "income"
     },
@@ -71,8 +76,8 @@ const AnimatedTabIndicator = ({ index, setIndex }) => {
         return (
           <TabBarButton
             key={i}
-            icon={route.icon}
-            label={route.name}
+            icon={route.icon as IconTypes}
+            label={route.label}
             onPress={onPress}
             isFocused={isFocused}
           />
@@ -94,15 +99,11 @@ const $container: ViewStyle = {
   paddingVertical: spacing.xxs,
   borderRadius: spacing.xs,
   elevation: 4,
-  /*shadowColor: "#000000",
-  shadowOffset: {width: 0, height: 10},
-  shadowRadius: 10,
-  shadowOpacity: 0.1*/
 }
 
 const $backgroundSplash: ViewStyle = {
   position: "absolute",
   left: 6,
   backgroundColor: colors.palette.primary500,
-  borderRadius: spacing.xs,
+  borderRadius: spacing.xxs,
 }

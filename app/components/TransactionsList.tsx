@@ -11,9 +11,8 @@ import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
 import Animated, {
   FadeIn,
-  Layout,
-  withSpring
-} from 'react-native-reanimated'
+  LinearTransition,
+} from "react-native-reanimated"
 
 
 export interface Props {
@@ -136,7 +135,6 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
     return Object.values(grouped);
   };
 
-
   const renderYearTabs = () => {
     if (availableYears.length <= 1) return null
 
@@ -152,7 +150,7 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
           <Animated.View
             key={year}
             entering={FadeIn}
-            layout={Layout.springify()}
+            layout={LinearTransition.springify()}
           >
             <TouchableOpacity
               style={[
@@ -178,6 +176,7 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
 
   const renderSectionHeader = ({ section }) => {
     // Only render month name for the first week of the month
+    const monthlyBalance = section.monthlyStats.totalIncome - section.monthlyStats.totalExpenses;
     const weeklyBalance = section.weeklyStats.totalIncome - section.weeklyStats.totalExpenses;
 
     const isFirstWeekOfMonth = !sections
@@ -187,7 +186,12 @@ const TransactionsList = ({ transactions, selectedYear, setSelectedYear } : Prop
     return (
       <View>
         {isFirstWeekOfMonth ? (
-        <Text style={$monthHeaderText}>{section.month}</Text>
+          <View style={$monthHeaderContainer}>
+            <Text style={$monthHeaderText}>{section.month}</Text>
+            <Text style={[$monthStatValue, monthlyBalance >= 0 ? $income : $expense]}>
+              {monthlyBalance >= 0 ? '+ ' : '- '}{Math.abs(monthlyBalance)} €
+            </Text>
+          </View>
         ) : null }
         <View style={$sectionHeader}>
           <Text style={$sectionHeaderText}>{section.title}</Text>
@@ -257,27 +261,6 @@ const $noItems: TextStyle = {
 
 }
 
-/*const $yearTabsContainer: ViewStyle = {
-  maxHeight: 50,
-}
-
-const $yearTabsContent: ViewStyle = {
-  flexDirection: "row-reverse",
-}
-
-const $yearTab: ViewStyle = {
-  paddingVertical: spacing.sm,
-  paddingHorizontal: spacing.md,
-  marginRight: spacing.sm,
-  borderRadius: spacing.md,
-}
-
-const $yearTabSelected: ViewStyle = {
-  backgroundColor: colors.palette.primary100,
-  borderWidth: 1,
-  borderColor: colors.palette.primary500,
-}*/
-
 const $yearTabText: TextStyle = {
   fontFamily: typography.primary.medium,
   fontSize: 16,
@@ -292,6 +275,7 @@ const $sectionContainer: ViewStyle = {
   flex: 1,
   paddingHorizontal: spacing.sm,
 };
+
 
 const $sectionHeader: ViewStyle = {
   flexDirection: "row",
@@ -333,19 +317,24 @@ const $sectionFooter: ViewStyle = {
   height: spacing.sm,
 };
 
-/*const $monthHeader: ViewStyle = {
-  paddingTop: spacing.md,
+const $monthHeaderContainer: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingVertical: spacing.md,
   paddingHorizontal: spacing.md,
-  backgroundColor: colors.background,
-};*/
+}
 
 const $monthHeaderText: TextStyle = {
-  paddingTop: spacing.lg,
-  paddingHorizontal: spacing.md,
   fontFamily: typography.primary.bold,
   fontSize: 20,
   color: colors.text,
 };
+
+const $monthStatValue: TextStyle = {
+  fontFamily: typography.primary.bold,
+  fontSize: 20,
+}
 
 const $statValue: TextStyle = {
   fontFamily: typography.primary.medium,
@@ -353,16 +342,6 @@ const $statValue: TextStyle = {
   fontSize: 14,
 };
 
-/*
-const $incomeText: TextStyle = {
-  color: colors.palette.secondary400,
-};
-
-const $expenseText: TextStyle = {
-  color: colors.palette.angry500,
-};*/
-
-// Update styles to ensure consistent tab width and better scrolling
 const $yearTabsContainer: ViewStyle = {
   maxHeight: 50,
 }
@@ -383,4 +362,12 @@ const $yearTabSelected: ViewStyle = {
   backgroundColor: colors.palette.primary100,
   borderWidth: 1,
   borderColor: colors.palette.primary500,
+}
+
+const $expense: TextStyle = {
+  color: colors.palette.angry500,
+}
+
+const $income: TextStyle = {
+  color: colors.palette.secondary400
 }

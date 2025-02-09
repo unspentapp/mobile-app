@@ -115,6 +115,7 @@ export const iconRegistry = {
   piggyBank: require("../../assets/icons/piggy-bank.png"),
   income: require("../../assets/icons/wallet-income.png"),
   expense: require("../../assets/icons/wallet-expense.png"),
+  reload: require("../../assets/icons/rotate-right.png")
 }
 
 const $imageStyleBase: ImageStyle = {

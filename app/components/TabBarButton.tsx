@@ -1,47 +1,23 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { colors, spacing, typography } from "app/theme"
-import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
-import { Icon } from "app/components/Icon"
+import { TextStyle, TouchableOpacity, ViewStyle } from "react-native"
+import { Icon, IconTypes } from "app/components/Icon"
 import { Text } from "./Text"
 
 type Props = {
-
+  label: string,
+  icon: IconTypes,
+  onPress: () => void,
+  isFocused: boolean,
 }
 
-const TabBarButton = ({ label, icon, onPress, isFocused }) => {
-
-  const scale = useSharedValue(0)
-
-  /*useEffect(() => {
-    scale.value = withSpring(typeof isFocused === 'boolean' ? (isFocused ? 1 : 0) : isFocused,
-      { duration: 350 })
-  }, [scale, isFocused])*/
-
-  /*const animatedTextStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(scale.value, [0, 1], [1, 0])
-
-    return { opacity }
-  })*/
-  /*const animatedIconStyle = useAnimatedStyle(() => {
-    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
-
-    const left = interpolate(scale.value, [0, 1], [0, 38])
-
-    return {
-      transform: [{
-        scale: scaleValue
-      }],
-      left
-    }
-  })*/
+const TabBarButton = ({ label, icon, onPress, isFocused } : Props) => {
 
   return (
     <TouchableOpacity
       onPress={onPress}
       style={$button}
     >
-
       <Icon
         icon={icon}
         size={typography.iconSize}

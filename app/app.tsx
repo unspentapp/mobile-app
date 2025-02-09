@@ -28,7 +28,6 @@ import React, { useEffect } from "react"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Linking from "expo-linking"
 import { AppNavigator, useNavigationPersistence } from "./navigators"
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { ErrorBoundary } from "app/screens"
 import { customFontsToLoad } from "./theme"
 import Config from "./config"
@@ -113,14 +112,12 @@ function App(props: AppProps) {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ErrorBoundary catchErrors={Config.catchErrors}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheetModalProvider>
               <Toast position="top" autoHide={true} visibilityTime={3} config={toastConfig}/>
               <AppNavigator
                 linking={linking}
                 initialState={initialNavigationState}
                 onStateChange={onNavigationStateChange}
               />
-            </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </ErrorBoundary>
       </SafeAreaProvider>

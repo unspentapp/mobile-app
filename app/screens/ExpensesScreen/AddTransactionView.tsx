@@ -1,54 +1,81 @@
-import React, { Dispatch, RefObject, SetStateAction, useRef } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Button, Icon, Text } from "app/components"
 import { Pressable, TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet"
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet"
 import { colors, spacing, typography } from "app/theme"
 import { isToday } from "date-fns"
 import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
-import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
 import { getCategories } from "assets/data"
+import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
 
-export type AddExpenseProps = {
-  bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
-  handleSheetChanges: (index: number) => void,
-  expenseValue: string,
-  setExpenseValue: Dispatch<SetStateAction<string>>,
-  setNote: Dispatch<SetStateAction<string>>,
-  date: string,
-  setDate: Dispatch<SetStateAction<string>>,
-  setDateModalToggle: Dispatch<SetStateAction<boolean>>,
-  selectedCategory: string,
-  setSelectedCategory: Dispatch<SetStateAction<string>>,
-  handleAddExpense: () => void,
-}
+
+
+type TransactionType = 'expense' | 'income'
 
 type BottomSheetTextInputRef = TextInput;
 
-const AddExpenseView = ({
-                          bottomSheetModalRef,
-                          handleSheetChanges,
-                          expenseValue,
-                          setExpenseValue,
-                          setNote,
-                          date,
-                          setDate,
-                          setDateModalToggle,
-                          selectedCategory,
-                          setSelectedCategory,
-                          handleAddExpense
-                        }: AddExpenseProps) => {
-  const categories = getCategories()
+type AddTransactionViewProps = {
+  type: TransactionType
+  onAddTransaction: (
+    expenseValue: string,
+    note: string,
+    selectedCategory: string,
+    date: string,
+    type: TransactionType
+  ) => void
+  index: number,
+  isModalOpen: boolean
+}
+
+const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTransaction, index, isModalOpen }) => {
+
+  const [expenseValue, setExpenseValue] = useState("")
+  const [note, setNote] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [dateModalToggle, setDateModalToggle] = useState(false)
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+
+  const categories = useMemo(() => getCategories(), [])
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
+  const lastIndexRef = useRef(index);
+
+  const handleAddTransaction = useCallback(() => {
+    onAddTransaction(expenseValue, note, selectedCategory, date, type)
+
+    // Reset form after adding transaction
+    setDate(format(new Date(), 'yyyy-MM-dd'))
+    setSelectedCategory("")
+    setExpenseValue("")
+    setNote("")
+  }, [expenseValue, note, selectedCategory, date, type, onAddTransaction])
 
   const handleKeyboardEnter = () => {
-    if (selectedCategory) handleAddExpense()
+    if (selectedCategory) handleAddTransaction()
   }
+
+  // @ts-ignore
+  useEffect(() => {
+    if (lastIndexRef.current !== index) {
+      const timeoutId = setTimeout(() => {
+        firstTextInputRef.current?.focus();
+      }, 300);
+      lastIndexRef.current = index;
+      return () => clearTimeout(timeoutId);
+    }
+  }, [index, isModalOpen]);
 
   return (
     <View style={$bottomSheetContainer}>
+      <CalendarModal
+        visible={dateModalToggle}
+        onClose={() => setDateModalToggle(false)}
+        date={date}
+        setDate={setDate}
+      />
+
       <View style={$inputContainer}>
         <BottomSheetTextInput
           ref={firstTextInputRef as any}
@@ -59,15 +86,15 @@ const AddExpenseView = ({
           autoComplete="off"
           placeholderTextColor={colors.palette.neutral200}
           autoCorrect={false}
-          autoFocus={true}
           cursorColor={colors.palette.primary500}
+          selectionColor={colors.palette.primary100}
+          selectionHandleColor={colors.palette.primary500}
           maxFontSizeMultiplier={0}
           maxLength={8}
-          blurOnSubmit={false}
+          // submitBehavior={"blurAndSubmit"}
           onSubmitEditing={() => {
             secondTextInputRef.current?.focus()
           }}
-
           onChangeText={(text) => {
             // Only allow digits
             if (/^\d+$/.test(text)) {
@@ -115,28 +142,38 @@ const AddExpenseView = ({
           />
         </Pressable>
 
-        <Text style={$categoryText} preset="formLabel" tx={"addExpenseModal.categoryLabel"} />
-        <View style={$categoriesContainer}>
-          {categories.map(category => (
-            <Tag
-              id={category.id}
-              label={category.label}
-              key={category.id}
-              onSelect={() => {
-                if (selectedCategory === category.id) setSelectedCategory("")
-                else setSelectedCategory(category.id)
-              }}
-              isSelected={selectedCategory === category.id} />
-          ))}
-        </View>
+        {type === "expense" ? (
+          <View>
+            <Text style={$categoryText} preset="formLabel" tx={"addExpenseModal.categoryLabel"} />
+            <View style={$categoriesContainer}>
+              {categories.map(category => (
+                <Tag
+                  id={category.id}
+                  label={category.label}
+                  key={category.id}
+                  onSelect={() => {
+                    if (selectedCategory === category.id) setSelectedCategory("")
+                    else setSelectedCategory(category.id)
+                  }}
+                  isSelected={selectedCategory === category.id} />
+              ))}
+            </View>
+          </View>
+          ) : null
+        }
 
-        <Button text="Add Expense" onPress={handleAddExpense} preset="filled" />
+        <Button
+          onPress={handleAddTransaction}
+          preset="filled"
+        >
+          <Text style={$addTransactionText}>{type === "expense" ? "Add Expense" : "Add Income"}</Text>
+        </Button>
       </View>
     </View>
   )
 }
 
-export default AddExpenseView
+export default AddTransactionView
 
 const $categoryText: TextStyle = {
   fontFamily: typography.primary.medium,
@@ -154,10 +191,6 @@ const $bottomSheetContainer : ViewStyle = {
   padding: 10,
   alignItems: 'center',
   marginBottom: spacing.md,
-}
-
-const $modalIndicator: ViewStyle = {
-  backgroundColor: colors.palette.primary500,
 }
 
 const $modalExpenseInput: TextStyle = {
@@ -238,4 +271,8 @@ const $calendarContainer: ViewStyle = {
 
 const $calendarText: TextStyle = {
   color: colors.palette.primary500,
+}
+
+const $addTransactionText: TextStyle = {
+  fontFamily: typography.primary.semiBold,
 }

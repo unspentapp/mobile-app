@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from "react"
 import {
   Animated,
-  BackHandler,
   Dimensions,
   ScrollView, TextStyle,
   TouchableOpacity,
@@ -14,18 +13,10 @@ import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import {
   BottomSheetModal,
 } from "@gorhom/bottom-sheet"
-import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
-import format from "date-fns/format"
-import { useFocusEffect } from "@react-navigation/native"
 import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import CategoryCard from "app/screens/ExpensesScreen/CategoryCard"
-import { NewExpenseModal } from "app/screens/ExpensesScreen/NewExpenseModal"
 import { getCategories } from "assets/data"
-import { TransactionDataI } from "db/useWmStorage"
-import { useWmStorage } from "../../../db/useWmStorage"
-import database from "../../../db"
-import Toast from "react-native-toast-message"
 import AddTransactionModal from "app/screens/ExpensesScreen/AddTransactionModal"
 
 
@@ -44,9 +35,8 @@ export const HomeScreen: FC<ExpensesScreenProps> = (props) => {
   const scrollViewRef = useRef<ScrollView>(null)
 
   // States
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
-
   const [cardHeights, setCardHeights] = useState<Record<string, number>>({})
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Hooks
   const { bottom } = useSafeAreaInsets()
@@ -67,66 +57,24 @@ export const HomeScreen: FC<ExpensesScreenProps> = (props) => {
   // Handlers
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
+    setIsModalOpen(true)
   }, [])
 
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === 0) {
-      setIsExpenseModalOpen(false)
-    } else if (index === -1) {
-      setIsExpenseModalOpen(true)
-    }
+  const handleModalDismiss = useCallback(() => {
+    setIsModalOpen(false)
   }, [])
-
 
   // Navigation
   const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
 
-
   return (
     <View style={$container}>
-      {/*<CalendarModal
-        visible={dateModalToggle}
-        onClose={() => setDateModalToggle(false)}
-        date={date}
-        setDate={setDate}
-      />*/}
 
-      {/*<NewExpenseModal
-        bottomSheetModalRef={bottomSheetModalRef}
-        handleSheetChanges={handleSheetChanges}
-        expenseValue={expenseValue}
-        setExpenseValue={setExpenseValue}
-        setNote={setNote}
-        date={date}
-        setDateModalToggle={setDateModalToggle}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        handleAddExpense={handleAddExpense}
-        handleAddIncome={handleAddExpense}
-      />*/}
       <AddTransactionModal
         bottomSheetModalRef={bottomSheetModalRef}
-        handleSheetChanges={handleSheetChanges}
-        //expenseValue={expenseValue}
-        //setExpenseValue={setExpenseValue}
-        //setNote={setNote}
-        // date={date}
-        // setDate={setDate}
-        // setDateModalToggle={setDateModalToggle}
-        //selectedCategory={selectedCategory}
-       // setSelectedCategory={setSelectedCategory}
-        //handleAddExpense={handleAddExpense}
-        // handleAddIncome={handleAddExpense}
+        isOpen={isModalOpen}
+        onDismiss={handleModalDismiss}
       />
-
-
-      {/* <Text
-          testID="expenses-heading"
-          style={$expensesHeading}
-          text={`expensesScreen.title ${userName}`}
-          preset="heading"
-        /> */}
-
 
       <DynamicHeader value={scrollOffsetY} name={USERNAME} />
       <ScrollView
@@ -173,7 +121,6 @@ export const HomeScreen: FC<ExpensesScreenProps> = (props) => {
         >
         <Icon icon={"plus"} color={colors.palette.neutral100} />
       </TouchableOpacity>
-
     </View>
   )
 }

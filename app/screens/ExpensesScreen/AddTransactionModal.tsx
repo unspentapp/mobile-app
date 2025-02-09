@@ -1,54 +1,45 @@
-import React, { Dispatch, RefObject, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
+import React, { RefObject, useCallback, useState } from "react"
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types"
 import { BottomSheetBackground } from "app/components/BottomSheetBackground"
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet"
-import { BackHandler, Text, TextInput, useWindowDimensions, View, ViewStyle } from "react-native"
-import { SceneMap, TabView } from "react-native-tab-view"
-import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen"
-import { ErrorBoundary, HomeScreen } from "app/screens"
-import { colors, spacing } from "app/theme"
-import AnimatedDots from "app/components/AnimatedTabIndicator"
+import { BackHandler, useWindowDimensions, View, ViewStyle } from "react-native"
+import { TabView } from "react-native-tab-view"
+import { colors } from "app/theme"
 import AnimatedTabIndicator from "app/components/AnimatedTabIndicator"
-import AddExpenseView from "app/screens/ExpensesScreen/AddExpenseView"
-import { AddExpenseProps } from "app/screens/ExpensesScreen/AddExpenseView"
-import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
-import format from "date-fns/format"
+import AddTransactionView from "app/screens/ExpensesScreen/AddTransactionView"
 import { useFocusEffect } from "@react-navigation/native"
 import { TransactionDataI, useWmStorage } from "../../../db/useWmStorage"
-import { getCategories } from "assets/data"
 import database from "../../../db"
 import Toast from "react-native-toast-message"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
-  handleSheetChanges: (index: number) => void,
-  expenseValue: string,
-  setExpenseValue: Dispatch<SetStateAction<string>>,
-  setNote: Dispatch<SetStateAction<string>>,
-  date: string,
-  setDate: Dispatch<SetStateAction<string>>
-  setDateModalToggle: Dispatch<SetStateAction<boolean>>,
-  selectedCategory: string,
-  setSelectedCategory: Dispatch<SetStateAction<string>>,
-  handleAddExpense: () => void,
-  handleAddIncome: () => void,
+  isOpen: boolean
+  onDismiss: () => void
 }
 
-const AddTransactionModal = ({
-                               bottomSheetModalRef,
-                               handleSheetChanges,
-                             } : Props) => {
+type RouteProps = {
+  key: 'income' | 'expense',
+  title: 'Expense' | 'Income',
+}
+
+const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-  const [expenseValue, setExpenseValue] = useState("")
-  const [note, setNote] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("")
-  const [dateModalToggle, setDateModalToggle] = useState(false)
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
-
   const { saveTransaction } = useWmStorage()
 
-  const handleAddExpense = useCallback(async () => {
+  const routes : RouteProps[] = [
+    { key: 'expense', title: 'Expense' },
+    { key: 'income', title: 'Income' },
+  ];
+
+  const handleAddTransaction = useCallback(async (
+    expenseValue: string,
+    note: string,
+    selectedCategory: string,
+    date: string,
+    type: 'expense' | 'income'
+  ) => {
     const userId = await database.localStorage.get("USER_ID")
 
     if (!userId || !note.trim() || !expenseValue.trim()) {
@@ -60,7 +51,7 @@ const AddTransactionModal = ({
       description: note.trim(),
       amount: parseFloat(expenseValue),
       categoryId: selectedCategory,
-      type: "expense",
+      type: type,
       transactionAt: new Date(date),
       isRecurring: false,
     }
@@ -69,116 +60,89 @@ const AddTransactionModal = ({
       await saveTransaction(newTransaction)
       Toast.show({
         type: "success",
-        text1: "Transaction Added",
-        text2: "Your transaction has been added successfully.",
+        text1: `${type.charAt(0).toUpperCase() + type.slice(1)} Added`,
+        text2: `Your ${type} has been added successfully.`,
       })
-      resetForm()
+      bottomSheetModalRef.current?.close()
     } catch (error) {
-      // TODO: Add error handling
       console.error('Failed to save transaction:', error)
     }
-  }, [note, expenseValue, selectedCategory, date, saveTransaction])
-
-  const resetForm = useCallback(() => {
-    bottomSheetModalRef.current?.close()
-    setDate(format(new Date(), 'yyyy-MM-dd'))
-    setSelectedCategory("")
-    setExpenseValue("")
-    setNote("")
-  }, [])
+  }, [saveTransaction, bottomSheetModalRef])
 
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
         bottomSheetModalRef.current?.close()
-        setDateModalToggle(false)
         return true
       }
 
       const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress)
       return () => subscription.remove()
-    }, [dateModalToggle, bottomSheetModalRef]))
+    }, [bottomSheetModalRef]))
 
-  const routes = [
-    {
-      key: 'first',
-      title: 'First',
-    },
-    { key: 'second', title: 'Second' },
-  ];
-
-  /*const renderScene = SceneMap({
-    first: AddExpenseView,
-    second: SecondRoute,
-  });*/
-
-  const renderScene = ({ route }) => {
+  const renderScene = ({ route } : { route : RouteProps}) => {
     switch (route.key) {
-      case 'first':
+      case 'expense':
         return (
-          <AddExpenseView
-            expenseValue={expenseValue}
-            setExpenseValue={setExpenseValue}
-            handleAddExpense={handleAddExpense}
-            date={date}
-            setDate={setDate}
-            setDateModalToggle={setDateModalToggle}
-            setNote={setNote}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
+          <AddTransactionView
+            type="expense"
+            onAddTransaction={handleAddTransaction}
+            index={index}
+            isModalOpen={isOpen}
           />)
-      case 'second':
-        return <View></View>;
+      case 'income':
+        return (
+          <AddTransactionView
+            type="income"
+            onAddTransaction={handleAddTransaction}
+            index={index}
+            isModalOpen={isOpen}
+          />
+        );
       default:
         return null;
     }
   }
 
-  return (
+  const handleDismissModal = () => {
+    setIndex(0)
+    onDismiss()
+  }
 
+  return (
     <View>
-      <CalendarModal
-        visible={dateModalToggle}
-        onClose={() => setDateModalToggle(false)}
-        date={date}
-        setDate={setDate}
-      />
       <BottomSheetModal
         ref={bottomSheetModalRef}
         snapPoints={["100%"]}
         animateOnMount={true}
         backgroundComponent={(props) => <BottomSheetBackground {...props} />}
-        onChange={handleSheetChanges}
         handleIndicatorStyle={$modalIndicator}
         // handleIndicatorStyle={{ display: 'none' }}
-        // keyboardBehavior="interactive"
+        keyboardBehavior="fillParent"
         android_keyboardInputMode="adjustResize"
-        keyboardBehavior='interactive' // test
-        keyboardBlurBehavior='restore' // test
-        enableContentPanningGesture={false}
+        // keyboardBehavior='interactive' // test
+        // keyboardBlurBehavior='restore' // test
+        enableContentPanningGesture={true}
         enablePanDownToClose={true}
         enableDynamicSizing={true}
-        /*handleComponent={
-          () => (
-            <AnimatedTabIndicator
-              index={index}
-              setIndex={setIndex}
-            />
-          )
-        }*/
+        activeOffsetY={50}
+        onDismiss={handleDismissModal} // todo on dismiss reset form and tab index
       >
         <BottomSheetView style={$container}>
-          <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={{ width: layout.width }}
-            renderTabBar={() =>
-              <AnimatedTabIndicator
-                index={index}
-                setIndex={setIndex}
-            />}
-          />
+
+            <TabView
+              navigationState={{ index, routes }}
+              renderScene={renderScene}
+              onIndexChange={setIndex}
+              initialLayout={{ width: layout.width }}
+              renderTabBar={() =>
+                <AnimatedTabIndicator
+                  index={index}
+                  setIndex={setIndex}
+              />}
+              lazy={true}
+            />
+
         </BottomSheetView>
       </BottomSheetModal>
     </View>
