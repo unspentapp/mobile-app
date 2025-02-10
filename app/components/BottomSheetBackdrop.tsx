@@ -11,8 +11,8 @@ const CustomBackdrop = ({ animatedIndex, style }: BottomSheetBackdropProps) => {
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       animatedIndex.value,
-      [0, 1],
-      [0.8, 1],
+      [-1, 0],
+      [0, 0.8],
       Extrapolation.CLAMP
     ),
   }));

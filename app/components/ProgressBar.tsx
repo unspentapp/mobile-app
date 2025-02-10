@@ -40,9 +40,14 @@ export const ProgressBar = (props: StatsCardProps) => {
   const showProgressBar = denominator !== undefined
   const [containerWidth, setContainerWidth] = useState(0)
 
+  let progress = 0
+  let percentage = 0
+
   // Calculate progress and percentage
-  const progress = showProgressBar ? numerator / denominator : 0
-  const percentage = Math.round(progress * 100)
+  if (denominator !== undefined && denominator !== 0 && denominator !== null) {
+    progress = showProgressBar ? numerator / denominator : 0
+    percentage = Math.round(progress * 100)
+  }
 
   // Use shared value for animation
   const progressAnimation = useSharedValue(0)

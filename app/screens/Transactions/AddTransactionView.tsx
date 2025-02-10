@@ -173,7 +173,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
           />
         </Pressable>
 
-        {type === "expense" ? (
+        {categories.length > 0 && type === "expense" ? (
           <View>
             <Text style={$categoryText} preset="formLabel" tx={"addExpenseModal.categoryLabel"} />
             <View style={$categoriesContainer}>

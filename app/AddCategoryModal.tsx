@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   BottomSheetFooter,
   BottomSheetModal,
@@ -14,8 +14,13 @@ import BottomSheetBackdrop from "app/components/BottomSheetBackdrop"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const AddCategoryModal = ({ addCategorySheetRef }) => {
-  const [categoryName, setCategoryName] = useState("")
+  const [categoryLabel, setCategoryLabel] = useState<string>("")
   const [selectedColor, setSelectedColor] = useState<keyof typeof colors.custom>("color1")
+
+
+  useEffect(() => {
+    console.log(categoryLabel)
+  }, [categoryLabel])
 
   const { bottom } = useSafeAreaInsets()
 
@@ -24,23 +29,31 @@ const AddCategoryModal = ({ addCategorySheetRef }) => {
   }
 
   const handleAddCategory = async () => {
-    await database.write(async () => {
-      const categoriesCollection = database.get('categories')
-      await categoriesCollection.create((category) => {
-        category.name = categoryName
-        category.type = "expense"
-        category.isDefault = false
-        category.color = selectedColor
-      })
-    })
-    setCategoryName("")
-    setSelectedColor("color1")
+    if (categoryLabel.trim() === "") {
+      console.log("[ADD CATEGORY]: categoryLabel is empty")
+      return
+    } // todo display error message to user
 
-    addCategorySheetRef.current?.dismiss()
+    try {
+      await database.write(async () => {
+        const categoriesCollection = database.get('categories')
+        await categoriesCollection.create((category) => {
+          category.name = categoryLabel
+          category.type = "expense"
+          category.isDefault = false
+          category.color = selectedColor
+        })
+      })
+    } finally {
+      setCategoryLabel("")
+      setSelectedColor("color1")
+
+      addCategorySheetRef.current?.dismiss()
+    }
   }
 
   const resetModal = useCallback(() => {
-    setCategoryName("")
+    setCategoryLabel("")
     setSelectedColor("color1")
   }, [])
 
@@ -52,18 +65,18 @@ const AddCategoryModal = ({ addCategorySheetRef }) => {
     stiffness: 500,
   });
 
-  const snapPoints = useMemo(() => ["50%", "75%"], []);
+  const snapPoints = useMemo(() => ["70%", "85%", "100%"], []);
 
   const renderFooter = useCallback(
     props => (
       <BottomSheetFooter {...props} bottomInset={bottom}>
         <View>
-          <Pressable
+          <TouchableOpacity
             onPress={handleAddCategory}
             style={$closeButton}
           >
             <Icon icon={"check"} color={colors.palette.neutral100} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </BottomSheetFooter>
     ),
@@ -77,53 +90,59 @@ const AddCategoryModal = ({ addCategorySheetRef }) => {
       handleIndicatorStyle={$modalIndicator}
       snapPoints={snapPoints}
       enablePanDownToClose={true}
-      enableDynamicSizing={true}
+      // enableDynamicSizing={true}
       animateOnMount={true}
       backdropComponent={(props) => <BottomSheetBackdrop {...props} />}
       onDismiss={resetModal}
       footerComponent={renderFooter}
       android_keyboardInputMode="adjustResize"
-      keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
+      keyboardBehavior={Platform.OS === "ios" ? "extend" : "interactive"}
       keyboardBlurBehavior="restore"
     >
-        <BottomSheetView style={$addCategorySheetContainer}>
-          <Text text="Add new category" preset={"subheading"}/>
-          <View style={$modalAddCategoryInputContainer}>
-            <Icon icon="tags" color={colors.palette.neutral400} size={typography.iconSize}/>
-            <BottomSheetTextInput
-              style={$modalAddCategoryInput}
-              textAlign="left"
-              inputMode="text"
-              returnKeyType="done"
-              cursorColor={colors.palette.primary500}
-              placeholder="Category name"
-              placeholderTextColor={colors.palette.neutral400}
-              maxFontSizeMultiplier={0}
-              maxLength={40}
-              onChangeText={setCategoryName}
-              onSubmitEditing={handleAddCategory}
-            />
-          </View>
-          <View style={$colorsContainer}>
-            {Object.entries(colors.custom).map(([key , value]) => (
-              <Pressable
-                key={key}
-                style={[
-                  $colorBorder,
-                  isColorSelected(key as keyof typeof colors.custom) ? { borderColor: colors.palette.primary500 } : { borderColor: colors.transparent },
-                ]}
-                onPress={() => setSelectedColor(key as keyof typeof colors.custom)}
-              >
+      <BottomSheetView style={$addCategorySheetContainer}>
+        <Text text="Add new category" preset={"subheading"} />
+        <View style={$modalAddCategoryInputContainer}>
+          <Icon icon="tags" color={colors.palette.neutral400} size={typography.iconSize} />
+          <BottomSheetTextInput
+            value={categoryLabel}
+            style={$modalAddCategoryInput}
+            textAlign="left"
+            inputMode="text"
+            returnKeyType="next"
+            cursorColor={colors.palette.primary500}
+            placeholder="Category name"
+            placeholderTextColor={colors.palette.neutral400}
+            maxFontSizeMultiplier={0}
+            maxLength={40}
+            onChangeText={setCategoryLabel}
+            onSubmitEditing={handleAddCategory}
+          />
+        </View>
+        <View style={$colorsContainer}>
+          {Object.entries(colors.custom).map(([key, value]) => (
+            <Pressable
+              key={key}
+              style={[
+                $colorBorder,
+                isColorSelected(key as keyof typeof colors.custom)
+                  ? { borderColor: colors.palette.primary500 }
+                  : { borderColor: colors.transparent },
+              ]}
+              onPress={() => setSelectedColor(key as keyof typeof colors.custom)}
+            >
               <View
-                style={[$colorCircle,
+                style={[
+                  $colorCircle,
                   { backgroundColor: value },
-                  value === "#ffffff" ? { borderWidth: 1, borderColor: colors.palette.neutral300 } : { borderColor: colors.transparent },
+                  value === "#ffffff"
+                    ? { borderWidth: 1, borderColor: colors.palette.neutral300 }
+                    : { borderColor: colors.transparent },
                 ]}
               />
-              </Pressable>
-            ))}
-          </View>
-        </BottomSheetView>
+            </Pressable>
+          ))}
+        </View>
+      </BottomSheetView>
     </BottomSheetModal>
   )
 }
@@ -156,7 +175,7 @@ const $modalAddCategoryInput: TextStyle = {
   fontFamily: typography.primary.normal,
   fontSize: 16,
   color: colors.palette.neutral700,
-  width: "100%",
+  width: "90%",
 }
 
 const $modalIndicator: ViewStyle = {
@@ -169,7 +188,6 @@ const $colorsContainer: ViewStyle = {
   flexWrap: "wrap",
   justifyContent: "center",
   gap: spacing.lg,
-  marginBottom: spacing.lg,
 }
 
 const $colorBorder: ViewStyle = {

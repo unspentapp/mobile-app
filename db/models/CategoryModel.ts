@@ -5,7 +5,7 @@ import { children, date, field, readonly } from "@nozbe/watermelondb/decorators"
 export default class CategoryModel extends Model {
   static table = 'categories'
   static associations = {
-    transactions: {type: 'has_many', foreignKey: 'category_id'},
+    transactions: {type: "has_many", foreignKey: "category_id"},
   }
 
   @children("transactions") transactions

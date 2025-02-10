@@ -72,18 +72,12 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     setIsModalOpen(false)
   }, [])
 
-  // Navigation
-  const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
-
-
-
   const handlePresentNewCategorySheet = useCallback(() => {
     addCategorySheetRef.current?.present()
   }, [])
 
-/*  const handlePresentNewCategorySheet = () => {
-    addCategorySheetRef.current?.present()
-  }*/
+  // Navigation
+  const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
 
   useEffect(() => {
     const totalExpenses = transactions.reduce((total, transaction) => total + transaction.amount, 0)
@@ -93,6 +87,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   // Add this memoized value to group transactions by category
   const groupedTransactions = useMemo(() => {
+
     const grouped = new Map<string, TransactionDataI[]>();
 
     // Initialize with existing categories
@@ -116,6 +111,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   // Calculate category expenses
   const categoryExpenses = useMemo(() => {
+
     const expenses = new Map<string, number>();
 
     groupedTransactions.forEach((transactions, categoryId) => {
@@ -170,13 +166,14 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
           </TouchableOpacity>
         </View>
 
-        {[...groupedTransactions].map(([categoryId, categoryTransactions], index) => {
+        {groupedTransactions.size > 1 ? [...groupedTransactions].map(([categoryId, categoryTransactions], index) => {
           // Find the category object or create an "Unknown" category for null cases
           const category = categoryId === 'unknown'
-            ? { id: 'unknown', name: 'Uncategorized', color: 'gray', type: 'expense' }
+            ? { id: 'unknown', name: 'Uncategorized', color: colors.textDim, type: 'expense' }
             : categories.find(c => c.id === categoryId);
 
           if (!category) return null;
+          if (categoryId === 'unknown' && categoryTransactions.length === 0) return null;
 
           return (
             <EnhancedCategoryCard
@@ -192,7 +189,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
               animationDelay={index * 50}
             />
           );
-        })}
+        }) : null }
 
         <TouchableOpacity
           style={$addCategoryButtonContainer}
