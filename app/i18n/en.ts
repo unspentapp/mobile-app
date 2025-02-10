@@ -1,3 +1,5 @@
+import homeScreen from "app/screens/HomeScreen"
+
 const en = {
   common: {
     ok: "OK!",
@@ -58,9 +60,10 @@ const en = {
     analyticsTab: "Analytics",
     settingsTab: "Settings",
   },
-  expensesScreen: {
+  homeScreen: {
     title: "Hello",
-    seeAll: "See all"
+    seeAll: "See all",
+    addCategory: "Add new category",
   },
   settingsScreen: {
     howTo: "HOW TO",
@@ -94,6 +97,14 @@ const en = {
   allTransactionsScreen: {
     title: "Transactions",
     noItems: "No transaction found."
+  },
+  addNewCategoryModal: {
+    title: "Add new category",
+    noteInputPlaceholder: "Category name",
+    selectColor: {
+      title: "Select a color",
+      hint: "",
+    },
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Button, Icon, Text } from "app/components"
 import { Pressable, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet"
@@ -6,12 +6,9 @@ import { colors, spacing, typography } from "app/theme"
 import { isToday } from "date-fns"
 import format from "date-fns/format"
 import { Tag } from "app/components/Tag"
-import { getCategories } from "assets/data"
-import { CalendarModal } from "app/screens/ExpensesScreen/CalendarModal"
-import { CategoryDataI } from "../../../db/useWmStorage"
+import { CalendarModal } from "app/screens/Transactions/CalendarModal"
 import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
-import categoryCard from "app/screens/ExpensesScreen/CategoryCard"
 import CategoryModel from "../../../db/models/CategoryModel"
 
 
@@ -41,8 +38,6 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   const [dateModalToggle, setDateModalToggle] = useState(false)
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [categories, setCategories] = useState<CategoryModel[]>([])
-
-  // const categories = useMemo(() => getCategories(), [])
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
@@ -148,25 +143,26 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
         </Text>
       </View>
 
-      <View style={$noteInputContainer}>
-        <Icon icon="edit" color={colors.palette.neutral400} size={typography.iconSize}/>
+      <View style={$topContainer}>
+        <View style={$noteInputContainer}>
+          <Icon icon="edit" color={colors.palette.neutral400} size={typography.iconSize}/>
 
-        <BottomSheetTextInput
-          ref={secondTextInputRef as any}
-          style={$modalNoteInput}
-          textAlign="left"
-          inputMode="text"
-          returnKeyType="done"
-          cursorColor={colors.palette.primary500}
-          placeholder="Add a note"
-          placeholderTextColor={colors.palette.neutral400}
-          maxFontSizeMultiplier={0}
-          maxLength={40}
-          onChangeText={(value) => setNote(value)}
-          onSubmitEditing={handleKeyboardEnter}
-        />
+          <BottomSheetTextInput
+            ref={secondTextInputRef as any}
+            style={$modalNoteInput}
+            textAlign="left"
+            inputMode="text"
+            returnKeyType="done"
+            cursorColor={colors.palette.primary500}
+            placeholder="Add a note"
+            placeholderTextColor={colors.palette.neutral400}
+            maxFontSizeMultiplier={0}
+            maxLength={40}
+            onChangeText={(value) => setNote(value)}
+            onSubmitEditing={handleKeyboardEnter}
+          />
+        </View>
       </View>
-
       <View style={$bottomContainer}>
         <Pressable style={$calendarContainer} onPress={() => setDateModalToggle(true)}>
           <Icon icon={"calendar"} color={colors.palette.primary500} size={typography.iconSize} />
@@ -214,6 +210,10 @@ const $categoryText: TextStyle = {
   fontFamily: typography.primary.medium,
 }
 
+const $topContainer: ViewStyle = {
+  paddingHorizontal: spacing.xl,
+}
+
 const $bottomContainer: ViewStyle = {
   flexGrow: 1,
   width: '100%',
@@ -250,6 +250,7 @@ const $modalNoteInput: TextStyle = {
   fontSize: 16,
   color: colors.palette.neutral700,
   width: "100%",
+
 }
 
 const $inputContainer: ViewStyle = {
@@ -267,19 +268,16 @@ const $euroSymbol: TextStyle = {
 }
 
 const $noteInputContainer: ViewStyle = {
-  flexDirection: 'row',
+  flexDirection: "row",
   gap: spacing.xs,
-  justifyContent: 'flex-start',
-  alignItems: 'center',
+  justifyContent: "flex-start",
+  alignItems: "center",
+  paddingVertical: spacing.xs,
+  paddingHorizontal: spacing.sm,
+  marginBottom: spacing.md,
   borderWidth: 1,
   borderColor: colors.palette.neutral300,
-  marginTop: spacing.xs,
-  marginBottom: spacing.sm,
   borderRadius: spacing.xxs,
-  paddingHorizontal: spacing.sm,
-  paddingVertical: spacing.xs,
-  minWidth: "50%",
-  maxWidth: "90%"
 }
 
 const $categoriesContainer: ViewStyle = {

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react"
 import { LayoutChangeEvent, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { AccordionItem } from "app/components/AccordionItem"
-import ArrowIconAnimated from "app/screens/ExpensesScreen/ArrowIconAnimated"
+import ArrowIconAnimated from "app/screens/Transactions/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
 import { TransactionDataI } from "../../../db/useWmStorage"
 import RowItem from "app/components/RowItem"
@@ -57,7 +57,6 @@ const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, o
                 data={transaction}
                 key={transaction.id}
               />
-              // <ExpenseCard transaction={transaction} key={transaction.id} />
             ))) : (
               <Text style={$normalText}>
                 No expenses found.
@@ -74,7 +73,6 @@ export default CategoryCard
 const $cardContainer: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'flex-start',
-  paddingHorizontal: spacing.lg,
   backgroundColor: colors.elevatedBackground,
   borderWidth: 1,
   borderColor: colors.border,
@@ -88,16 +86,18 @@ const $labelContainer: ViewStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   width: "100%",
-  paddingVertical: spacing.md,
+  paddingVertical: spacing.sm,
+  paddingHorizontal: spacing.md,
 }
 
 const $title: TextStyle = {
   fontSize: 20,
-  fontFamily: typography.fonts.spaceGrotesk.medium,
+  fontFamily: typography.primary.medium,
   color: colors.text,
 }
 
 const $normalText: TextStyle = {
+  paddingHorizontal: spacing.md,
   paddingBottom: spacing.md,
   fontSize: 14,
   fontFamily: typography.fonts.spaceGrotesk.normal,

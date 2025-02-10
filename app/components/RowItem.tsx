@@ -50,6 +50,7 @@ const $container: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
+  paddingHorizontal: spacing.md,
 }
 
 const $leftContainer: ViewStyle = {

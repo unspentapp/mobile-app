@@ -1,4 +1,16 @@
 // TODO: write documentation for colors and palette in own markdown file and add links from here
+const custom = {
+  color1: "#ffffff", // White
+  color2: "#FF1493", // Deep Pink (Pink Family)
+  color3: "#DC143C", // Crimson (Red Family)
+  color4: "#FF4500", // Vivid Orange-Red (Orange Family)
+  color5: "#FF8C00", // Dark Orange (Orange Family)
+  color6: "#32CD32", // Lime Green (Green Family)
+  color7: "#2E8B57", // Sea Green (Green Family)
+  color8: "#4682B4", // Steel Blue (Blue Family)
+  color9: "#4169E1", // Royal Blue (Blue Family)
+  color10: "#242470", // Midnight Blue (Blue Family)
+} as const
 
 const palette = {
   neutral000: "#ffffff",
@@ -40,6 +52,10 @@ const palette = {
 
 export const colors = {
   /**
+  * Colors for user personalization
+  */
+  custom,
+  /**
    * The palette is available to use, but prefer using the name.
    * This is only included for rare, one-off cases. Try to use
    * semantic names as much as possible.
@@ -60,7 +76,7 @@ export const colors = {
   /**
    * The default color of the screen background.
    */
-  background: palette.neutral100,
+  background: palette.neutral100, // original neutral100
   /**
    * The default color of the screen background.
    */

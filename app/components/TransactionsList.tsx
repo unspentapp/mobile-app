@@ -315,7 +315,6 @@ const $sectionHeaderText: TextStyle = {
 
 const $itemWrapper: ViewStyle = {
   marginHorizontal: spacing.md,
-  paddingHorizontal: spacing.sm,
   backgroundColor: "white",
   borderLeftWidth: 5,
 };

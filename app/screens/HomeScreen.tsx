@@ -1,28 +1,29 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   Animated,
-  Dimensions,
+  Dimensions, Modal,
   ScrollView, TextInput, TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
 import { Icon, Text, TextField } from "app/components"
-import { colors, spacing } from "app/theme"
+import { colors, spacing, typography } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
-import {
-  BottomSheetModal,
+import BottomSheet, {
+  BottomSheetModal, BottomSheetTextInput, BottomSheetView, useBottomSheetSpringConfigs,
 } from "@gorhom/bottom-sheet"
 import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import AddTransactionModal from "app/screens/ExpensesScreen/AddTransactionModal"
-import EnhancedCategoryCard from "app/screens/ExpensesScreen/CategoryCard"
+import AddTransactionModal from "app/screens/Transactions/AddTransactionModal"
+import EnhancedCategoryCard from "app/screens/Transactions/CategoryCard"
 import CategoryModel from "../../db/models/CategoryModel"
 import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../db"
 import { Q } from "@nozbe/watermelondb"
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns"
 import { CategoryDataI, TransactionDataI } from "../../db/useWmStorage"
+import AddCategoryModal from "app/AddCategoryModal"
 
 
 const HEADER_HEIGHT = 250
@@ -40,12 +41,12 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
   // Refs
   const scrollOffsetY = useRef(new Animated.Value(0)).current // value for dynamic header
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const addCategorySheetRef = useRef<BottomSheetModal>(null);
   const scrollViewRef = useRef<ScrollView>(null)
 
   // States
   const [cardHeights, setCardHeights] = useState<Record<string, number>>({})
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [categoryName, setCategoryName] = useState("")
   const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>()
 
   // Hooks
@@ -74,18 +75,15 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
   // Navigation
   const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
 
-  const handleAddCategory = async () => {
-    await database.write(async () => {
-      const categoriesCollection = database.get('categories')
-      await categoriesCollection.create((category) => {
-        category.name = categoryName
-        category.type = "expense"
-        category.isDefault = false
-        category.color = "blue"
-      })
-    })
-    setCategoryName("")
-  }
+
+
+  const handlePresentNewCategorySheet = useCallback(() => {
+    addCategorySheetRef.current?.present()
+  }, [])
+
+/*  const handlePresentNewCategorySheet = () => {
+    addCategorySheetRef.current?.present()
+  }*/
 
   useEffect(() => {
     const totalExpenses = transactions.reduce((total, transaction) => total + transaction.amount, 0)
@@ -129,6 +127,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
   }, [groupedTransactions]);
 
 
+
   return (
     <View style={$container}>
       <AddTransactionModal
@@ -136,6 +135,11 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
         isOpen={isModalOpen}
         onDismiss={handleModalDismiss}
       />
+
+      <AddCategoryModal
+        addCategorySheetRef={addCategorySheetRef}
+      />
+
 
       <DynamicHeader
         value={scrollOffsetY}
@@ -162,7 +166,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
       >
         <View style={$goToTransactionsContainer}>
           <TouchableOpacity onPress={navigateToAllTransactions}>
-            <Text tx="expensesScreen.seeAll" preset="formLabel" style={$goToTransactions} />
+            <Text tx="homeScreen.seeAll" preset="formLabel" style={$goToTransactions} />
           </TouchableOpacity>
         </View>
 
@@ -190,14 +194,13 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
           );
         })}
 
-        <View>
-          <TextField
-            label="Category Name"
-            value={categoryName}
-            onChangeText={setCategoryName}
-            onSubmitEditing={handleAddCategory}
-          ></TextField>
-        </View>
+        <TouchableOpacity
+          style={$addCategoryButtonContainer}
+          onPress={handlePresentNewCategorySheet}
+        >
+            <Text tx={"homeScreen.addCategory"} style={$addNewCategoryText}/>
+        </TouchableOpacity>
+
       </ScrollView>
 
       <TouchableOpacity
@@ -230,9 +233,10 @@ const EnhancedHomeScreen = enhance(HomeScreen)
 export default EnhancedHomeScreen
 
 const $container: ViewStyle = {
-  // flex: 1,
+  flex: 1,
   backgroundColor: colors.background,
-  // backgroundColor: 'blue' // test!
+  // padding: 24,
+  // backgroundColor: 'gray' // test!
 }
 
 const $roundButton: ViewStyle = {
@@ -270,6 +274,23 @@ const $goToTransactionsContainer: ViewStyle = {
   alignItems: "flex-end",
 }
 
+const $addCategoryButtonContainer: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  paddingHorizontal: spacing.lg,
+  paddingVertical: spacing.lg,
+  backgroundColor: colors.elevatedBackground,
+  borderWidth: 1,
+  borderColor: colors.border,
+  marginBottom: spacing.sm,
+  borderRadius: spacing.xxs,
+}
+
+const $addNewCategoryText: TextStyle = {
+  fontFamily: typography.primary.medium,
+  color: colors.textDim
+}
 
 
 

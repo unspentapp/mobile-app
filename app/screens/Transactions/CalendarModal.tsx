@@ -121,7 +121,6 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
   );
 };
 
-// Styles remain the same...
 const $absoluteFill: ViewStyle = {
   position: 'absolute',
   top: 0,

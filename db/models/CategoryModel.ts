@@ -16,6 +16,7 @@ export default class CategoryModel extends Model {
   @field('is_default') isDefault!: boolean
   @field('icon') icon?: string
   @field('color') color?: string
+  // @field('budget') budget?: number
   @readonly @date('updated_at') updatedAt?: number
   @readonly @date('createdAt') createdAt?: number
 }
