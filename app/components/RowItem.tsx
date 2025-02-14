@@ -4,12 +4,14 @@ import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
 import format from "date-fns/format"
 import { TransactionDataI } from "../../db/useWmStorage"
+import { useNavigation } from "@react-navigation/native"
 
 export interface RowItemProps {
   data : TransactionDataI
 }
 
 const RowItem = ({ data } : RowItemProps) => {
+  const navigation = useNavigation()
 
   const isExpense = () => {
     return data.type === "expense"
@@ -17,7 +19,10 @@ const RowItem = ({ data } : RowItemProps) => {
 
   return (
     <View>
-      <TouchableOpacity style={$container}>
+      <TouchableOpacity
+        style={$container}
+        onPress={() => navigation.navigate("TransactionDetails", { itemId: data.id })} // create a stack navigator and pass the item. In the new screen user should be able to edit transactions
+      >
         <View style={$leftContainer}>
           <Text style={$description} numberOfLines={1}>
             {data.description}

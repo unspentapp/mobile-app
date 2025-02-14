@@ -9,11 +9,15 @@ import format from "date-fns/format"
 import { ScrollView, SectionList, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, {
   FadeIn,
-  LinearTransition,
+  LinearTransition, SharedValue, useAnimatedStyle,
 } from "react-native-reanimated"
+import Reanimated from "react-native-reanimated"
 import TransactionModel from "../../db/models/TransactionModel"
+import { Icon } from "app/components/Icon"
+import { useNavigation } from "@react-navigation/native"
 
 
 export interface Props {
@@ -41,6 +45,24 @@ interface YearTab {
 const TransactionsList = ({ transactions, categories, selectedYear, setSelectedYear } : Props) => {
   const scrollViewRef = useRef<ScrollView>(null)
   const [availableYears, setAvailableYears] = useState<YearTab[]>([])
+
+  const handleDelete = async (transaction: TransactionDataI) => {
+
+    if (!transaction.id) return
+
+    try {
+      const transactionRecord = await database
+        .get('transactions')
+        .find(transaction.id);
+
+      await database.write(async () => {
+        await transactionRecord.markAsDeleted();
+      });
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+    }
+  }
+
 
   // Fetch available years with transactions
   useEffect(() => {
@@ -220,17 +242,48 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
     const category = categoriesMap[item.categoryId];
     const categoryColor = category?.color || colors.palette.primary500;
 
+    function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+
+      const styleAnimation = useAnimatedStyle(() => {
+
+        return {
+          transform: [{ translateX: drag.value + 50 }],
+        };
+      });
+
+      return (
+        <Reanimated.View style={styleAnimation}>
+          <View style={$rightAction}>
+            <TouchableOpacity
+              style={$deleteAction}
+              onPress={() => handleDelete(item)}
+            >
+              <Icon icon={"delete"} size={typography.iconSize} color={colors.palette.neutral000}/>
+            </TouchableOpacity>
+          </View>
+        </Reanimated.View>
+      );
+    }
+
     return (
-      <View style={[
-        $itemWrapper,
-        index === 0 && $itemWrapperFirst,
-        index === section.data.length - 1 && $itemWrapperLast,
-        { borderColor: categoryColor }
-      ]}>
-        <RowItem
-          data={item}
-        />
-      </View>
+      <ReanimatedSwipeable
+        friction={2}
+        enableTrackpadTwoFingerGesture
+        rightThreshold={40}
+        renderRightActions={RightAction}
+      >
+        <View style={[
+          $itemWrapper,
+          index === 0 && $itemWrapperFirst,
+          index === section.data.length - 1 && $itemWrapperLast,
+          { borderColor: categoryColor }
+        ]}>
+          <RowItem
+            data={item}
+          />
+        </View>
+      </ReanimatedSwipeable>
+
     );
   };
 
@@ -390,4 +443,28 @@ const $expense: TextStyle = {
 
 const $income: TextStyle = {
   color: colors.palette.secondary400
+}
+
+const $rightAction: ViewStyle = {
+  flexDirection: "row",
+}
+
+const $editAction : ViewStyle = {
+  width: 50,
+  height: 50,
+  backgroundColor: colors.palette.neutral300,
+  alignItems: "center",
+  justifyContent: "center",
+  borderTopLeftRadius: spacing.xxs,
+  borderBottomLeftRadius: spacing.xxs,
+}
+
+const $deleteAction : ViewStyle = {
+  width: 50,
+  height: 50,
+  backgroundColor: colors.error,
+  alignItems: "center",
+  justifyContent: "center",
+  borderTopRightRadius: spacing.xxs,
+  borderBottomRightRadius: spacing.xxs,
 }
