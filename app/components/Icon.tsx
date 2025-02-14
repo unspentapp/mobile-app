@@ -117,6 +117,7 @@ export const iconRegistry = {
   expense: require("../../assets/icons/wallet-expense.png"),
   reload: require("../../assets/icons/rotate-right.png"),
   tags: require("../../assets/icons/tags.png"),
+  delete: require("../../assets/icons/trash.png")
 }
 
 const $imageStyleBase: ImageStyle = {

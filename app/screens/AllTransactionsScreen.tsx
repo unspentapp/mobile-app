@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
-import { Text, Screen } from "app/components"
+import { Text, Screen, Header } from "app/components"
 import { spacing } from "app/theme"
 import { useHeader } from "app/utils/useHeader"
 import EnhancedTransactionsList from "app/components/TransactionsList"
@@ -34,7 +34,6 @@ export const AllTransactionsScreen: FC<AllTransactionsScreenProps> = () => {
     </Screen>
   )
 }
-
 
 const $container: ViewStyle = {
   flex: 1,

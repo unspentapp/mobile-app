@@ -8,19 +8,24 @@ import { useExpensesStore } from "app/store/ExpensesStore"
 interface DynamicHeaderProps {
   value: Animated.Value,
   name: string,
-  totalExpenses: number
+  totalExpenses: number,
+  topInset: number
 }
 
-const HEADER_MAX_HEIGHT = 250;
+const HEADER_MAX_HEIGHT = 200;
 const HEADER_MIN_HEIGHT = 80;
 const SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-export const DynamicHeader = ({value, name, totalExpenses}: DynamicHeaderProps) => {
+export const DynamicHeader = ({ value, name, totalExpenses, topInset }: DynamicHeaderProps) => {
+  const ADJUSTED_MAX_HEIGHT = HEADER_MAX_HEIGHT + topInset
+  const ADJUSTED_MIN_HEIGHT = HEADER_MIN_HEIGHT + topInset
+  const ADJUSTED_SCROLL_DISTANCE = ADJUSTED_MAX_HEIGHT - ADJUSTED_MIN_HEIGHT
+
   const animatedHeaderHeight = value.interpolate({
-    inputRange: [0, SCROLL_DISTANCE],
-    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+    inputRange: [0, ADJUSTED_SCROLL_DISTANCE],
+    outputRange: [ADJUSTED_MAX_HEIGHT, ADJUSTED_MIN_HEIGHT],
     extrapolate: 'clamp',
-  });
+  })
 
   const animatedHeaderColor = value.interpolate({
     inputRange: [0, SCROLL_DISTANCE],
@@ -48,6 +53,7 @@ export const DynamicHeader = ({value, name, totalExpenses}: DynamicHeaderProps) 
         {
           height: animatedHeaderHeight,
           backgroundColor: animatedHeaderColor,
+          paddingTop: topInset,
           borderBottomRightRadius: animatedBorderRadius,
           borderBottomLeftRadius: animatedBorderRadius,
         },

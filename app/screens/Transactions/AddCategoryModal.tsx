@@ -7,20 +7,16 @@ import {
   useBottomSheetSpringConfigs,
 } from "@gorhom/bottom-sheet"
 import { Button, Icon, Text } from "app/components"
-import { Platform, Pressable, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Platform, Pressable, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
-import database from "../db"
+import database from "../../../db"
 import BottomSheetBackdrop from "app/components/BottomSheetBackdrop"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useFocusEffect } from "@react-navigation/native"
 
-const AddCategoryModal = ({ addCategorySheetRef }) => {
+const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
   const [categoryLabel, setCategoryLabel] = useState<string>("")
   const [selectedColor, setSelectedColor] = useState<keyof typeof colors.custom>("color1")
-
-
-  useEffect(() => {
-    console.log(categoryLabel)
-  }, [categoryLabel])
 
   const { bottom } = useSafeAreaInsets()
 
@@ -48,7 +44,7 @@ const AddCategoryModal = ({ addCategorySheetRef }) => {
       setCategoryLabel("")
       setSelectedColor("color1")
 
-      addCategorySheetRef.current?.dismiss()
+      addCategorySheetRef.current?.close()
     }
   }
 
@@ -67,20 +63,17 @@ const AddCategoryModal = ({ addCategorySheetRef }) => {
 
   const snapPoints = useMemo(() => ["70%", "85%", "100%"], []);
 
-  const renderFooter = useCallback(
-    props => (
-      <BottomSheetFooter {...props} bottomInset={bottom}>
-        <View>
-          <TouchableOpacity
-            onPress={handleAddCategory}
-            style={$closeButton}
-          >
-            <Icon icon={"check"} color={colors.palette.neutral100} />
-          </TouchableOpacity>
-        </View>
-      </BottomSheetFooter>
-    ),
-    []
+  const renderFooter = (props) => (
+    <BottomSheetFooter {...props} bottomInset={bottom}>
+      <View>
+        <TouchableOpacity
+          onPress={handleAddCategory}
+          style={$closeButton}
+        >
+          <Icon icon={"check"} color={colors.palette.neutral100} />
+        </TouchableOpacity>
+      </View>
+    </BottomSheetFooter>
   );
 
   return (
@@ -104,11 +97,14 @@ const AddCategoryModal = ({ addCategorySheetRef }) => {
         <View style={$modalAddCategoryInputContainer}>
           <Icon icon="tags" color={colors.palette.neutral400} size={typography.iconSize} />
           <BottomSheetTextInput
+            ref={addCategoryInputRef}
             value={categoryLabel}
+            autoComplete={"off"}
+            autoCapitalize={"sentences"}
             style={$modalAddCategoryInput}
             textAlign="left"
             inputMode="text"
-            returnKeyType="next"
+            returnKeyType="done"
             cursorColor={colors.palette.primary500}
             placeholder="Category name"
             placeholderTextColor={colors.palette.neutral400}

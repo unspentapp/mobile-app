@@ -10,6 +10,7 @@ import { CalendarModal } from "app/screens/Transactions/CalendarModal"
 import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
 import CategoryModel from "../../../db/models/CategoryModel"
+import { useFocusEffect } from "@react-navigation/native"
 
 
 
@@ -73,6 +74,11 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   }, [])
 
   const handleAddTransaction = useCallback(() => {
+    if (expenseValue.trim() === "" || note.trim() === "") {
+      console.log("[ADD TRANSACTION: empty field")
+      return
+    }
+
     onAddTransaction(expenseValue, note, selectedCategory, date, type)
 
     // Reset form after adding transaction
@@ -87,7 +93,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   }
 
   // @ts-ignore
-  useEffect(() => {
+  /*useEffect(() => {
     if (lastIndexRef.current !== index) {
       const timeoutId = setTimeout(() => {
         firstTextInputRef.current?.focus();
@@ -95,7 +101,17 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
       lastIndexRef.current = index;
       return () => clearTimeout(timeoutId);
     }
-  }, [index, isModalOpen]);
+  }, [index, isModalOpen]);*/
+
+  useFocusEffect(
+    useCallback(() => {
+      const timeoutId = setTimeout(() => {
+        firstTextInputRef.current?.focus();
+      }, 300);
+      lastIndexRef.current = index;
+      return () => clearTimeout(timeoutId);
+    }, [index, isModalOpen])
+  )
 
   return (
     <View style={$bottomSheetContainer}>

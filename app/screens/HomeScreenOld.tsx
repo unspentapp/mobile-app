@@ -1,13 +1,13 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   Animated,
-  Dimensions, Image, ImageStyle, Modal,
+  Dimensions, Modal,
   ScrollView, TextInput, TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
-import { Header, Icon, Text, TextField, Screen } from "app/components"
+import { Icon, Text, TextField } from "app/components"
 import { colors, spacing, typography } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import BottomSheet, {
@@ -24,11 +24,6 @@ import { Q } from "@nozbe/watermelondb"
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns"
 import { CategoryDataI, TransactionDataI } from "../../db/useWmStorage"
 import AddCategoryModal from "app/screens/Transactions/AddCategoryModal"
-import { useHeader } from "app/utils/useHeader"
-import { goBack } from "app/navigators"
-import profilePic from "assets/images/profile-pic.jpg"
-import { StatusBar } from "expo-status-bar"
-
 
 
 const HEADER_HEIGHT = 200
@@ -40,25 +35,32 @@ interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
   categories: CategoryDataI[]
 }
 
-type BottomSheetTextInputRef = TextInput
-
-
-const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...props }) => {
+const HomeScreenDeprecated: FC<ExpensesScreenProps> = ({ transactions, categories, ...props }) => {
   const { navigation } = props
 
+  // Refs
+  const scrollOffsetY = useRef(new Animated.Value(0)).current // value for dynamic header
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const addCategorySheetRef = useRef<BottomSheetModal>(null);
-  const addCategoryInputRef = useRef<BottomSheetTextInputRef>(null)
+  const scrollViewRef = useRef<ScrollView>(null)
 
   // States
+  const [cardHeights, setCardHeights] = useState<Record<string, number>>({})
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>()
 
   // Hooks
   const { bottom } = useSafeAreaInsets()
+  const { height: screenHeight } = Dimensions.get("window")
+
+  // Memoized values
+  const totalCardsHeight = useMemo(
+    () => Object.values(cardHeights).reduce((sum, height) => sum + height, 0),
+    [cardHeights],
+  )
 
   // Constants
-  // const tabBarSpacing = bottom + 55
+  const tabBarSpacing = bottom + 55
 
   // Handlers
   const handlePresentModalPress = useCallback(() => {
@@ -72,7 +74,6 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   const handlePresentNewCategorySheet = useCallback(() => {
     addCategorySheetRef.current?.present()
-    addCategoryInputRef.current?.focus()
   }, [])
 
   // Navigation
@@ -121,95 +122,112 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     return expenses;
   }, [groupedTransactions]);
 
+  // Add this effect to reset scroll position when screen focuses
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      scrollOffsetY.setValue(0)
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 0, animated: false })
+      }
+    })
+    return unsubscribe
+  }, [navigation])
+
+  // Add safe area handling for the header
   const { top } = useSafeAreaInsets()
 
+  // Modify the container style to account for safe area
+  const containerStyle = useMemo(() => ([
+    $container,
+    { paddingTop: 0 }
+  ]), [top])
 
 
-  /* todo qui dentro posso metterci lo sfondo */
   return (
-    <View style={{ flex: 1 }}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
+    <View style={containerStyle}>
+      <AddTransactionModal
+        bottomSheetModalRef={bottomSheetModalRef}
+        isOpen={isModalOpen}
+        onDismiss={handleModalDismiss}
       />
-      <View style={{ flex: 1, paddingTop: top + spacing.lg }}>
-        <AddTransactionModal
-          bottomSheetModalRef={bottomSheetModalRef}
-          isOpen={isModalOpen}
-          onDismiss={handleModalDismiss}
-        />
 
-        <AddCategoryModal
-          addCategorySheetRef={addCategorySheetRef}
-          addCategoryInputRef={addCategoryInputRef}
-        />
+      <AddCategoryModal
+        addCategorySheetRef={addCategorySheetRef}
+      />
 
-        <View style={$topContainer}>
-          <Text
-            testID="transactions-heading"
-            text={`Spent this month: ${totalMonthlyExpenses} €`}
-            style={{ fontSize: 28, lineHeight: 28, fontFamily: typography.primary.semiBold}}
-          />
+
+      <DynamicHeader
+        value={scrollOffsetY}
+        totalExpenses={totalMonthlyExpenses || 0}
+        name={USERNAME}
+        topInset={top}
+      />
+
+      <ScrollView
+        style={$scrollViewContainer}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: HEADER_HEIGHT + spacing.lg,
+          paddingHorizontal: spacing.lg,
+          minHeight: totalCardsHeight + screenHeight - tabBarSpacing,
+        }}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }], {
+          useNativeDriver: false,
+        })}
+        ref={scrollViewRef}
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: undefined,
+        }}
+      >
+        <View style={$goToTransactionsContainer}>
+          <TouchableOpacity onPress={navigateToAllTransactions}>
+            <Text tx="homeScreen.seeAll" preset="formLabel" style={$goToTransactions} />
+          </TouchableOpacity>
         </View>
 
-        <ScrollView
-          style={$scrollViewContainer}
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingTop: spacing.lg,
-            paddingHorizontal: spacing.lg,
-          }}
-          maintainVisibleContentPosition={{
-            minIndexForVisible: 0,
-            autoscrollToTopThreshold: undefined,
-          }}
-        >
-          <View style={$goToTransactionsContainer}>
-            <TouchableOpacity onPress={navigateToAllTransactions}>
-              <Text tx="homeScreen.seeAll" preset="formLabel" style={$goToTransactions} />
-            </TouchableOpacity>
-          </View>
+        {groupedTransactions.size > 1 ? [...groupedTransactions].map(([categoryId, categoryTransactions], index) => {
+          // Find the category object or create an "Unknown" category for null cases
+          const category = categoryId === 'unknown'
+            ? { id: 'unknown', name: 'Uncategorized', color: colors.textDim, type: 'expense' }
+            : categories.find(c => c.id === categoryId);
 
-          {groupedTransactions.size > 1 ? [...groupedTransactions].map(([categoryId, categoryTransactions], index) => {
-            // Find the category object or create an "Unknown" category for null cases
-            const category = categoryId === 'unknown'
-              ? { id: 'unknown', name: 'Uncategorized', color: colors.textDim, type: 'expense' }
-              : categories.find(c => c.id === categoryId);
+          if (!category) return null;
+          if (categoryId === 'unknown' && categoryTransactions.length === 0) return null;
 
-            if (!category) return null;
-            if (categoryId === 'unknown' && categoryTransactions.length === 0) return null;
-
-            return (
-              <EnhancedCategoryCard
-                key={categoryId}
-                categoryId={category.id}
-                categoryName={category.name}
-                transactions={categoryTransactions}
-                totalAmount={categoryExpenses.get(categoryId) || 0}
-                totalExpenses={totalMonthlyExpenses || 0}
-                animationDelay={index * 50}
-              />
-            );
-          }) : null }
-
-          <TouchableOpacity
-            style={$addCategoryButtonContainer}
-            onPress={handlePresentNewCategorySheet}
-          >
-            <Text tx={"homeScreen.addCategory"} style={$addNewCategoryText}/>
-          </TouchableOpacity>
-
-        </ScrollView>
+          return (
+            <EnhancedCategoryCard
+              key={categoryId}
+              categoryId={category.id}
+              categoryName={category.name}
+              transactions={categoryTransactions}
+              totalAmount={categoryExpenses.get(categoryId) || 0}
+              onHeightChange={(height: number) =>
+                setCardHeights((prev) => ({ ...prev, [categoryId]: height }))
+              }
+              totalExpenses={totalMonthlyExpenses || 0}
+              animationDelay={index * 50}
+            />
+          );
+        }) : null }
 
         <TouchableOpacity
-          style={[$roundButton, { bottom: spacing.lg + bottom }]}
-          onPress={handlePresentModalPress}
-          testID="addExpenseButton"
+          style={$addCategoryButtonContainer}
+          onPress={handlePresentNewCategorySheet}
         >
-          <Icon icon={"plus"} color={colors.palette.neutral100} />
+          <Text tx={"homeScreen.addCategory"} style={$addNewCategoryText}/>
         </TouchableOpacity>
-      </View>
+
+      </ScrollView>
+
+      <TouchableOpacity
+        style={[$roundButton, { bottom: spacing.lg + bottom }]}
+        onPress={handlePresentModalPress}
+        testID="addExpenseButton"
+      >
+        <Icon icon={"plus"} color={colors.palette.neutral100} />
+      </TouchableOpacity>
     </View>
   )
 }
@@ -228,27 +246,20 @@ const enhance = withObservables([], () => {
   }
 })
 
-const EnhancedHomeScreen = enhance(HomeScreen)
+// const EnhancedHomeScreen = enhance(HomeScreen)
 // const EnhancedHomeScreen = (HomeScreen)
-export default EnhancedHomeScreen
-
-const $topContainer: ViewStyle = {
-  justifyContent: "flex-start",
-  paddingHorizontal: spacing.lg,
-  paddingVertical: spacing.sm
-}
+// export default EnhancedHomeScreen
 
 const $container: ViewStyle = {
   flex: 1,
-  // backgroundColor: colors.background,
+  backgroundColor: colors.background,
   // padding: 24,
-  backgroundColor: 'red' // test!
+  // backgroundColor: 'gray' // test!
 }
 
 const $roundButton: ViewStyle = {
   position: "absolute",
   right: spacing.lg,
-  bottom: spacing.lg,
   elevation: 3, // android shadow
   height: ROUND_BUTTON_SIZE,
   width: ROUND_BUTTON_SIZE,
@@ -269,7 +280,7 @@ const $scrollViewContainer: ViewStyle = {
   // backgroundColor: "red",
   // paddingTop: 250 + spacing.lg, // 250 is for the header animation
   // paddingHorizontal: spacing.lg,
-  // marginTop: spacing.md,
+  // paddingVertical: spacing.md,
 }
 
 const $goToTransactions: TextStyle = {
@@ -298,14 +309,6 @@ const $addNewCategoryText: TextStyle = {
   fontFamily: typography.primary.medium,
   color: colors.textDim
 }
-
-
-
-
-
-
-
-
 
 
 

@@ -19,6 +19,8 @@ import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
+import TransactionDetails from "app/screens/Transactions/TransactionDetails"
+import { Header } from "app/components"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -73,6 +75,11 @@ const AppStack = () => {
           <RootStack.Screen
             name="Main"
             component={MainNavigator}
+            options={{
+              statusBarColor: colors.background,
+              statusBarStyle: "dark",
+              statusBarHidden: false,
+            }}
           />
           <RootStack.Screen
             name="AllTransactions"
@@ -81,12 +88,30 @@ const AppStack = () => {
               statusBarColor: colors.background,
               statusBarStyle: "dark",
               statusBarHidden: false,
+
             }}
           />
+          {/*<RootStack.Screen
+            name="TransactionDetails"
+            component={TransactionDetails}
+            options={{
+              statusBarColor: colors.background,
+              statusBarStyle: "dark",
+              statusBarHidden: false,
+            }}
+          />*/}
         </>
       ) : (
         <>
-          <RootStack.Screen name="Login" component={Screens.SignInScreen} />
+          <RootStack.Screen
+            name="Login"
+            component={Screens.SignInScreen}
+            options={{
+              statusBarColor: colors.background,
+              statusBarStyle: "dark",
+              statusBarHidden: false,
+            }}
+          />
         </>
       )}
 

@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar"
 import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen"
 import { translate } from "app/i18n"
 import { Icon } from "app/components"
+import TransactionDetails from "app/screens/Transactions/TransactionDetails"
 
 export type ExpensesStackParamList = {
   Expenses: undefined,
@@ -41,7 +42,19 @@ export function ExpensesNavigator() {
         component={EnhancedHomeScreen}
         options={{
           headerShown: false,
-          statusBarColor: colors.background,
+          statusBarStyle: "dark",
+  /*        statusBarColor: "transparent",
+          statusBarTranslucent: true,
+          statusBarHidden: false,*/
+        }}
+      />
+
+      <ExpensesStack.Screen
+        name="TransactionDetails"
+        component={TransactionDetails}
+        options={{
+          headerShown: false,
+          statusBarTranslucent: true,
           statusBarStyle: "dark",
           statusBarHidden: false,
         }}

@@ -11,6 +11,7 @@ import { useFocusEffect } from "@react-navigation/native"
 import { TransactionDataI, useWmStorage } from "../../../db/useWmStorage"
 import database from "../../../db"
 import Toast from "react-native-toast-message"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -78,7 +79,8 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
 
       const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress)
       return () => subscription.remove()
-    }, [bottomSheetModalRef]))
+    }, [bottomSheetModalRef])
+  )
 
   const renderScene = ({ route } : { route : RouteProps}) => {
     switch (route.key) {
@@ -109,15 +111,17 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
     onDismiss()
   }
 
+  const { top } = useSafeAreaInsets()
+
   return (
     <View>
       <BottomSheetModal
         ref={bottomSheetModalRef}
+        topInset={top}
         snapPoints={["100%"]}
         animateOnMount={true}
         backgroundComponent={(props) => <BottomSheetBackground {...props} />}
         handleIndicatorStyle={$modalIndicator}
-        // handleIndicatorStyle={{ display: 'none' }}
         keyboardBehavior="fillParent"
         android_keyboardInputMode="adjustResize"
         // keyboardBehavior='interactive' // test
@@ -128,7 +132,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
         activeOffsetY={50}
         onDismiss={handleDismissModal} // todo on dismiss reset form and tab index
       >
-        <BottomSheetView style={$container}>
+        <BottomSheetView style={$viewContainer}>
 
             <TabView
               navigationState={{ index, routes }}
@@ -151,7 +155,8 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
 
 export default AddTransactionModal
 
-const $container: ViewStyle = {
+
+const $viewContainer: ViewStyle = {
   flex: 1
 };
 

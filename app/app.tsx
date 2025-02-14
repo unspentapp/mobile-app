@@ -52,11 +52,13 @@ const config = {
         Expenses: {
           screens: {
               Expenses: "expenses",
+
           }
         },
       }
     },
     AllTransactions: "AllTransactions",
+    TransactionDetails: "TransactionDetails",
   },
 }
 
@@ -112,12 +114,12 @@ function App(props: AppProps) {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ErrorBoundary catchErrors={Config.catchErrors}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-              <Toast position="top" autoHide={true} visibilityTime={3} config={toastConfig}/>
-              <AppNavigator
-                linking={linking}
-                initialState={initialNavigationState}
-                onStateChange={onNavigationStateChange}
-              />
+            <AppNavigator
+              linking={linking}
+              initialState={initialNavigationState}
+              onStateChange={onNavigationStateChange}
+            />
+            <Toast position="top" autoHide={true} visibilityTime={3} config={toastConfig}/>
           </GestureHandlerRootView>
         </ErrorBoundary>
       </SafeAreaProvider>

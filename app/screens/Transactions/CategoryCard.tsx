@@ -12,24 +12,18 @@ type Props = {
   categoryName: string,
   transactions: TransactionDataI[],
   totalExpenses: number,
-  onHeightChange: any,
   animationDelay?: number,
 }
 
-const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, onHeightChange, animationDelay }: Props) => {
+const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, animationDelay }: Props) => {
 
   const totalExpensesPerCategory = transactions.reduce((total, transaction) => total + transaction.amount, 0)
   const [isExpanded, setExpanded] = useState(false)
 
-  const onLayout = useCallback((event : LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    onHeightChange(height);
-  }, [onHeightChange]);
-
   
 
   return (
-    <View onLayout={onLayout} style={$cardContainer}>
+    <View style={$cardContainer}>
       <TouchableOpacity  onPress={() => setExpanded(!isExpanded)} style={$labelContainer}>
         <View style={$cardDescriptionContainer}>
           <Text style={[$title, categoryId === "unknown" ? { color: colors.textDim } : null]}>
