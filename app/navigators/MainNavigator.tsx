@@ -10,7 +10,7 @@ import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { SettingsScreen } from "app/screens/SettingsScreen"
 import { ExpensesNavigator } from "app/navigators/ExpensesNavigator"
 import { AnalyticsScreen } from "app/screens"
-import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen"
+import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen/AllTransactionsScreen"
 
 export type MainTabParamList = {
   Analytics: undefined,

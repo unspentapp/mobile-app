@@ -1,9 +1,9 @@
 import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
-import { Text, Screen, Header } from "app/components"
+import { Text, Screen } from "app/components"
 import { spacing } from "app/theme"
 import { useHeader } from "app/utils/useHeader"
-import EnhancedTransactionsList from "app/components/TransactionsList"
+import EnhancedTransactionsList from "app/screens/AllTransactionsScreen/TransactionsList"
 import { goBack, NavigationProps } from "app/navigators"
 
 

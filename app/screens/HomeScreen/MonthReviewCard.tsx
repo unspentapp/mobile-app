@@ -30,6 +30,7 @@ const $container: ViewStyle = {
 const $title: TextStyle = {
   textTransform: "uppercase",
   fontFamily: typography.secondary?.medium,
+  fontSize: 14,
   color: colors.textDim,
 
 }

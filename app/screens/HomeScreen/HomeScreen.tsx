@@ -17,18 +17,18 @@ import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import AddTransactionModal from "app/screens/Transactions/AddTransactionModal"
 import EnhancedCategoryCard from "app/screens/Transactions/CategoryCard"
-import CategoryModel from "../../db/models/CategoryModel"
+import CategoryModel from "../../../db/models/CategoryModel"
 import { withObservables } from "@nozbe/watermelondb/react"
-import database from "../../db"
+import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns"
-import { CategoryDataI, TransactionDataI } from "../../db/useWmStorage"
+import { CategoryDataI, TransactionDataI } from "../../../db/useWmStorage"
 import AddCategoryModal from "app/screens/Transactions/AddCategoryModal"
 import { useHeader } from "app/utils/useHeader"
 import { goBack } from "app/navigators"
 import profilePic from "assets/images/profile-pic.jpg"
 import { StatusBar } from "expo-status-bar"
-import MonthReviewCard from "app/screens/MonthReviewCard"
+import MonthReviewCard from "app/screens/HomeScreen/MonthReviewCard"
 
 
 
@@ -110,7 +110,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
   }, [transactions, categories]);
 
   // Calculate category expenses
-  const categoryExpenses = useMemo(() => {
+  /*const categoryExpenses = useMemo(() => {
 
     const expenses = new Map<string, number>();
 
@@ -120,7 +120,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     });
 
     return expenses;
-  }, [groupedTransactions]);
+  }, [groupedTransactions]);*/
 
   const { top } = useSafeAreaInsets()
 
@@ -128,12 +128,12 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   /* todo qui dentro posso metterci lo sfondo */
   return (
-    <View style={{ flex: 1 }}>
+    <View style={$screenContainer}>
       <StatusBar
         backgroundColor="transparent"
         translucent={true}
       />
-      <View style={{ flex: 1, paddingTop: top }}>
+      <View style={[$container, { paddingTop: top }]}>
         <AddTransactionModal
           bottomSheetModalRef={bottomSheetModalRef}
           isOpen={isModalOpen}
@@ -181,10 +181,10 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
             return (
               <EnhancedCategoryCard
                 key={categoryId}
-                categoryId={category.id}
+                categoryId={categoryId}
                 categoryName={category.name}
                 transactions={categoryTransactions}
-                totalAmount={categoryExpenses.get(categoryId) || 0}
+                // totalAmount={categoryExpenses.get(categoryId) || 0}
                 totalExpenses={totalMonthlyExpenses || 0}
                 animationDelay={index * 50}
               />
@@ -227,20 +227,20 @@ const enhance = withObservables([], () => {
 })
 
 const EnhancedHomeScreen = enhance(HomeScreen)
-// const EnhancedHomeScreen = (HomeScreen)
 export default EnhancedHomeScreen
+
+const $screenContainer: ViewStyle = {
+  flex: 1,
+}
+
+const $container: ViewStyle = {
+  flex: 1
+}
 
 const $topContainer: ViewStyle = {
   justifyContent: "flex-start",
   paddingHorizontal: spacing.lg,
   paddingVertical: spacing.xs
-}
-
-const $container: ViewStyle = {
-  flex: 1,
-  // backgroundColor: colors.background,
-  // padding: 24,
-  // backgroundColor: 'red' // test!
 }
 
 const $roundButton: ViewStyle = {

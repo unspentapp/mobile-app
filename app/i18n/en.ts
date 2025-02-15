@@ -1,4 +1,4 @@
-import homeScreen from "app/screens/HomeScreen"
+import homeScreen from "app/screens/HomeScreen/HomeScreen"
 
 const en = {
   common: {
