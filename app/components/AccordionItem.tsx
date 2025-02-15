@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleProp, ViewStyle } from "react-native"
 import Animated, {
+  SharedValue,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -8,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated"
 
 type Props = {
-  isExpanded: boolean
+  isExpanded: SharedValue<boolean>
   children?: React.ReactNode
   viewKey: string
   style?: StyleProp<ViewStyle>
@@ -33,7 +34,7 @@ export const AccordionItem = ({
   const height = useSharedValue(0);
 
   const derivedHeight = useDerivedValue(() =>
-    withSpring(height.value * Number(isExpanded), {
+    withSpring(height.value * Number(isExpanded.value), {
       damping: springConfig.damping,
       stiffness: springConfig.stiffness,
       mass: springConfig.mass,

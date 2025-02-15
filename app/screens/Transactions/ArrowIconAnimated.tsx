@@ -1,11 +1,11 @@
 import React from "react"
-import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated"
+import Animated, { SharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated"
 import { Icon } from "app/components"
 import { colors } from "app/theme"
 import { ViewStyle } from "react-native"
 
 interface ArrowIconAnimatedProps {
-  value: boolean
+  value: SharedValue<boolean>
   springConfig?: {
     damping?: number
     stiffness?: number
@@ -14,17 +14,17 @@ interface ArrowIconAnimatedProps {
 }
 
 const ArrowIconAnimated: React.FC<ArrowIconAnimatedProps> = ({
-  value,
-  springConfig = {
-    damping: 15,
-    stiffness: 200,
-    mass: 1
-  }
-  }) => {
+                                                               value,
+                                                               springConfig = {
+                                                                 damping: 15,
+                                                                 stiffness: 200,
+                                                                 mass: 1
+                                                               }
+                                                             }) => {
   const animatedIcon = useAnimatedStyle(() => ({
     transform: [{
       rotate: withSpring(
-        value ? '-180deg' : '0deg',
+        value.value ? '-180deg' : '0deg',
         {
           damping: springConfig.damping,
           stiffness: springConfig.stiffness,

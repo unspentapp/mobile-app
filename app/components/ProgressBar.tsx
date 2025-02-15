@@ -99,7 +99,7 @@ const $container: ViewStyle = {
   flex: 1,
   marginTop: spacing.sm,
   borderRadius: spacing.md,
-  width: '100%',
+  width: '95%',
 }
 
 const $content: ViewStyle = {

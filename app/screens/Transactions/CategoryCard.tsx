@@ -6,6 +6,7 @@ import ArrowIconAnimated from "app/screens/Transactions/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
 import { TransactionDataI } from "../../../db/useWmStorage"
 import RowItem from "app/components/RowItem"
+import { useSharedValue } from "react-native-reanimated"
 
 type Props = {
   categoryId: string,
@@ -18,13 +19,16 @@ type Props = {
 const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, animationDelay }: Props) => {
 
   const totalExpensesPerCategory = transactions.reduce((total, transaction) => total + transaction.amount, 0)
-  const [isExpanded, setExpanded] = useState(false)
+  const isExpanded = useSharedValue(false);
 
+  const onPress = () => {
+    isExpanded.value = !isExpanded.value;
+  };
   
 
   return (
     <View style={$cardContainer}>
-      <TouchableOpacity  onPress={() => setExpanded(!isExpanded)} style={$labelContainer}>
+      <TouchableOpacity  onPress={onPress} style={$labelContainer}>
         <View style={$cardDescriptionContainer}>
           <Text style={[$title, categoryId === "unknown" ? { color: colors.textDim } : null]}>
             {categoryName}
@@ -35,29 +39,28 @@ const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, a
         </View>
         <ArrowIconAnimated  value={isExpanded}/>
       </TouchableOpacity>
-      {isExpanded ? (
-        <AccordionItem
-          isExpanded={isExpanded}
-          viewKey="Accordion"
-          springConfig={{
-            damping: 15,
-            stiffness: 200,
-            mass: 0.8
-          }}
-        >
-          {transactions.length > 0 ? (
-            transactions.map(transaction => (
-              <RowItem
-                data={transaction}
-                key={transaction.id}
-              />
-            ))) : (
-              <Text style={$normalText}>
-                No expenses found.
-              </Text>
-          )}
-        </AccordionItem>
-      ) : null}
+
+      <AccordionItem
+        isExpanded={isExpanded}
+        viewKey="Accordion"
+        springConfig={{
+          damping: 15,
+          stiffness: 160,
+          mass: 0.8
+        }}
+      >
+        {transactions.length > 0 ? (
+          transactions.map(transaction => (
+            <RowItem
+              data={transaction}
+              key={transaction.id}
+            />
+          ))) : (
+            <Text style={$normalText}>
+              No expenses found.
+            </Text>
+        )}
+      </AccordionItem>
     </View>
   )
 }
