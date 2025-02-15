@@ -64,6 +64,9 @@ const en = {
     title: "Hello",
     seeAll: "See all",
     addCategory: "Add new category",
+    monthReview: {
+      title: "Spent this month",
+    }
   },
   settingsScreen: {
     howTo: "HOW TO",

@@ -28,6 +28,7 @@ import { useHeader } from "app/utils/useHeader"
 import { goBack } from "app/navigators"
 import profilePic from "assets/images/profile-pic.jpg"
 import { StatusBar } from "expo-status-bar"
+import MonthReviewCard from "app/screens/MonthReviewCard"
 
 
 
@@ -52,7 +53,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   // States
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>()
+  const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>(0)
 
   // Hooks
   const { bottom } = useSafeAreaInsets()
@@ -132,7 +133,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
         backgroundColor="transparent"
         translucent={true}
       />
-      <View style={{ flex: 1, paddingTop: top + spacing.lg }}>
+      <View style={{ flex: 1, paddingTop: top }}>
         <AddTransactionModal
           bottomSheetModalRef={bottomSheetModalRef}
           isOpen={isModalOpen}
@@ -145,10 +146,8 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
         />
 
         <View style={$topContainer}>
-          <Text
-            testID="transactions-heading"
-            text={`Spent this month: ${totalMonthlyExpenses} €`}
-            style={{ fontSize: 28, lineHeight: 28, fontFamily: typography.primary.semiBold}}
+          <MonthReviewCard
+            totalMonthlyExpenses={totalMonthlyExpenses}
           />
         </View>
 
@@ -157,7 +156,6 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingTop: spacing.lg,
             paddingHorizontal: spacing.lg,
           }}
           maintainVisibleContentPosition={{
@@ -235,14 +233,14 @@ export default EnhancedHomeScreen
 const $topContainer: ViewStyle = {
   justifyContent: "flex-start",
   paddingHorizontal: spacing.lg,
-  paddingVertical: spacing.sm
+  paddingVertical: spacing.xs
 }
 
 const $container: ViewStyle = {
   flex: 1,
   // backgroundColor: colors.background,
   // padding: 24,
-  backgroundColor: 'red' // test!
+  // backgroundColor: 'red' // test!
 }
 
 const $roundButton: ViewStyle = {
