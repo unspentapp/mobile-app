@@ -1,10 +1,12 @@
 import { Model } from "@nozbe/watermelondb";
-import { field, date, text, children, json } from "@nozbe/watermelondb/decorators"
+import { field, date, text, children } from "@nozbe/watermelondb/decorators"
+import { Associations } from "@nozbe/watermelondb/Model"
+import { TableName } from "../schema"
 
 // todo
 export default class UserModel extends Model {
-  static table = 'users'
-  static associations = {
+  static table = TableName.USERS
+  static associations : Associations = {
     transactions: { type: "has_many", foreignKey: "user_id" },
   }
 

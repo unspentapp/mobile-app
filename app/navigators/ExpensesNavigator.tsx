@@ -49,7 +49,7 @@ export function ExpensesNavigator() {
         }}
       />
 
-      <ExpensesStack.Screen
+      {/*<ExpensesStack.Screen
         name="TransactionDetails"
         component={TransactionDetails}
         options={{
@@ -58,7 +58,7 @@ export function ExpensesNavigator() {
           statusBarStyle: "dark",
           statusBarHidden: false,
         }}
-      />
+      />*/}
 
     </ExpensesStack.Navigator>
   )

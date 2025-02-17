@@ -1,40 +1,30 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
-  Animated,
-  Dimensions, Image, ImageStyle, Modal,
   ScrollView, TextInput, TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
-import { Header, Icon, Text, TextField, Screen } from "app/components"
+import { Icon, Text } from "app/components"
 import { colors, spacing, typography } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
-import BottomSheet, {
-  BottomSheetModal, BottomSheetTextInput, BottomSheetView, useBottomSheetSpringConfigs,
-} from "@gorhom/bottom-sheet"
-import { DynamicHeader } from "app/components/DynamicHeader"
+import { BottomSheetModal } from "@gorhom/bottom-sheet"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import AddTransactionModal from "app/screens/Transactions/AddTransactionModal"
-import EnhancedCategoryCard from "app/screens/Transactions/CategoryCard"
-import CategoryModel from "../../../db/models/CategoryModel"
+import EnhancedCategoryCard from "app/screens/HomeScreen/CategoryCard"
 import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
-import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns"
+import { endOfMonth, startOfMonth } from "date-fns"
 import { CategoryDataI, TransactionDataI } from "../../../db/useWmStorage"
-import AddCategoryModal from "app/screens/Transactions/AddCategoryModal"
-import { useHeader } from "app/utils/useHeader"
-import { goBack } from "app/navigators"
-import profilePic from "assets/images/profile-pic.jpg"
+import AddCategoryModal from "app/screens/HomeScreen/AddCategoryModal"
 import { StatusBar } from "expo-status-bar"
 import MonthReviewCard from "app/screens/HomeScreen/MonthReviewCard"
+import { useFocusEffect } from "@react-navigation/native"
 
 
 
-const HEADER_HEIGHT = 200
 const ROUND_BUTTON_SIZE = 56
-const USERNAME = "Amie"
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
   transactions: TransactionDataI[]
@@ -54,6 +44,8 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
   // States
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>(0)
+  const [groupedTransactions, setGroupedTransactions] = useState<Map<string, TransactionDataI[]>>(new Map())
+
 
   // Hooks
   const { bottom } = useSafeAreaInsets()
@@ -73,54 +65,44 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   const handlePresentNewCategorySheet = useCallback(() => {
     addCategorySheetRef.current?.present()
-    addCategoryInputRef.current?.focus()
+
+    setTimeout(() => {
+      addCategoryInputRef.current?.focus()
+    }, 100)
   }, [])
 
   // Navigation
   const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
 
-  useEffect(() => {
-    const totalExpenses = transactions.reduce((total, transaction) => total + transaction.amount, 0)
-    setTotalMonthlyExpenses(totalExpenses)
+  // Use useFocusEffect to recalculate when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      // Calculate total expenses
+      const totalExpenses = transactions.reduce((total, transaction) => total + transaction.amount, 0)
+      setTotalMonthlyExpenses(totalExpenses)
 
-  }, [transactions])
+      // Group transactions
+      const grouped = new Map<string, TransactionDataI[]>()
 
-  // Add this memoized value to group transactions by category
-  const groupedTransactions = useMemo(() => {
+      // Initialize with existing categories
+      categories.forEach(category => {
+        grouped.set(category.id, [])
+      })
 
-    const grouped = new Map<string, TransactionDataI[]>();
+      // Add an "unknown" category for null category transactions
+      grouped.set('unknown', [])
 
-    // Initialize with existing categories
-    categories.forEach(category => {
-      grouped.set(category.id, []);
-    });
+      // Group transactions
+      transactions.forEach(transaction => {
+        const categoryId = transaction.category?.id || 'unknown'
+        const categoryTransactions = grouped.get(categoryId) || []
+        categoryTransactions.push(transaction)
+        grouped.set(categoryId, categoryTransactions)
+      })
 
-    // Add an "unknown" category for null category transactions
-    grouped.set('unknown', []);
-
-    // Group transactions
-    transactions.forEach(transaction => {
-      const categoryId = transaction.category?.id || 'unknown';
-      const categoryTransactions = grouped.get(categoryId) || [];
-      categoryTransactions.push(transaction);
-      grouped.set(categoryId, categoryTransactions);
-    });
-
-    return grouped;
-  }, [transactions, categories]);
-
-  // Calculate category expenses
-  /*const categoryExpenses = useMemo(() => {
-
-    const expenses = new Map<string, number>();
-
-    groupedTransactions.forEach((transactions, categoryId) => {
-      const total = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-      expenses.set(categoryId, total);
-    });
-
-    return expenses;
-  }, [groupedTransactions]);*/
+      setGroupedTransactions(grouped)
+    }, [transactions, categories])
+  )
 
   const { top } = useSafeAreaInsets()
 
@@ -221,8 +203,8 @@ const enhance = withObservables([], () => {
       Q.where('type', 'expense'),
       Q.where('transaction_at', Q.gte(new Date(startDate).getTime())),
       Q.where('transaction_at', Q.lte(new Date(endDate).getTime())),
-    ),
-    categories: database.get("categories").query(),
+    ).observe(),
+    categories: database.get("categories").query().observe(),
   }
 })
 

@@ -1,6 +1,6 @@
 import React from "react"
 import Animated, { SharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated"
-import { Icon } from "app/components"
+import { Icon } from "app/components/index"
 import { colors } from "app/theme"
 import { ViewStyle } from "react-native"
 

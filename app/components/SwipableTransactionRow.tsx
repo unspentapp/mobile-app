@@ -28,7 +28,7 @@ export const SwipeableTransactionRow = ({
     const styleAnimation = useAnimatedStyle(() => {
 
       return {
-        transform: [{ translateX: drag.value + 50 }],
+        transform: [{ translateX: drag.value + 56 }],
       };
     });
 
@@ -52,6 +52,7 @@ export const SwipeableTransactionRow = ({
       enableTrackpadTwoFingerGesture
       rightThreshold={40}
       renderRightActions={RightAction}
+      containerStyle={$container}
     >
       <View style={[
         $itemWrapper,
@@ -59,14 +60,17 @@ export const SwipeableTransactionRow = ({
         index === sectionLength - 1 && $itemWrapperLast,
         { borderColor: categoryColor }
       ]}>
-        <RowItem data={item} />
+        <RowItem transaction={item} />
       </View>
     </ReanimatedSwipeable>
   );
 };
 
+const $container: ViewStyle = {
+  marginHorizontal: spacing.md
+}
+
 const $itemWrapper: ViewStyle = {
-  marginHorizontal: spacing.md,
   backgroundColor: "white",
   borderLeftWidth: 5,
 };
@@ -82,15 +86,17 @@ const $itemWrapperLast: ViewStyle = {
 };
 
 const $rightAction: ViewStyle = {
-  flexDirection: "row",
+  marginHorizontal: "auto",
+  marginVertical: "auto",
+  justifyContent: "center",
+  alignItems: "center",
 }
 
 const $deleteAction : ViewStyle = {
-  width: 50,
-  height: 50,
+  width: 56,
+  height: 56,
   backgroundColor: colors.error,
   alignItems: "center",
   justifyContent: "center",
-  borderTopRightRadius: spacing.xxs,
-  borderBottomRightRadius: spacing.xxs,
+  borderRadius: spacing.xxs,
 }

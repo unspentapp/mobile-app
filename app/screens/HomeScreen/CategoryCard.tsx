@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from "react"
-import { LayoutChangeEvent, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import React from "react"
+import { Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { AccordionItem } from "app/components/AccordionItem"
-import ArrowIconAnimated from "app/screens/Transactions/ArrowIconAnimated"
+import ArrowIconAnimated from "app/components/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
 import { TransactionDataI } from "../../../db/useWmStorage"
 import RowItem from "app/components/RowItem"
@@ -16,7 +16,7 @@ type Props = {
   animationDelay?: number,
 }
 
-const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, animationDelay }: Props) => {
+const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, animationDelay } : Props) => {
 
   const totalExpensesPerCategory = transactions.reduce((total, transaction) => total + transaction.amount, 0)
   const isExpanded = useSharedValue(false);
@@ -52,7 +52,7 @@ const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, a
         {transactions.length > 0 ? (
           transactions.map(transaction => (
             <RowItem
-              data={transaction}
+              transaction={transaction}
               key={transaction.id}
             />
           ))) : (

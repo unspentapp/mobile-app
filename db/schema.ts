@@ -1,11 +1,17 @@
-import { appSchema, tableSchema } from "@nozbe/watermelondb";
+import { appSchema, tableSchema } from "@nozbe/watermelondb"
 
+export enum TableName {
+  AUTH = 'auth_session',
+  TRANSACTIONS = 'transactions',
+  USERS = 'users',
+  CATEGORIES = 'categories',
+}
 
 export default appSchema({
   version: 1,
   tables: [
     tableSchema({
-      name: "auth_session",
+      name: TableName.AUTH,
       columns: [{
         name: "session",
         type: "string"
@@ -13,7 +19,7 @@ export default appSchema({
     }),
     // todo add indexes
     tableSchema({
-      name: "transactions",
+      name: TableName.TRANSACTIONS,
       columns: [
         { name: "user_id", type: "string" },
         { name: "category_id", type: "string", isIndexed: true},
@@ -28,7 +34,7 @@ export default appSchema({
       ]
     }),
     tableSchema({
-      name: "users",
+      name: TableName.USERS,
       columns: [
         { name: "username", type: "string" },
         { name: "email", type: "string" },
@@ -39,7 +45,7 @@ export default appSchema({
       ]
     }),
     tableSchema({
-      name: "categories",
+      name: TableName.CATEGORIES,
       columns: [
         { name: "user_id", type: "string" },
         { name: "name", type: "string" },

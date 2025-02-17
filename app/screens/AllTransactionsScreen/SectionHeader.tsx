@@ -47,7 +47,7 @@ const $monthHeaderContainer: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  paddingVertical: spacing.md,
+  paddingTop: spacing.xl,
   paddingHorizontal: spacing.md,
 }
 
@@ -61,10 +61,9 @@ const $sectionHeader: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  marginTop: spacing.sm,
-  marginBottom: spacing.xxs,
+  marginTop: spacing.xs,
+  marginBottom: spacing.xs,
   paddingHorizontal: spacing.md,
-  backgroundColor: colors.background,
 };
 
 const $sectionHeaderText: TextStyle = {

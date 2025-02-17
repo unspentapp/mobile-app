@@ -46,6 +46,9 @@ const palette = {
   angry100: "#F2D6CD",
   angry500: "#C03403",
 
+  green100: "#c4ffd5",
+  green500: "#186437",
+
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
 } as const
@@ -76,7 +79,7 @@ export const colors = {
   /**
    * The default color of the screen background.
    */
-  background: palette.neutral100, // original neutral100
+  background: palette.neutral200, // original neutral100
   /**
    * The default color of the screen background.
    */

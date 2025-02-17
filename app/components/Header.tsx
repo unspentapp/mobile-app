@@ -267,6 +267,7 @@ const $wrapper: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
+  backgroundColor: "blue"
 }
 
 const $container: ViewStyle = {

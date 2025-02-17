@@ -46,26 +46,11 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const categories = await database.get('categories')
+      const categories = await database.get<CategoryModel>('categories')
         .query(Q.sortBy('name', Q.asc))
         .fetch()
 
       // todo map CategoryModel in CategoryDataI
-      /*const years = new Set<number>()
-      categories.forEach(transaction => {
-        const year = new Date(transaction.transactionAt).getFullYear()
-
-        if (year >= 2000) {
-          years.add(year)
-        }
-      })
-
-      const yearTabs = Array.from(years)
-        .sort((a, b) => a - b)
-        .map(year => ({
-          year,
-          hasTransactions: true
-        }))*/
 
       setCategories(categories)
     }
@@ -91,17 +76,6 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   const handleKeyboardEnter = () => {
     if (selectedCategory) handleAddTransaction()
   }
-
-  // @ts-ignore
-  /*useEffect(() => {
-    if (lastIndexRef.current !== index) {
-      const timeoutId = setTimeout(() => {
-        firstTextInputRef.current?.focus();
-      }, 300);
-      lastIndexRef.current = index;
-      return () => clearTimeout(timeoutId);
-    }
-  }, [index, isModalOpen]);*/
 
   useFocusEffect(
     useCallback(() => {

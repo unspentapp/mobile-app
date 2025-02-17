@@ -10,6 +10,7 @@ import { Text } from "app/components/Text"
 import { colors, spacing } from "app/theme"
 import { YearTabsContainer, SectionHeader } from "app/screens"
 import { SwipeableTransactionRow } from "app/components"
+import TransactionModel from "../../../db/models/TransactionModel"
 
 
 export interface Props {
@@ -62,7 +63,7 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
   // Fetch available years with transactions
   useEffect(() => {
     const fetchAvailableYears = async () => {
-      const allTransactions = await database.get('transactions')
+      const allTransactions = await database.get<TransactionModel>('transactions')
         .query(Q.sortBy('transaction_at', Q.desc))
         .fetch()
 
@@ -103,7 +104,7 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
   }, [availableYears, selectedYear])
 
   // Transform and group transactions by month and week
-  const prepareSections = (transactions) => {
+  const prepareSections = (transactions : TransactionModel[]) => {
     const monthlyStats: { [key: string]: MonthlyStats } = {};
     const weeklyStats: { [key: string]: WeeklyStats } = {};
 
@@ -196,9 +197,9 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
         )}
         ListEmptyComponent={<Text preset={"formHelper"} tx={"allTransactionsScreen.noItems"} style={$noItems}/>}
         showsVerticalScrollIndicator={false}
-        initialNumToRender={30}
+        initialNumToRender={20}
         // SectionSeparatorComponent={() => <View style={$sectionSeparator} />}
-        renderSectionFooter={() => <View style={$sectionFooter} />}
+        // renderSectionFooter={() => <View style={$sectionFooter} />}
       />
     </View>
   )

@@ -1,10 +1,12 @@
 /** @type {import('@babel/core').TransformOptions['plugins']} */
 const plugins = [
+  ["@babel/plugin-proposal-decorators", { "version": "legacy" }],
+  ["@babel/plugin-transform-class-properties", { "loose": true }],
+  ['@babel/plugin-transform-flow-strip-types'],
+  ['@babel/plugin-proposal-class-properties', {loose: true}],
   /** react-native-reanimated web support @see https://docs.swmansion.com/react-native-reanimated/docs/guides/web-support/ */
   "@babel/plugin-transform-export-namespace-from",
   "react-native-reanimated/plugin",
-  ["@babel/plugin-proposal-decorators", { "legacy": true }]
-
 ]
 
 /** @type {import('@babel/core').TransformOptions} */

@@ -108,6 +108,16 @@ const en = {
       title: "Select a color",
       hint: "",
     },
+  },
+  transactionDetails: {
+    title: "Transaction Details",
+    note: "Note",
+    amount: "Amount",
+    type: "Transaction Type",
+    category: "Category",
+    date: "Date",
+    expenseType: "Expense",
+    incomeType: "Income",
   }
 }
 

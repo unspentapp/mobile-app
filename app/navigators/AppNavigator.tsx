@@ -40,6 +40,9 @@ export type AppStackParamList = {
   Login: undefined
   Main: NavigatorScreenParams<MainTabParamList>
   AllTransactions: undefined
+  TransactionDetails: {
+    itemId: string | undefined;
+  };
 }
 
 /**
@@ -76,8 +79,6 @@ const AppStack = () => {
             name="Main"
             component={MainNavigator}
             options={{
-              statusBarColor: colors.background,
-              statusBarStyle: "dark",
               statusBarHidden: false,
             }}
           />
@@ -85,21 +86,17 @@ const AppStack = () => {
             name="AllTransactions"
             component={AllTransactionsScreen}
             options={{
-              statusBarColor: colors.background,
-              statusBarStyle: "dark",
               statusBarHidden: false,
 
             }}
           />
-          {/*<RootStack.Screen
+          <RootStack.Screen
             name="TransactionDetails"
             component={TransactionDetails}
             options={{
-              statusBarColor: colors.background,
-              statusBarStyle: "dark",
               statusBarHidden: false,
             }}
-          />*/}
+          />
         </>
       ) : (
         <>

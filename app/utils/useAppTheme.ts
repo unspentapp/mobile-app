@@ -26,7 +26,7 @@ export const ThemeContext = createContext<ThemeContextType>({
 })
 
 const themeContextToTheme = (themeContext: ThemeContexts): Theme =>
-  themeContext === "dark" ? lightTheme : lightTheme
+  themeContext === "dark" ? lightTheme : lightTheme // todo
 
 const setImperativeTheming = (theme: Theme) => {
   SystemUI.setBackgroundColorAsync(theme.colors.background)

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import {
   BottomSheetFooter,
   BottomSheetModal,
@@ -6,13 +6,44 @@ import {
   BottomSheetView,
   useBottomSheetSpringConfigs,
 } from "@gorhom/bottom-sheet"
-import { Button, Icon, Text } from "app/components"
-import { Platform, Pressable, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Icon, Text } from "app/components"
+import {
+  Platform,
+  Pressable,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import database from "../../../db"
 import BottomSheetBackdrop from "app/components/BottomSheetBackdrop"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useFocusEffect } from "@react-navigation/native"
+
+
+
+const CustomTextInput = ({ addCategoryInputRef, handleAddCategory }) => {
+  const [value, setValue] = useState("");
+
+  return (
+    <BottomSheetTextInput
+      ref={addCategoryInputRef}
+      value={value}
+      autoComplete={"off"}
+      style={$modalAddCategoryInput}
+      textAlign="left"
+      inputMode="text"
+      returnKeyType="done"
+      cursorColor={colors.palette.primary500}
+      placeholder="Category name"
+      placeholderTextColor={colors.palette.neutral400}
+      maxFontSizeMultiplier={0}
+      maxLength={40}
+      onChangeText={setValue}
+      onSubmitEditing={handleAddCategory}
+    />
+  )
+}
 
 const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
   const [categoryLabel, setCategoryLabel] = useState<string>("")
@@ -61,7 +92,7 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
     stiffness: 500,
   });
 
-  const snapPoints = useMemo(() => ["70%", "85%", "100%"], []);
+  const snapPoints = useMemo(() => ["70%", "85%", "95%"], []);
 
   const renderFooter = (props) => (
     <BottomSheetFooter {...props} bottomInset={bottom}>
@@ -83,7 +114,6 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
       handleIndicatorStyle={$modalIndicator}
       snapPoints={snapPoints}
       enablePanDownToClose={true}
-      // enableDynamicSizing={true}
       animateOnMount={true}
       backdropComponent={(props) => <BottomSheetBackdrop {...props} />}
       onDismiss={resetModal}
@@ -96,22 +126,10 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
         <Text text="Add new category" preset={"subheading"} />
         <View style={$modalAddCategoryInputContainer}>
           <Icon icon="tags" color={colors.palette.neutral400} size={typography.iconSize} />
-          <BottomSheetTextInput
-            ref={addCategoryInputRef}
-            value={categoryLabel}
-            autoComplete={"off"}
-            autoCapitalize={"sentences"}
-            style={$modalAddCategoryInput}
-            textAlign="left"
-            inputMode="text"
-            returnKeyType="done"
-            cursorColor={colors.palette.primary500}
-            placeholder="Category name"
-            placeholderTextColor={colors.palette.neutral400}
-            maxFontSizeMultiplier={0}
-            maxLength={40}
-            onChangeText={setCategoryLabel}
-            onSubmitEditing={handleAddCategory}
+
+          <CustomTextInput
+            addCategoryInputRef={addCategoryInputRef}
+            handleAddCategory={handleAddCategory}
           />
         </View>
         <View style={$colorsContainer}>
@@ -131,8 +149,8 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
                   $colorCircle,
                   { backgroundColor: value },
                   value === "#ffffff"
-                    ? { borderWidth: 1, borderColor: colors.palette.neutral300 }
-                    : { borderColor: colors.transparent },
+                    ? $selected
+                    : $unselected,
                 ]}
               />
             </Pressable>
@@ -209,11 +227,12 @@ const $closeButton: ViewStyle = {
   justifyContent: "center",
 }
 
+const $selected: ViewStyle = {
+  borderWidth: 1,
+  borderColor: colors.palette.neutral300,
+}
 
-/*const $footerContainer: ViewStyle = {
-  padding: 12,
-  margin: 12,
-  borderRadius: 12,
-  backgroundColor: '#80f',
-}*/
+const $unselected: ViewStyle = {
+  borderColor: colors.transparent,
+}
 

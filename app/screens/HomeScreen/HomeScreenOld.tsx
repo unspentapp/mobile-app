@@ -16,14 +16,14 @@ import BottomSheet, {
 import { DynamicHeader } from "app/components/DynamicHeader"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import AddTransactionModal from "app/screens/Transactions/AddTransactionModal"
-import EnhancedCategoryCard from "app/screens/Transactions/CategoryCard"
+import EnhancedCategoryCard from "app/screens/HomeScreen/CategoryCard"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns"
 import { CategoryDataI, TransactionDataI } from "../../../db/useWmStorage"
-import AddCategoryModal from "app/screens/Transactions/AddCategoryModal"
+import AddCategoryModal from "app/screens/HomeScreen/AddCategoryModal"
 
 
 const HEADER_HEIGHT = 200

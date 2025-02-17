@@ -2,9 +2,7 @@ import React from "react"
 import { ListItem, Text } from "app/components"
 import { GestureResponderEvent, TextStyle, ViewStyle } from "react-native"
 import { log } from "app/utils/logger"
-import CategoryModel from "../../../db/models/CategoryModel"
 import TransactionModel from "../../../db/models/TransactionModel"
-import { CategoryDataI } from "../../../db/useWmStorage"
 
 interface Props {
   transaction: TransactionModel;
@@ -12,6 +10,7 @@ interface Props {
   onPress?: (event: GestureResponderEvent) => void
 }
 
+@deprecated
 export const ExpenseCard = (props: Props) => {
   log.info(props.transaction.amount, props.transaction.description)
 

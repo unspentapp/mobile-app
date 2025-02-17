@@ -4,33 +4,37 @@ import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
 import format from "date-fns/format"
 import { TransactionDataI } from "../../db/useWmStorage"
-import { useNavigation } from "@react-navigation/native"
+import { NavigationProp, useNavigation } from "@react-navigation/native"
+import { AppStackParamList } from "app/navigators"
+import { withObservables } from "@nozbe/watermelondb/react"
+import TransactionModel from "../../db/models/TransactionModel"
 
 export interface RowItemProps {
-  data : TransactionDataI
+  transaction : TransactionDataI
 }
 
-const RowItem = ({ data } : RowItemProps) => {
-  const navigation = useNavigation()
+const RowItem = ({ transaction } : RowItemProps) => {
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>()
+
 
   const isExpense = () => {
-    return data.type === "expense"
+    return transaction.type === "expense"
   }
 
   return (
     <View>
       <TouchableOpacity
         style={$container}
-        onPress={() => navigation.navigate("TransactionDetails", { itemId: data.id })} // create a stack navigator and pass the item. In the new screen user should be able to edit transactions
+        onPress={() => navigation.navigate("TransactionDetails", { itemId: transaction.id })} // create a stack navigator and pass the item. In the new screen user should be able to edit transactions
       >
         <View style={$leftContainer}>
           <Text style={$description} numberOfLines={1}>
-            {data.description}
+            {transaction.description}
           </Text>
 
           {/* todo dynamic currency */}
           <Text style={$date}>
-            {format(data.transactionAt, "dd MMM", { weekStartsOn: 0 })}
+            {format(transaction.transactionAt, "dd MMM", { weekStartsOn: 0 })}
           </Text>
         </View>
         {/*
@@ -38,15 +42,20 @@ const RowItem = ({ data } : RowItemProps) => {
          * income >> + sign [green]
          */}
         <Text style={[$amount, isExpense() ? $expense : $income]}>
-          {data.type === "expense" ? "- " : "+ "}
-          <Text style={$amount}>{data.amount} €</Text>
+          {transaction.type === "expense" ? "- " : "+ "}
+          <Text style={$amount}>{transaction.amount} €</Text>
         </Text>
       </TouchableOpacity>
     </View>
   )
 }
 
-export default RowItem
+
+const enhance = withObservables(["transaction"], ({ transaction }: { transaction : TransactionModel }) => ({
+  transaction: transaction.observe(),
+}))
+
+export default enhance(RowItem)
 
 const $container: ViewStyle = {
   position: "relative",

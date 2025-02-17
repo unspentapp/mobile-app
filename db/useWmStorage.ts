@@ -3,17 +3,17 @@ import { log } from "app/utils/logger"
 import database from "./index"
 import TransactionModel from "./models/TransactionModel"
 import { Q } from "@nozbe/watermelondb"
-import { date, field, readonly } from "@nozbe/watermelondb/decorators"
 
 export interface TransactionDataI {
   id?: string
-  userId: string;
+  userId?: string;
   amount: number;
   description: string;
   categoryId?: string;
+  category?: CategoryDataI,
   type: "expense" | "income";
   transactionAt: Date;
-  isRecurring: boolean;
+  isRecurring?: boolean;
 }
 
 export interface getTransactionFiltersI {
