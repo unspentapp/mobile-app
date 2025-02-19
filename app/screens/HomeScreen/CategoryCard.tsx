@@ -7,37 +7,53 @@ import { ProgressBar } from "app/components/ProgressBar"
 import { TransactionDataI } from "../../../db/useWmStorage"
 import RowItem from "app/components/RowItem"
 import { useSharedValue } from "react-native-reanimated"
+import CategoryModel from "../../../db/models/CategoryModel"
+import { withObservables } from "@nozbe/watermelondb/react"
 
 type Props = {
   categoryId: string,
-  categoryName: string,
   transactions: TransactionDataI[],
   totalExpenses: number,
   animationDelay?: number,
+  presentConfirmationModal: (category: Partial<CategoryModel>) => void,
+  category: Partial<CategoryModel>,
 }
 
-const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, animationDelay } : Props) => {
-
+const CategoryCard = ({
+    categoryId,
+    transactions,
+    totalExpenses,
+    animationDelay,
+    presentConfirmationModal,
+    category
+  }: Props) => {
   const totalExpensesPerCategory = transactions.reduce((total, transaction) => total + transaction.amount, 0)
-  const isExpanded = useSharedValue(false);
+  const isExpanded = useSharedValue(false)
 
   const onPress = () => {
-    isExpanded.value = !isExpanded.value;
-  };
-  
+    isExpanded.value = !isExpanded.value
+  }
+
+  const handleLongPress = () => {
+    presentConfirmationModal(category)
+  }
 
   return (
     <View style={$cardContainer}>
-      <TouchableOpacity  onPress={onPress} style={$labelContainer}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={$labelContainer}
+        onLongPress={handleLongPress}
+      >
         <View style={$cardDescriptionContainer}>
           <Text style={[$title, categoryId === "unknown" ? { color: colors.textDim } : null]}>
-            {categoryName}
+            {category.name}
           </Text>
           <View style={$progressBarContainer}>
             <ProgressBar numerator={totalExpensesPerCategory} denominator={totalExpenses} animationDelay={animationDelay} />
           </View>
         </View>
-        <ArrowIconAnimated  value={isExpanded}/>
+        <ArrowIconAnimated value={isExpanded}/>
       </TouchableOpacity>
 
       <AccordionItem
@@ -56,9 +72,9 @@ const CategoryCard = ({ categoryId, categoryName, transactions, totalExpenses, a
               key={transaction.id}
             />
           ))) : (
-            <Text style={$normalText}>
-              No expenses found.
-            </Text>
+          <Text style={$normalText}>
+            No expenses found.
+          </Text>
         )}
       </AccordionItem>
     </View>

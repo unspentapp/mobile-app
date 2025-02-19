@@ -53,6 +53,7 @@ const RowItem = ({ transaction } : RowItemProps) => {
 
 const enhance = withObservables(["transaction"], ({ transaction }: { transaction : TransactionModel }) => ({
   transaction: transaction.observe(),
+  category: transaction.category?.observe(),
 }))
 
 export default enhance(RowItem)

@@ -16,19 +16,23 @@ import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
 import { endOfMonth, startOfMonth } from "date-fns"
-import { CategoryDataI, TransactionDataI } from "../../../db/useWmStorage"
 import AddCategoryModal from "app/screens/HomeScreen/AddCategoryModal"
 import { StatusBar } from "expo-status-bar"
 import MonthReviewCard from "app/screens/HomeScreen/MonthReviewCard"
 import { useFocusEffect } from "@react-navigation/native"
+import { ConfirmationSheet } from "app/components/ConfirmationSheet"
+import CategoryModel from "../../../db/models/CategoryModel"
+import { useModals } from "app/hooks/useModals"
+import TransactionModel from "../../../db/models/TransactionModel"
+
 
 
 
 const ROUND_BUTTON_SIZE = 56
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
-  transactions: TransactionDataI[]
-  categories: CategoryDataI[]
+  transactions: TransactionModel[]
+  categories: CategoryModel[]
 }
 
 type BottomSheetTextInputRef = TextInput
@@ -36,40 +40,17 @@ type BottomSheetTextInputRef = TextInput
 
 const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...props }) => {
   const { navigation } = props
-
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const addCategorySheetRef = useRef<BottomSheetModal>(null);
-  const addCategoryInputRef = useRef<BottomSheetTextInputRef>(null)
+  const { top, bottom } = useSafeAreaInsets()
+  const {
+    modalState,
+    refs,
+    actions
+  } = useModals()
 
   // States
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>(0)
-  const [groupedTransactions, setGroupedTransactions] = useState<Map<string, TransactionDataI[]>>(new Map())
-
-
-  // Hooks
-  const { bottom } = useSafeAreaInsets()
-
-  // Constants
-  // const tabBarSpacing = bottom + 55
-
-  // Handlers
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present()
-    setIsModalOpen(true)
-  }, [])
-
-  const handleModalDismiss = useCallback(() => {
-    setIsModalOpen(false)
-  }, [])
-
-  const handlePresentNewCategorySheet = useCallback(() => {
-    addCategorySheetRef.current?.present()
-
-    setTimeout(() => {
-      addCategoryInputRef.current?.focus()
-    }, 100)
-  }, [])
+  const [groupedTransactions, setGroupedTransactions] = useState<Map<string, TransactionModel[]>>(new Map())
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
 
   // Navigation
   const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
@@ -82,7 +63,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
       setTotalMonthlyExpenses(totalExpenses)
 
       // Group transactions
-      const grouped = new Map<string, TransactionDataI[]>()
+      const grouped = new Map<string, TransactionModel[]>()
 
       // Initialize with existing categories
       categories.forEach(category => {
@@ -104,42 +85,129 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     }, [transactions, categories])
   )
 
-  const { top } = useSafeAreaInsets()
+/*
+  const handlePresentConfirmationSheet = useCallback((category: Partial<CategoryModel>) => {
+    setEditableCategory(category)
+    setIsConfirmationVisible(true)
+    confirmationSheetRef?.current?.present()
+  }, [])
+
+  const handleEditCategorySheet = useCallback(() => {
+    setModalType('edit')
+    setIsConfirmationVisible(false)
+    addCategorySheetRef.current?.present()
+  }, [])
+
+  const handleDismissConfirmationSheet = useCallback(() => {
+    setIsConfirmationVisible(false)
+    confirmationSheetRef.current?.dismiss()
+    setEditableCategory(null)
+  }, [])
+
+  const handleDismissAddCategorySheet = useCallback(() => {
+    addCategorySheetRef.current?.dismiss()
+    setIsConfirmationVisible(false)
+    confirmationSheetRef.current?.dismiss()
+    setEditableCategory(null)
+    setModalType('new')
+  }, [])
+*/
+
+
+  const handlePresentModalPress = useCallback(() => {
+    refs.bottomSheetModalRef.current?.present()
+    setIsTransactionModalOpen(true)
+  }, [])
+
+  const handleDeleteCategory = async () => {
+    if (!modalState.category?.id) return
+
+    const categoryId = modalState.category.id
+
+    try {
+      await database.write(async () => {
+        const categoryTransactions = await database
+          .get<TransactionModel>('transactions')
+          .query(
+            Q.where('category_id', categoryId)
+          )
+          .fetch()
+
+        // Update all transactions to remove category reference
+        for (const transaction of categoryTransactions) {
+          type UpdateFunction = (tx: TransactionModel) => void;
+          const updateFn: UpdateFunction = (tx) => {
+            tx.category = undefined
+          };
+          await transaction.update(updateFn);
+        }
+
+        // Delete the category
+        const categoryRecord = await database
+          .get<CategoryModel>('categories')
+          .find(categoryId)
+
+        if (categoryRecord) {
+          await categoryRecord.destroyPermanently()
+        }
+      })
+
+      // Close modals
+      actions.closeAddCategorySheet()
+      actions.closeConfirmationSheet()
+
+    } catch (error) {
+      console.error('Error deleting category:', error)
+    }
+  }
 
 
 
-  /* todo qui dentro posso metterci lo sfondo */
   return (
     <View style={$screenContainer}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-      />
+      <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={[$container, { paddingTop: top }]}>
         <AddTransactionModal
-          bottomSheetModalRef={bottomSheetModalRef}
-          isOpen={isModalOpen}
-          onDismiss={handleModalDismiss}
+          bottomSheetModalRef={refs.bottomSheetModalRef}
+          isOpen={isTransactionModalOpen}
+          onDismiss={() => setIsTransactionModalOpen(false)}
         />
 
         <AddCategoryModal
-          addCategorySheetRef={addCategorySheetRef}
-          addCategoryInputRef={addCategoryInputRef}
+          modalType={modalState.type}
+          category={modalState.category}
+          addCategorySheetRef={refs.addCategorySheetRef}
+          addCategoryInputRef={refs.addCategoryInputRef}
+          onDismiss={actions.closeAddCategorySheet}
         />
 
-        <View style={$topContainer}>
-          <MonthReviewCard
-            totalMonthlyExpenses={totalMonthlyExpenses}
+        {modalState.category && (
+          <ConfirmationSheet
+            bottomSheetRef={refs.confirmationSheetRef}
+            title={`Category: ${modalState.category.name}`}
+            primaryButton={{
+              text: "Edit",
+              onPress: () => actions.openAddCategorySheet('edit', modalState.category),
+              style: { backgroundColor: 'green' },
+              textStyle: { color: 'white' },
+            }}
+            secondaryButton={{
+              text: "Delete",
+              onPress: handleDeleteCategory,
+            }}
+            onDismiss={actions.closeConfirmationSheet}
           />
+        )}
+
+        <View style={$topContainer}>
+          <MonthReviewCard totalMonthlyExpenses={totalMonthlyExpenses} />
         </View>
 
         <ScrollView
           style={$scrollViewContainer}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: spacing.lg,
-          }}
+          contentContainerStyle={{ paddingHorizontal: spacing.lg }}
           maintainVisibleContentPosition={{
             minIndexForVisible: 0,
             autoscrollToTopThreshold: undefined,
@@ -152,34 +220,32 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
           </View>
 
           {groupedTransactions.size > 1 ? [...groupedTransactions].map(([categoryId, categoryTransactions], index) => {
-            // Find the category object or create an "Unknown" category for null cases
             const category = categoryId === 'unknown'
               ? { id: 'unknown', name: 'Uncategorized', color: colors.textDim, type: 'expense' }
-              : categories.find(c => c.id === categoryId);
+              : categories.find(c => c.id === categoryId)
 
-            if (!category) return null;
-            if (categoryId === 'unknown' && categoryTransactions.length === 0) return null;
+            if (!category) return null
+            if (categoryId === 'unknown' && categoryTransactions.length === 0) return null
 
             return (
               <EnhancedCategoryCard
                 key={categoryId}
                 categoryId={categoryId}
-                categoryName={category.name}
+                category={category}
                 transactions={categoryTransactions}
-                // totalAmount={categoryExpenses.get(categoryId) || 0}
                 totalExpenses={totalMonthlyExpenses || 0}
                 animationDelay={index * 50}
+                presentConfirmationModal={actions.openConfirmationSheet}
               />
-            );
-          }) : null }
+            )
+          }) : null}
 
           <TouchableOpacity
             style={$addCategoryButtonContainer}
-            onPress={handlePresentNewCategorySheet}
+            onPress={() => actions.openAddCategorySheet('new')}
           >
             <Text tx={"homeScreen.addCategory"} style={$addNewCategoryText}/>
           </TouchableOpacity>
-
         </ScrollView>
 
         <TouchableOpacity

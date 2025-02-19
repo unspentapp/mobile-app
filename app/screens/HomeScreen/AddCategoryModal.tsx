@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react"
+import React, { ForwardedRef, RefObject, useCallback, useEffect, useMemo, useState } from "react"
 import {
   BottomSheetFooter,
   BottomSheetModal,
@@ -8,8 +8,9 @@ import {
 } from "@gorhom/bottom-sheet"
 import { Icon, Text } from "app/components"
 import {
+  NativeSyntheticEvent,
   Platform,
-  Pressable,
+  Pressable, TextInput, TextInputSubmitEditingEventData,
   TextStyle,
   TouchableOpacity,
   View,
@@ -19,12 +20,33 @@ import { colors, spacing, typography } from "app/theme"
 import database from "../../../db"
 import BottomSheetBackdrop from "app/components/BottomSheetBackdrop"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import CategoryModel from "../../../db/models/CategoryModel"
+import { BottomSheetDefaultFooterProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetFooter/types"
 
 
+export type CategoryModalProps = {
+  modalType: 'new' | 'edit',
+  category: Partial<CategoryModel> | null,
+  addCategorySheetRef: RefObject<BottomSheetModal>,
+  addCategoryInputRef: RefObject<TextInput>,
+  onDismiss?: () => void
+  onSubmit?: () => void
+}
 
-const CustomTextInput = ({ addCategoryInputRef, handleAddCategory }) => {
-  const [value, setValue] = useState("");
+type CustomTextInputProps = {
+  addCategoryInputRef: ForwardedRef<TextInput>,
+  value: string,
+  onChangeText: (text: string) => void,
+  handleAddCategory: (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void,
+}
 
+/* moved out due to a modal text input bug which cause a rerendering during typing */
+const CustomTextInput = ({
+     addCategoryInputRef,
+     value,
+     onChangeText,
+     handleAddCategory,
+   }: CustomTextInputProps) => {
   return (
     <BottomSheetTextInput
       ref={addCategoryInputRef}
@@ -39,15 +61,22 @@ const CustomTextInput = ({ addCategoryInputRef, handleAddCategory }) => {
       placeholderTextColor={colors.palette.neutral400}
       maxFontSizeMultiplier={0}
       maxLength={40}
-      onChangeText={setValue}
+      onChangeText={onChangeText}
       onSubmitEditing={handleAddCategory}
     />
   )
 }
 
-const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
-  const [categoryLabel, setCategoryLabel] = useState<string>("")
-  const [selectedColor, setSelectedColor] = useState<keyof typeof colors.custom>("color1")
+const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, modalType, onDismiss } : CategoryModalProps) => {
+  const [categoryLabel, setCategoryLabel] = useState<string>(category?.name || "")
+  const [selectedColor, setSelectedColor] = useState<keyof typeof colors.custom>(category?.color || "color1")
+
+  useEffect(() => {
+    if (category) {
+      setCategoryLabel(category.name || "")
+      setSelectedColor(category.color || "color1")
+    }
+  }, [category])
 
   const { bottom } = useSafeAreaInsets()
 
@@ -59,22 +88,31 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
     if (categoryLabel.trim() === "") {
       console.log("[ADD CATEGORY]: categoryLabel is empty")
       return
-    } // todo display error message to user
+    }
 
     try {
       await database.write(async () => {
-        const categoriesCollection = database.get('categories')
-        await categoriesCollection.create((category) => {
-          category.name = categoryLabel
-          category.type = "expense"
-          category.isDefault = false
-          category.color = selectedColor
-        })
+        const categoriesCollection = database.get<CategoryModel>('categories')
+
+        if (category?.id) {
+          // Update existing category
+          const existingCategory = await categoriesCollection.find(category.id)
+          await existingCategory.update(category => {
+            category.name = categoryLabel
+            category.color = selectedColor
+          })
+        } else {
+          // Create new category
+          await categoriesCollection.create((category) => {
+            category.name = categoryLabel
+            category.type = "expense"
+            category.isDefault = false
+            category.color = selectedColor
+          })
+        }
       })
     } finally {
-      setCategoryLabel("")
-      setSelectedColor("color1")
-
+      resetModal()
       addCategorySheetRef.current?.close()
     }
   }
@@ -82,6 +120,7 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
   const resetModal = useCallback(() => {
     setCategoryLabel("")
     setSelectedColor("color1")
+    onDismiss?.()
   }, [])
 
   const animationConfigs = useBottomSheetSpringConfigs({
@@ -94,7 +133,7 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
 
   const snapPoints = useMemo(() => ["70%", "85%", "95%"], []);
 
-  const renderFooter = (props) => (
+  const renderFooter = (props : BottomSheetDefaultFooterProps) => (
     <BottomSheetFooter {...props} bottomInset={bottom}>
       <View>
         <TouchableOpacity
@@ -123,13 +162,18 @@ const AddCategoryModal = ({ addCategorySheetRef, addCategoryInputRef }) => {
       keyboardBlurBehavior="restore"
     >
       <BottomSheetView style={$addCategorySheetContainer}>
-        <Text text="Add new category" preset={"subheading"} />
+        <Text
+          text={modalType === 'edit' ? "Edit category" : "Add new category"}
+          preset={"subheading"}
+        />
         <View style={$modalAddCategoryInputContainer}>
           <Icon icon="tags" color={colors.palette.neutral400} size={typography.iconSize} />
 
           <CustomTextInput
             addCategoryInputRef={addCategoryInputRef}
-            handleAddCategory={handleAddCategory}
+            value={categoryLabel}
+            onChangeText={setCategoryLabel}
+            handleAddCategory={() => handleAddCategory()}
           />
         </View>
         <View style={$colorsContainer}>

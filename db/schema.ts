@@ -22,7 +22,7 @@ export default appSchema({
       name: TableName.TRANSACTIONS,
       columns: [
         { name: "user_id", type: "string" },
-        { name: "category_id", type: "string", isIndexed: true},
+        { name: "category_id", type: "string"},
         { name: "amount", type: "number" },
         { name: "transaction_at", type: "number" },
         { name: "description", type: "string" },

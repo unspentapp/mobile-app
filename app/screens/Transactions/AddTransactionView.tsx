@@ -228,7 +228,7 @@ const $modalExpenseInput: TextStyle = {
   lineHeight: 56, // Should be larger than fontSize
   minWidth: 48,
   color: colors.palette.neutral700,
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.transparent,
   includeFontPadding: false, // Add this to prevent padding issues
   padding: 0, // Add this to ensure no extra padding
   textAlignVertical: 'center', // Add this for better vertical alignment

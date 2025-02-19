@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { BackHandler, Keyboard, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { BackHandler, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { StatusBar } from "expo-status-bar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { AppStackParamList, goBack } from "app/navigators"
@@ -13,6 +13,7 @@ import { CalendarModal } from "app/screens/Transactions/CalendarModal"
 import format from "date-fns/format"
 import { isToday } from "date-fns"
 import AnimatedDropdown, { DropdownOption } from "app/components/AnimatedDropdown"
+
 
 type TransactionDetailsRouteProp = RouteProp<AppStackParamList, 'TransactionDetails'>;
 type TransactionType = Partial<TransactionModel>
@@ -58,7 +59,7 @@ const TransactionDetails = () => {
       const updatedTransaction = {
         amount: parseFloat(amount),
         description,
-        categoryId: category?.id,
+        category
       }
 
       await transaction.updateWithCategory(updatedTransaction)
@@ -68,7 +69,7 @@ const TransactionDetails = () => {
         ...transaction,
         description,
         amount: parseFloat(amount),
-        categoryId: category?.id,
+        category
       })
 
       setIsEditing(false)
@@ -88,6 +89,11 @@ const TransactionDetails = () => {
           label: category.name,
           value: category.id
         }))
+
+        categoryOptions.push({
+          label: "Uncategorized",
+          value: "unknown",
+        })
 
         setCategories(categoryOptions)
       } catch (e) {
@@ -118,7 +124,7 @@ const TransactionDetails = () => {
           setTransaction(transaction)
           setDescription(transaction.description || "")
           setAmount(transaction.amount.toString())
-          setDate(transaction.transactionAt || "")
+          setDate(format(new Date(transaction.transactionAt), 'eee do MMM, yyyy') || "")
 
           if (category) {
             setCategory(category)
@@ -154,18 +160,17 @@ const TransactionDetails = () => {
     setFocusedInput(inputName)
   }
 
-  const handleBlur = () => {
+
+
+/*  const handleBlur = () => {
     setIsEditing(false)
     setFocusedInput(null)
-  }
+  } */
 
 
   return (
     <View style={$screenContainer}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-      />
+      <StatusBar backgroundColor="transparent" translucent={true} />
 
       <CalendarModal
         visible={isCalendarOpen}
@@ -177,27 +182,18 @@ const TransactionDetails = () => {
       <View style={[$container, { paddingTop: top }]}>
         <View style={$topContainer}>
           <View style={$leftWrapper}>
-            <TouchableOpacity
-              style={$goBackButton}
-              onPress={goBack}
-            >
+            <TouchableOpacity style={$goBackButton} onPress={goBack}>
               <Icon icon={"back"} />
             </TouchableOpacity>
             <Text testID="transactions-heading" tx={"transactionDetails.title"} preset="heading" />
           </View>
           {!isEditing ? (
-            <TouchableOpacity
-              style={$goBackButton}
-              onPress={handleEdit}
-            >
-              <Icon icon={"edit"} size={typography.iconSize} color={colors.textDim}/>
+            <TouchableOpacity style={$goBackButton} onPress={handleEdit}>
+              <Icon icon={"edit"} size={typography.iconSize} color={colors.textDim} />
             </TouchableOpacity>
           ) : (
             <View style={$actionButtons}>
-              <TouchableOpacity
-                style={[$goBackButton, $saveButton]}
-                onPress={handleSave}
-              >
+              <TouchableOpacity style={[$goBackButton, $saveButton]} onPress={handleSave}>
                 <Icon icon={"check"} size={typography.iconSize} />
               </TouchableOpacity>
             </View>
@@ -213,14 +209,11 @@ const TransactionDetails = () => {
               onChangeText={setDescription}
               editable={isEditing}
               cursorColor={colors.palette.primary500}
-              style={[
-                $textInput,
-                isEditing && $editableInput,
-              ]}
+              style={[$textInput, isEditing && $editableInput]}
               placeholder="Enter description"
               submitBehavior={"blurAndSubmit"}
               returnKeyType="next"
-              onFocus={() => handleFocus('description')}
+              onFocus={() => handleFocus("description")}
               onSubmitEditing={() => inputRefs.amount.current?.focus()}
             />
           </View>
@@ -228,32 +221,24 @@ const TransactionDetails = () => {
           <View style={$fieldContainer}>
             <Text preset="formLabel" tx={"transactionDetails.amount"} style={$label} />
             <View style={$amountInputWrapper}>
-            <TextInput
-              ref={inputRefs.amount}
-              value={amount}
-              onChangeText={setAmount}
-              onFocus={() => handleFocus('amount')}
-              editable={isEditing}
-              cursorColor={colors.palette.primary500}
-              style={[
-                $textInput,
-                isEditing && $editableInput,
-              ]}
-              keyboardType="numeric" // todo decimals?
-              placeholder="Enter amount"
-              returnKeyType="done"
-              onSubmitEditing={handleSave}
-            />
-              {!isEditing && (
-                <Text
-                  text={"€"}
-                  style={{ fontFamily: typography.primary.bold }}
-                />
-              )}
+              <TextInput
+                ref={inputRefs.amount}
+                value={amount}
+                onChangeText={setAmount}
+                onFocus={() => handleFocus("amount")}
+                editable={isEditing}
+                cursorColor={colors.palette.primary500}
+                style={[$textInput, isEditing && $editableInput]}
+                keyboardType="numeric" // todo decimals?
+                placeholder="Enter amount"
+                returnKeyType="done"
+                onSubmitEditing={handleSave}
+              />
+              {!isEditing && <Text text={"€"} style={{ fontFamily: typography.primary.bold }} />}
             </View>
           </View>
 
-          <View style={$fieldContainer}>
+          {/*<View style={$fieldContainer}>
             <Text preset="formLabel" tx={"transactionDetails.date"} style={$label} />
             <TouchableOpacity
               disabled={!isEditing}
@@ -268,19 +253,19 @@ const TransactionDetails = () => {
                 text={isToday(new Date(date)) ? 'Today' : format(new Date(date), 'eee do MMM, yyyy')}
               />
             </TouchableOpacity>
-          </View>
+          </View>*/}
 
           <View style={$fieldContainer}>
             <Text preset="formLabel" tx={"transactionDetails.type"} style={$label} />
-            {transaction?.type === 'expense' ? (
+            {transaction?.type === "expense" ? (
               <View style={$typeExpenseWrapper}>
-                <Icon icon={"expense"} size={typography.iconSize} color={colors.error}/>
-                <Text tx={"transactionDetails.expenseType"} style={$typeExpenseText}/>
+                <Icon icon={"expense"} size={typography.iconSize} color={colors.error} />
+                <Text tx={"transactionDetails.expenseType"} style={$typeExpenseText} />
               </View>
             ) : (
               <View style={$typeIncomeWrapper}>
-                <Icon icon={"income"} size={typography.iconSize} color={colors.palette.green500}/>
-                <Text tx={"transactionDetails.incomeType"} style={$typeIncomeText}/>
+                <Icon icon={"income"} size={typography.iconSize} color={colors.palette.green500} />
+                <Text tx={"transactionDetails.incomeType"} style={$typeIncomeText} />
               </View>
             )}
           </View>
@@ -292,7 +277,7 @@ const TransactionDetails = () => {
               <AnimatedDropdown
                 options={categories}
                 selectedOption={category ? {
-                  label: category.name,
+                  label: category.name, // todo uncategorized implementation
                   value: category.id
                 } : undefined}
                 onSelect={handleCategorySelect}
@@ -378,12 +363,6 @@ const $editableInput: TextStyle = {
   backgroundColor: colors.palette.neutral200,
   paddingHorizontal: spacing.xs,
   borderRadius: 4,
-}
-
-const $textValue: TextStyle = {
-  color: colors.text,
-  fontSize: 16,
-  paddingVertical: spacing.xs,
 }
 
 const $amountInputWrapper: ViewStyle = {

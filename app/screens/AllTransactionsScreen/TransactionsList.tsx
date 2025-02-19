@@ -215,8 +215,8 @@ const enhance = withObservables(["selectedYear"], ({ selectedYear }) => {
       Q.where('transaction_at', Q.gte(new Date(startDate).getTime())),
       Q.where('transaction_at', Q.lte(new Date(endDate).getTime())),
       Q.sortBy('transaction_at', Q.desc),
-    ),
-    categories: database.get('categories').query()
+    ).observe(),
+    categories: database.get('categories').query().observe()
   }
 })
 

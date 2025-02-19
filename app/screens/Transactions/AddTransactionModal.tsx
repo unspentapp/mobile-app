@@ -12,6 +12,8 @@ import { TransactionDataI, useWmStorage } from "../../../db/useWmStorage"
 import database from "../../../db"
 import Toast from "react-native-toast-message"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import categoryCard from "app/screens/HomeScreen/CategoryCard"
+import CategoryModel from "../../../db/models/CategoryModel"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -37,7 +39,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
   const handleAddTransaction = useCallback(async (
     expenseValue: string,
     note: string,
-    selectedCategory: string,
+    selectedCategory: CategoryModel,
     date: string,
     type: 'expense' | 'income'
   ) => {
@@ -51,7 +53,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
       userId: userId as string,
       description: note.trim(),
       amount: parseFloat(expenseValue),
-      categoryId: selectedCategory,
+      category: selectedCategory,
       type: type,
       transactionAt: new Date(date),
       isRecurring: false,

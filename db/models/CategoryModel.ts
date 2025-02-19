@@ -3,6 +3,8 @@ import { children, date, field, readonly } from "@nozbe/watermelondb/decorators"
 import TransactionModel from "./TransactionModel"
 import { Associations } from "@nozbe/watermelondb/Model"
 import { TableName } from "../schema"
+import { colors } from "app/theme"
+
 
 // todo
 export default class CategoryModel extends Model {
@@ -18,7 +20,7 @@ export default class CategoryModel extends Model {
   @field("type") type!: "expense" | "income"
   @field("is_default") isDefault!: boolean
   @field("icon") icon?: string
-  @field("color") color?: string
+  @field("color") color?: keyof typeof colors.custom
   // @field('budget') budget?: number
   @readonly @date("updated_at") updatedAt?: number
   @readonly @date("createdAt") createdAt?: number
