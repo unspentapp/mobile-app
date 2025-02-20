@@ -83,11 +83,12 @@ const AnimatedBackground = ({
           />
         )
       })}
-      <BlurView
-        style={$screenWrapper}
-        blurAmount={intensity}
-        blurType="light"
-        blurRadius={25}
+     <BlurView
+      style={$screenWrapper}
+      blurAmount={intensity}
+      blurType="light"
+      blurRadius={25}
+      // overlayColor={"#00000000"}
       />
     </View>
   )

@@ -69,6 +69,7 @@ const AppStack = () => {
         headerShown: false,
         navigationBarColor: colors.background,
         statusBarHidden: true,
+        animation: "fade"
     }}
       initialRouteName={isAuthenticated ? "Main" : "Login"}
     >

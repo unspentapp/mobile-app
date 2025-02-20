@@ -78,7 +78,7 @@ const CategoryCard = ({
           </Text>
         )}
       </AccordionItem>
-      <BlurView />
+      {/*<BlurView />*/}
     </View>
   )
 }
