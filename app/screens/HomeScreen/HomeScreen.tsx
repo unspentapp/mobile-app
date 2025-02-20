@@ -24,6 +24,7 @@ import { ConfirmationSheet } from "app/components/ConfirmationSheet"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { useModals } from "app/hooks/useModals"
 import TransactionModel from "../../../db/models/TransactionModel"
+import AnimatedBackground from "app/components/AnimatedBackground"
 
 
 
@@ -165,7 +166,9 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   return (
     <View style={$screenContainer}>
+      <AnimatedBackground count={8} hue={"monochrome"} />
       <StatusBar backgroundColor="transparent" translucent={true} />
+
       <View style={[$container, { paddingTop: top }]}>
         <AddTransactionModal
           bottomSheetModalRef={refs.bottomSheetModalRef}
