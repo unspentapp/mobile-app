@@ -9,6 +9,7 @@ import RowItem from "app/components/RowItem"
 import { useSharedValue } from "react-native-reanimated"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { withObservables } from "@nozbe/watermelondb/react"
+import { BlurView } from "@react-native-community/blur"
 
 type Props = {
   categoryId: string,
@@ -77,6 +78,7 @@ const CategoryCard = ({
           </Text>
         )}
       </AccordionItem>
+      <BlurView />
     </View>
   )
 }
@@ -86,7 +88,7 @@ export default CategoryCard
 const $cardContainer: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'flex-start',
-  backgroundColor: colors.elevatedBackground,
+  backgroundColor: 'rgba(256, 256, 256, 0.6)',
   borderWidth: 1,
   borderColor: colors.border,
   marginBottom: spacing.sm,

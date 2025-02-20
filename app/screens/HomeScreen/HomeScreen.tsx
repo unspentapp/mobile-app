@@ -166,7 +166,12 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   return (
     <View style={$screenContainer}>
-      <AnimatedBackground count={8} hue={"monochrome"} />
+      <AnimatedBackground
+        count={5}
+        customColors={[colors.palette.primary100, colors.palette.primary200, colors.palette.primary300, colors.palette.secondary100, colors.palette.secondary200]}
+        backgroundColor={colors.palette.neutral100}
+        duration={30000}
+      />
       <StatusBar backgroundColor="transparent" translucent={true} />
 
       <View style={[$container, { paddingTop: top }]}>

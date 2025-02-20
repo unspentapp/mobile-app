@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 import { BlurView } from "@react-native-community/blur"
+import { colors } from "app/theme"
 
 
 function randomNumber(min: number, max: number): number {
@@ -19,10 +20,11 @@ function randomNumber(min: number, max: number): number {
 
 type AnimatedBackgroundProps = {
   count: number,
-  hue: string,
+  hue?: string,
   intensity?: number,
-  colors?: string[],
+  customColors?: string[],
   duration?: number,
+  backgroundColor?: string,
 }
 
 type CircleElementProps = {
@@ -38,13 +40,19 @@ type CircleProps = {
   duration?: number,
 }
 
-const AnimatedBackground = ({ count, hue, intensity = 100, colors, duration } : AnimatedBackgroundProps) => {
-
+const AnimatedBackground = ({
+                              count,
+                              hue,
+                              intensity = 100,
+                              customColors,
+                              backgroundColor = colors.background,
+                              duration
+  } : AnimatedBackgroundProps) => {
   const { width, height } = useWindowDimensions()
 
   const circles = useMemo<CircleElementProps[]>(() => {
-    const _colors = colors ?? randomColor({
-      count: 10,
+    const _colors = customColors ?? randomColor({
+      count: 5,
       hue,
       luminosity: 'light',
       format: 'rgba',
@@ -52,7 +60,7 @@ const AnimatedBackground = ({ count, hue, intensity = 100, colors, duration } : 
     })
 
     return _colors.map((color : string, index: number) => {
-      const random = randomNumber(5, 14) / 10
+      const random = randomNumber(4, 10) / 10
       const radius = (width * random) / 2
       return {
         x: Math.random() * (width - radius * 2),
@@ -64,15 +72,8 @@ const AnimatedBackground = ({ count, hue, intensity = 100, colors, duration } : 
     })
   }, [count, hue])
 
-  const backgroundColor = randomColor({
-    hue,
-    count: 1,
-    luminosity: 'dark',
-  })
-
-
   return (
-    <View style={[$screenWrapper, { backgroundColor: backgroundColor[0] }]}>
+    <View style={[$screenWrapper, { backgroundColor }]}>
       {circles.map((circle) => {
         return (
           <Circle
@@ -85,7 +86,8 @@ const AnimatedBackground = ({ count, hue, intensity = 100, colors, duration } : 
       <BlurView
         style={$screenWrapper}
         blurAmount={intensity}
-        blurType="chromeMaterial"
+        blurType="light"
+        blurRadius={25}
       />
     </View>
   )
