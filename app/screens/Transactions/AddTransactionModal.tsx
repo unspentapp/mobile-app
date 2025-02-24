@@ -8,12 +8,10 @@ import { colors } from "app/theme"
 import AnimatedTabIndicator from "app/components/AnimatedTabIndicator"
 import AddTransactionView from "app/screens/Transactions/AddTransactionView"
 import { useFocusEffect } from "@react-navigation/native"
-import { TransactionDataI, useWmStorage } from "../../../db/useWmStorage"
+import { TransactionData, useWmStorage } from "../../../db/useWmStorage"
 import database from "../../../db"
 import Toast from "react-native-toast-message"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import categoryCard from "app/screens/HomeScreen/CategoryCard"
-import CategoryModel from "../../../db/models/CategoryModel"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -29,7 +27,7 @@ type RouteProps = {
 const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-  const { saveTransaction } = useWmStorage()
+  const { addNewTransaction } = useWmStorage()
 
   const routes : RouteProps[] = [
     { key: 'expense', title: 'Expense' },
@@ -39,7 +37,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
   const handleAddTransaction = useCallback(async (
     expenseValue: string,
     note: string,
-    selectedCategory: CategoryModel,
+    selectedCategoryId: string,
     date: string,
     type: 'expense' | 'income'
   ) => {
@@ -49,18 +47,18 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
       return
     }
 
-    const newTransaction: TransactionDataI = {
+    const newTransaction: TransactionData = {
       userId: userId as string,
       description: note.trim(),
       amount: parseFloat(expenseValue),
-      category: selectedCategory,
-      type: type,
-      transactionAt: new Date(date),
+      categoryId: selectedCategoryId,
+      type,
+      transactionAt: date,
       isRecurring: false,
     }
 
     try {
-      await saveTransaction(newTransaction)
+      await addNewTransaction(newTransaction)
       Toast.show({
         type: "success",
         text1: `${type.charAt(0).toUpperCase() + type.slice(1)} Added`,
@@ -70,7 +68,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
     } catch (error) {
       console.error('Failed to save transaction:', error)
     }
-  }, [saveTransaction, bottomSheetModalRef])
+  }, [addNewTransaction, bottomSheetModalRef])
 
   useFocusEffect(
     useCallback(() => {

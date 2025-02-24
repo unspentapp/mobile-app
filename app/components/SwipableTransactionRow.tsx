@@ -4,15 +4,15 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import Reanimated, { SharedValue, useAnimatedStyle } from "react-native-reanimated"
 import { Icon } from 'app/components/Icon'
 import RowItem from 'app/components/RowItem'
-import { TransactionDataI } from '../../db/useWmStorage'
 import { colors, spacing, typography } from 'app/theme'
+import TransactionModel from "../../db/models/TransactionModel"
 
 interface SwipeableTransactionRowProps {
-  item: TransactionDataI
+  item: TransactionModel
   index: number
   sectionLength: number
   categoryColor: string
-  onDelete: (transaction: TransactionDataI) => void
+  onDelete: (transaction: TransactionModel) => void
 }
 
 export const SwipeableTransactionRow = ({

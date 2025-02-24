@@ -22,24 +22,13 @@ export default appSchema({
       name: TableName.TRANSACTIONS,
       columns: [
         { name: "user_id", type: "string" },
-        { name: "category_id", type: "string"},
         { name: "amount", type: "number" },
-        { name: "transaction_at", type: "number" },
         { name: "description", type: "string" },
+        { name: "category_id", type: "string"},
         { name: "type", type: "string" },
         { name: "is_recurring", type: "boolean" },
         // { name: "receipt_url", type: "string", isOptional: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-      ]
-    }),
-    tableSchema({
-      name: TableName.USERS,
-      columns: [
-        { name: "username", type: "string" },
-        { name: "email", type: "string" },
-        { name: "avatar_url", type: "string", isOptional: true },
-        { name: "preferences", type: "string", isOptional: true },
+        { name: "transaction_at", type: "number" },
         { name: "created_at", type: "number" },
         { name: "updated_at", type: "number" },
       ]
@@ -56,7 +45,18 @@ export default appSchema({
         { name: "created_at", type: "number" },
         { name: "updated_at", type: "number" },
       ]
-    })
+    }),
+    tableSchema({
+      name: TableName.USERS,
+      columns: [
+        { name: "username", type: "string" },
+        { name: "email", type: "string" },
+        { name: "avatar_url", type: "string", isOptional: true },
+        { name: "preferences", type: "string", isOptional: true },
+        { name: "created_at", type: "number" },
+        { name: "updated_at", type: "number" },
+      ]
+    }),
   ],
 });
 

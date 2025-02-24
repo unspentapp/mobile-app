@@ -4,16 +4,14 @@ import { colors, spacing, typography } from "app/theme"
 import { AccordionItem } from "app/components/AccordionItem"
 import ArrowIconAnimated from "app/components/ArrowIconAnimated"
 import { ProgressBar } from "app/components/ProgressBar"
-import { TransactionDataI } from "../../../db/useWmStorage"
 import RowItem from "app/components/RowItem"
 import { useSharedValue } from "react-native-reanimated"
 import CategoryModel from "../../../db/models/CategoryModel"
-import { withObservables } from "@nozbe/watermelondb/react"
-import { BlurView } from "@react-native-community/blur"
+import TransactionModel from "../../../db/models/TransactionModel"
 
 type Props = {
   categoryId: string,
-  transactions: TransactionDataI[],
+  transactions: TransactionModel[],
   totalExpenses: number,
   animationDelay?: number,
   presentConfirmationModal: (category: Partial<CategoryModel>) => void,
@@ -78,7 +76,6 @@ const CategoryCard = ({
           </Text>
         )}
       </AccordionItem>
-      {/*<BlurView />*/}
     </View>
   )
 }

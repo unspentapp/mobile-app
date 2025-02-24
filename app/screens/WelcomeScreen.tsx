@@ -6,7 +6,7 @@ import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 import { useHeader } from "../utils/useHeader"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
-import { useStore } from "app/store"
+import { useAuth } from "app/services/auth/useAuth"
 
 const welcomeLogo = require("../../assets/images/logo.png")
 const welcomeFace = require("../../assets/images/welcome-face.png")
@@ -15,7 +15,7 @@ interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
 export const WelcomeScreen: FC<WelcomeScreenProps> = (props) => {
   const { navigation } = props
-  const logout = useStore((state) => state.logout)
+  const { signOut } = useAuth()
 
   function goNext() {
     navigation.navigate("Main", { screen: "ExpensesNavigator" })
@@ -24,9 +24,9 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = (props) => {
   useHeader(
     {
       rightTx: "common.logOut",
-      onRightPress: logout,
+      onRightPress: signOut,
     },
-    [logout],
+    [signOut],
   )
 
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])

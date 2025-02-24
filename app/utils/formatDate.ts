@@ -2,7 +2,7 @@
 // If you import with the syntax: import { format } from "date-fns" the ENTIRE library
 // will be included in your production bundle (even if you only use one function).
 // This is because react-native does not support tree-shaking.
-import type { Locale } from "date-fns"
+import { isToday, isYesterday, Locale } from "date-fns"
 import format from "date-fns/format"
 import parseISO from "date-fns/parseISO"
 import ar from "date-fns/locale/ar-SA"
@@ -17,11 +17,28 @@ const getLocale = (): Locale => {
   return locale === "ar" ? ar : locale === "ko" ? ko : en
 }
 
-export const formatDate = (date: string, dateFormat?: string, options?: Options) => {
+// Accept either string or Date
+export const formatDate = (
+  date: string | Date,
+  dateFormat?: string,
+  options?: Options & {
+    showRelative?: boolean // Show "Today" or "Yesterday" if applicable
+  }
+) => {
   const locale = getLocale()
   const dateOptions = {
     ...options,
     locale,
   }
-  return format(parseISO(date), dateFormat ?? "MMM dd, yyyy", dateOptions)
+
+  // Parse if string, otherwise use as is
+  const dateObj = typeof date === 'string' ? parseISO(date) : date
+
+  // Show relative dates if enabled
+  if (options?.showRelative) {
+    if (isToday(dateObj)) return i18n.t('common.today')
+    if (isYesterday(dateObj)) return i18n.t('common.yesterday')
+  }
+
+  return format(dateObj, dateFormat ?? "MMM dd, yyyy", dateOptions)
 }

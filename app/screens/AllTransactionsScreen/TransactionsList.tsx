@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react"
 import { withObservables } from "@nozbe/watermelondb/react"
 import database from "../../../db"
 import { Q } from "@nozbe/watermelondb"
-import { CategoryDataI, TransactionDataI } from "../../../db/useWmStorage"
 import { endOfYear, getWeekOfMonth, getYear, startOfYear } from "date-fns"
 import format from "date-fns/format"
 import { ScrollView, SectionList, TextStyle, View, ViewStyle } from "react-native"
@@ -11,11 +10,12 @@ import { colors, spacing } from "app/theme"
 import { YearTabsContainer, SectionHeader } from "app/screens"
 import { SwipeableTransactionRow } from "app/components"
 import TransactionModel from "../../../db/models/TransactionModel"
+import CategoryModel from "../../../db/models/CategoryModel"
 
 
 export interface Props {
-  transactions: TransactionDataI[]
-  categories: CategoryDataI[]
+  transactions: TransactionModel[]
+  categories: CategoryModel[]
   selectedYear: number
   setSelectedYear: (selectedYear: number) => void
 }
@@ -42,7 +42,7 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
     hasTransactions: false
   }])
 
-  const handleDelete = async (transaction: TransactionDataI) => {
+  const handleDelete = async (transaction: TransactionModel) => {
 
     if (!transaction.id) return
 

@@ -11,15 +11,17 @@ import TransactionModel from "../../../db/models/TransactionModel"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { CalendarModal } from "app/screens/Transactions/CalendarModal"
 import format from "date-fns/format"
-import { isToday } from "date-fns"
 import AnimatedDropdown, { DropdownOption } from "app/components/AnimatedDropdown"
+import { useWmStorage } from "../../../db/useWmStorage"
+import { isToday } from "date-fns"
+import { formatDate } from "app/utils/formatDate"
 
 
 type TransactionDetailsRouteProp = RouteProp<AppStackParamList, 'TransactionDetails'>;
-type TransactionType = Partial<TransactionModel>
 
 const TransactionDetails = () => {
   const route = useRoute<TransactionDetailsRouteProp>()
+  const { updateTransaction } = useWmStorage()
   const { itemId } = route.params
 
   const inputRefs = {
@@ -29,14 +31,14 @@ const TransactionDetails = () => {
 
   const [focusedInput, setFocusedInput] = useState<keyof typeof inputRefs | null>(null)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  const [transaction, setTransaction] = useState<TransactionType>()
   const [categories, setCategories] = useState<DropdownOption[]>([])
   const [category, setCategory] = useState<CategoryModel>()
+  const [type, setType] = useState<string>()
   const [isEditing, setIsEditing] = useState(false)
 
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState("")
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  const [date, setDate] = useState<Date>()
 
   const { top } = useSafeAreaInsets()
 
@@ -51,26 +53,17 @@ const TransactionDetails = () => {
   }
 
   const handleSave = async () => {
-    if (!transaction || !itemId) return
+    if (!itemId) return
 
     try {
-      const transaction = await transactionCollection.find(itemId)
-
       const updatedTransaction = {
         amount: parseFloat(amount),
         description,
-        category
+        categoryId: category?.id,
+        transactionAt: date,
       }
 
-      await transaction.updateWithCategory(updatedTransaction)
-
-      // Update the local state
-      setTransaction({
-        ...transaction,
-        description,
-        amount: parseFloat(amount),
-        category
-      })
+      await updateTransaction(itemId, updatedTransaction)
 
       setIsEditing(false)
     } catch (e) {
@@ -119,12 +112,13 @@ const TransactionDetails = () => {
         const transaction = await transactionCollection.find(itemId)
 
         if (transaction) {
-          const category = await transaction.category
+          const category = transaction.category
 
-          setTransaction(transaction)
-          setDescription(transaction.description || "")
+          setDescription(transaction.description)
           setAmount(transaction.amount.toString())
-          setDate(format(new Date(transaction.transactionAt), 'eee do MMM, yyyy') || "")
+          setType(transaction.type)
+          setDate(transaction.transactionAt)
+          console.log(transaction.transactionAt.toString())
 
           if (category) {
             setCategory(category)
@@ -238,7 +232,7 @@ const TransactionDetails = () => {
             </View>
           </View>
 
-          {/*<View style={$fieldContainer}>
+          <View style={$fieldContainer}>
             <Text preset="formLabel" tx={"transactionDetails.date"} style={$label} />
             <TouchableOpacity
               disabled={!isEditing}
@@ -250,14 +244,14 @@ const TransactionDetails = () => {
                   $textInput,
                   isEditing && $editableInput,
                 ]}
-                text={isToday(new Date(date)) ? 'Today' : format(new Date(date), 'eee do MMM, yyyy')}
+                text={date ? formatDate(date, 'eee do MMM, yyyy', { showRelative: true }) : ""}
               />
             </TouchableOpacity>
-          </View>*/}
+          </View>
 
           <View style={$fieldContainer}>
             <Text preset="formLabel" tx={"transactionDetails.type"} style={$label} />
-            {transaction?.type === "expense" ? (
+            {type === "expense" ? (
               <View style={$typeExpenseWrapper}>
                 <Icon icon={"expense"} size={typography.iconSize} color={colors.error} />
                 <Text tx={"transactionDetails.expenseType"} style={$typeExpenseText} />
@@ -270,28 +264,26 @@ const TransactionDetails = () => {
             )}
           </View>
 
-          {category ? (
-            <View style={$fieldContainer}>
-              <Text preset="formLabel" tx={"transactionDetails.category"} style={$label} />
-              {isEditing ? (
-              <AnimatedDropdown
-                options={categories}
-                selectedOption={category ? {
-                  label: category.name, // todo uncategorized implementation
-                  value: category.id
-                } : undefined}
-                onSelect={handleCategorySelect}
-                disabled={!isEditing}
-                maxHeight={300}
+          <View style={$fieldContainer}>
+            <Text preset="formLabel" tx={"transactionDetails.category"} style={$label} />
+            {isEditing ? (
+            <AnimatedDropdown
+              options={categories}
+              selectedOption={category ? {
+                label: category.name, // todo uncategorized implementation
+                value: category.id
+              } : undefined}
+              onSelect={handleCategorySelect}
+              disabled={!isEditing}
+              maxHeight={300}
+            />
+            ) : (
+              <Text
+                text={category?.name}
+                style={$textInput}
               />
-              ) : (
-                <Text
-                  text={category.name}
-                  style={$textInput}
-                />
-              )}
-            </View>
-          ) : null}
+            )}
+          </View>
         </View>
       </View>
     </View>
@@ -308,7 +300,6 @@ const $screenContainer: ViewStyle = {
 const $container: ViewStyle = {
   flex: 1,
   backgroundColor: colors.background,
-  paddingHorizontal: spacing.lg,
 }
 
 const $topContainer: ViewStyle = {
@@ -316,6 +307,7 @@ const $topContainer: ViewStyle = {
   alignItems: "center",
   justifyContent: "space-between",
   paddingVertical: spacing.md,
+  paddingHorizontal: spacing.sm,
 }
 
 const $leftWrapper: ViewStyle = {
@@ -330,6 +322,7 @@ const $goBackButton: ViewStyle = {
 }
 
 const $formContainer: ViewStyle = {
+  marginHorizontal: spacing.md,
   padding: spacing.md,
   gap: spacing.md,
   backgroundColor: colors.elevatedBackground,

@@ -86,35 +86,6 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     }, [transactions, categories])
   )
 
-/*
-  const handlePresentConfirmationSheet = useCallback((category: Partial<CategoryModel>) => {
-    setEditableCategory(category)
-    setIsConfirmationVisible(true)
-    confirmationSheetRef?.current?.present()
-  }, [])
-
-  const handleEditCategorySheet = useCallback(() => {
-    setModalType('edit')
-    setIsConfirmationVisible(false)
-    addCategorySheetRef.current?.present()
-  }, [])
-
-  const handleDismissConfirmationSheet = useCallback(() => {
-    setIsConfirmationVisible(false)
-    confirmationSheetRef.current?.dismiss()
-    setEditableCategory(null)
-  }, [])
-
-  const handleDismissAddCategorySheet = useCallback(() => {
-    addCategorySheetRef.current?.dismiss()
-    setIsConfirmationVisible(false)
-    confirmationSheetRef.current?.dismiss()
-    setEditableCategory(null)
-    setModalType('new')
-  }, [])
-*/
-
-
   const handlePresentModalPress = useCallback(() => {
     refs.bottomSheetModalRef.current?.present()
     setIsTransactionModalOpen(true)
@@ -168,7 +139,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     <View style={$screenContainer}>
       <AnimatedBackground
         count={5}
-        customColors={[colors.palette.primary100, colors.palette.primary200, colors.palette.primary300, colors.palette.secondary100, colors.palette.secondary200]}
+        customColors={[colors.palette.primary200, colors.palette.primary300, colors.palette.secondary100, colors.palette.secondary200, colors.palette.secondary300]}
         backgroundColor={colors.palette.neutral100}
         duration={30000}
       />

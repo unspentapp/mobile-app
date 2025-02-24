@@ -14,18 +14,17 @@ import { useFocusEffect } from "@react-navigation/native"
 
 
 
-type TransactionType = 'expense' | 'income'
 
 type BottomSheetTextInputRef = TextInput;
 
 type AddTransactionViewProps = {
-  type: TransactionType
+  type: 'expense' | 'income'
   onAddTransaction: (
     expenseValue: string,
     note: string,
-    selectedCategory: string,
+    selectedCategoryId: string,
     date: string,
-    type: TransactionType
+    type: 'expense' | 'income'
   ) => void
   index: number,
   isModalOpen: boolean
@@ -33,12 +32,13 @@ type AddTransactionViewProps = {
 
 const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTransaction, index, isModalOpen }) => {
 
-  const [expenseValue, setExpenseValue] = useState("")
-  const [note, setNote] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("")
-  const [dateModalToggle, setDateModalToggle] = useState(false)
+  const [amount, setAmount] = useState("")
+  const [description, setDescription] = useState("")
+  const [selectedCategoryId, setSelectedCategoryId] = useState("")
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+
   const [categories, setCategories] = useState<CategoryModel[]>([])
+  const [dateModalToggle, setDateModalToggle] = useState(false)
 
   const firstTextInputRef = useRef<BottomSheetTextInputRef>(null);
   const secondTextInputRef = useRef<BottomSheetTextInputRef>(null);
@@ -59,22 +59,22 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   }, [])
 
   const handleAddTransaction = useCallback(() => {
-    if (expenseValue.trim() === "" || note.trim() === "") {
+    if (amount.trim() === "" || description.trim() === "") {
       console.log("[ADD TRANSACTION: empty field")
       return
     }
 
-    onAddTransaction(expenseValue, note, selectedCategory, date, type)
+    onAddTransaction(amount, description, selectedCategoryId, date, type)
 
     // Reset form after adding transaction
     setDate(format(new Date(), 'yyyy-MM-dd'))
-    setSelectedCategory("")
-    setExpenseValue("")
-    setNote("")
-  }, [expenseValue, note, selectedCategory, date, type, onAddTransaction])
+    setSelectedCategoryId("")
+    setAmount("")
+    setDescription("")
+  }, [amount, description, selectedCategoryId, date, type, onAddTransaction])
 
   const handleKeyboardEnter = () => {
-    if (selectedCategory) handleAddTransaction()
+    if (selectedCategoryId) handleAddTransaction()
   }
 
   useFocusEffect(
@@ -118,13 +118,13 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
           onChangeText={(text) => {
             // Only allow digits
             if (/^\d+$/.test(text)) {
-              setExpenseValue(text);
+              setAmount(text);
             } else if (text === '') {
               // Allow empty input for deletion
-              setExpenseValue('');
+              setAmount('');
             }
           }}
-          value={expenseValue}
+          value={amount}
         />
 
         {/* todo dynamic currency selection */}
@@ -148,7 +148,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
             placeholderTextColor={colors.palette.neutral400}
             maxFontSizeMultiplier={0}
             maxLength={40}
-            onChangeText={(value) => setNote(value)}
+            onChangeText={(value) => setDescription(value)}
             onSubmitEditing={handleKeyboardEnter}
           />
         </View>
@@ -173,10 +173,10 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
                   label={category.name}
                   key={category.id}
                   onSelect={() => {
-                    if (selectedCategory === category.id) setSelectedCategory("")
-                    else setSelectedCategory(category.id)
+                    if (selectedCategoryId === category.id) setSelectedCategoryId("")
+                    else setSelectedCategoryId(category.id)
                   }}
-                  isSelected={selectedCategory === category.id} />
+                  isSelected={selectedCategoryId === category.id} />
               ))}
             </View>
           </View>

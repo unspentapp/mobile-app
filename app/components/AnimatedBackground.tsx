@@ -86,7 +86,7 @@ const AnimatedBackground = ({
      <BlurView
       style={$screenWrapper}
       blurAmount={intensity}
-      blurType="light"
+      blurType="xlight"
       blurRadius={25}
       // overlayColor={"#00000000"}
       />
@@ -135,7 +135,7 @@ function Circle({ circle, duration = 25000 } : CircleProps) {
           left: circle.x - circle.radius,
           top: circle.y - circle.radius,
           width: circle.radius * 2,
-          height: circle.radius * 2,
+          height: circle.radius * 4,
           borderRadius: circle.radius,
         }]}
       />

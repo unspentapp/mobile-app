@@ -3,14 +3,13 @@ import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
 import format from "date-fns/format"
-import { TransactionDataI } from "../../db/useWmStorage"
 import { NavigationProp, useNavigation } from "@react-navigation/native"
 import { AppStackParamList } from "app/navigators"
 import { withObservables } from "@nozbe/watermelondb/react"
 import TransactionModel from "../../db/models/TransactionModel"
 
 export interface RowItemProps {
-  transaction : TransactionDataI
+  transaction : Partial<TransactionModel>
 }
 
 const RowItem = ({ transaction } : RowItemProps) => {

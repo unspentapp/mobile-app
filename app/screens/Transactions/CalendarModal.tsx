@@ -12,12 +12,13 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 import { isThisMonth } from "date-fns"
+import format from "date-fns/format"
 
 type CalendarModalProps = {
   visible: boolean;
   onClose: () => void;
-  date: string;
-  setDate: React.Dispatch<React.SetStateAction<string>>;
+  date: Date | undefined;
+  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 }
 
 export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModalProps) => {
@@ -72,8 +73,9 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
         )}
         <View style={$calendarView}>
           <View style={$dragIndicator} />
+          {date ? (
           <Calendar
-            key={date}
+            key={date.toISOString()}
             theme={{
               backgroundColor: "red",
               arrowColor: colors.palette.primary500,
@@ -84,19 +86,20 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
             }}
             enableSwipeMonths={true}
             firstDay={1}
-            markedDates={{[date]: { selected: true, selectedColor: colors.palette.primary500}}}
-            current={date}
+            markedDates={{[date.toISOString()]: { selected: true, selectedColor: colors.palette.primary500}}}
+            current={date.toISOString()}
             onDayPress={(day) => {
-              setDate(day.dateString)
+              setDate(new Date(day.dateString))
               onClose();
             }}
             onMonthChange={current => setIsBackButtonVisible(!isThisMonth(new Date(current.dateString)))}
           />
+          ) : null}
           <View style={$buttonContainer}>
             <Animated.View style={backButtonAnimatedStyle}>
               <TouchableOpacity
                 onPress={() => {
-                  setDate(new Date().toISOString())
+                  setDate(new Date())
                   setIsBackButtonVisible(false)
                 }}
                 style={$goTodayButtonContent}

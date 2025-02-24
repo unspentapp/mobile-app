@@ -3,51 +3,43 @@ import { log } from "app/utils/logger"
 import database from "./index"
 import TransactionModel from "./models/TransactionModel"
 import { Q } from "@nozbe/watermelondb"
+import CategoryModel from "./models/CategoryModel"
 
-export interface TransactionDataI {
-  id?: string
+export interface TransactionData {
   userId?: string;
   amount: number;
   description: string;
   categoryId?: string;
-  category?: CategoryDataI,
-  type: "expense" | "income";
-  transactionAt: Date;
-  isRecurring?: boolean;
+  category?: CategoryModel;
+  transactionAt?: Date;
+  type?: "expense" | "income";
+  isRecurring?: boolean
 }
 
-export interface getTransactionFiltersI {
-  userId: string;
+export interface TransactionFiltersI {
+  userId?: string;
   startDate?: Date | undefined;
   endDate?: Date | undefined;
-  category?: string;
-}
-
-export interface CategoryDataI {
-  id?: string
-  userId?: string
-  name: string
-  type: "expense" | "income"
-  isDefault: boolean
-  icon?: string
-  color?: string
+  categoryId?: string;
 }
 
 export const useWmStorage = () => {
   // Retrieve transactions
-  const getTransactions = useCallback(async (filters : getTransactionFiltersI) => {
+  const getTransactionsWithFilter = useCallback(async ({userId, categoryId, startDate, endDate} : TransactionFiltersI) => {
     try {
-      const transactionsCollection = database.get('transactions');
-      let query = transactionsCollection.query(
-        Q.where('user_id', filters.userId)
-      );
+      const transactionsCollection = database.get<TransactionModel>('transactions');
+      let query = transactionsCollection.query();
 
-      if (filters.startDate && filters.endDate) {
-        query = query.extend(Q.between('created_at', filters.startDate, filters.endDate));
+      if (userId) {
+        query = query.extend(Q.where('user_id', userId));
       }
 
-      if (filters.category) {
-        query = query.extend(Q.where('category', filters.category));
+      if (startDate && endDate) {
+        query = query.extend(Q.between('created_at', startDate, endDate));
+      }
+
+      if (categoryId) {
+        query = query.extend(Q.where('categoryId', categoryId));
       }
 
       return await query.fetch();
@@ -58,17 +50,17 @@ export const useWmStorage = () => {
   }, []);
 
   // Save a new transaction
-  const saveTransaction = useCallback(async (transactionData : TransactionDataI) => {
+  const addNewTransaction = useCallback(async (transactionData : TransactionData) => {
     try {
       return await database.write(async () => {
         const newTransaction = await database.get<TransactionModel>('transactions').create(transaction => {
           transaction.userId = transactionData.userId;
           transaction.amount = transactionData.amount;
           transaction.description = transactionData.description;
-          transaction.categoryId = transactionData.categoryId;
-          transaction.type = transactionData.type;
-          transaction.transactionAt = transactionData.transactionAt;
-          transaction.isRecurring = transactionData.isRecurring;
+          if (transactionData.categoryId) transaction.categoryId = transactionData.categoryId;
+          if (transactionData.type) transaction.type = transactionData.type;
+          if (transactionData.transactionAt) transaction.transactionAt = transactionData.transactionAt;
+          transaction.isRecurring = transactionData.isRecurring || false;
         });
 
         log.debug(`Transaction added: ${newTransaction.id}`);
@@ -82,7 +74,7 @@ export const useWmStorage = () => {
   }, []);
 
   // Update an existing transaction
-  const updateTransaction = useCallback(async (transactionId : string, updateData : TransactionModel) => {
+  const updateTransaction = useCallback(async (transactionId : string, updateData : TransactionData) => {
     try {
       return await database.write(async () => {
         const transaction = await database.get<TransactionModel>('transactions').find(transactionId);
@@ -91,7 +83,7 @@ export const useWmStorage = () => {
           if (updateData.amount !== undefined) record.amount = updateData.amount;
           if (updateData.description !== undefined) record.description = updateData.description;
           if (updateData.categoryId !== undefined) record.categoryId = updateData.categoryId;
-          record.updatedAt = Date.now();
+          if (updateData.transactionAt !== undefined) record.transactionAt = new Date(updateData.transactionAt);
         });
 
         log.debug(`Transaction updated: ${transactionId}`);
@@ -120,8 +112,8 @@ export const useWmStorage = () => {
   }, []);
 
   return {
-    getTransactions,
-    saveTransaction,
+    getTransactionsWithFilter,
+    addNewTransaction,
     updateTransaction,
     deleteTransaction
   };

@@ -28,7 +28,7 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
   const fetchAuthSessionRecords = async () => {
     const results = await database.collections.get('auth_session').query().fetch()
     const sessionData = JSON.parse(results[0]._raw.session)
-    logger.log(sessionData)
+    // logger.log(sessionData)
   }
 
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
