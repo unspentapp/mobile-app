@@ -35,6 +35,31 @@ interface YearTab {
   hasTransactions: boolean
 }
 
+interface SectionData {
+  monthKey: string;
+  title: string;
+  data: TransactionModel[];
+  month: string;
+  monthlyStats: MonthlyStats;
+  weeklyStats: WeeklyStats;
+  isFirstWeekOfMonth?: boolean;
+}
+
+interface GroupedTransactions {
+  [weekKey: string]: {
+    monthKey: string;
+    title: string;
+    data: TransactionModel[];
+    month: string;
+    monthlyStats: MonthlyStats;
+    weeklyStats: WeeklyStats;
+  };
+}
+
+interface CategoriesMap {
+  [key: string]: CategoryModel;
+}
+
 const TransactionsList = ({ transactions, categories, selectedYear, setSelectedYear } : Props) => {
   const scrollViewRef = useRef<ScrollView>(null)
   const [availableYears, setAvailableYears] = useState<YearTab[]>([{
@@ -105,10 +130,10 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
 
   // Transform and group transactions by month and week
   const prepareSections = (transactions : TransactionModel[]) => {
-    const monthlyStats: { [key: string]: MonthlyStats } = {};
-    const weeklyStats: { [key: string]: WeeklyStats } = {};
+    const monthlyStats: { [key: string] : MonthlyStats } = {};
+    const weeklyStats: { [key: string] : WeeklyStats } = {};
 
-    const grouped = transactions.reduce((acc, transaction) => {
+    const grouped : GroupedTransactions = transactions.reduce((acc, transaction) => {
       const monthKey = format(transaction.transactionAt, 'yyyy-MM');
       const weekKey = `${monthKey}-W${getWeekOfMonth(transaction.transactionAt, { weekStartsOn: 1 })}`;
 
@@ -162,9 +187,10 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
     }));
   };
 
-  const categoriesMap = useMemo(() => {
+  const categoriesMap = useMemo<CategoriesMap>(() => {
     return categories.reduce((acc, category) => {
       acc[category.id] = category;
+
       return acc;
     }, {});
   }, [categories]);
@@ -187,7 +213,7 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
             item={item}
             index={index}
             sectionLength={section.data.length}
-            categoryColor={categoriesMap[item.categoryId]?.color || colors.palette.primary500}
+            categoryColor={categoriesMap[item.categoryId]?.color || "primary500" }
             onDelete={handleDelete}
           />
         )}

@@ -16,7 +16,7 @@ export default class TransactionModel extends Model {
   @field("user_id") userId?: string
   @field("amount") amount!: number
   @field("description") description!: string
-  @field("category_id") categoryId!: string
+  @field("category_id") categoryId!: string | null
   @relation("categories", "category_id") category: CategoryModel | undefined
   @date("transaction_at") transactionAt!: Date
   @field("type") type!: "expense" | "income"

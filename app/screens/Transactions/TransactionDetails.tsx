@@ -112,13 +112,12 @@ const TransactionDetails = () => {
         const transaction = await transactionCollection.find(itemId)
 
         if (transaction) {
-          const category = transaction.category
+          const category = await transaction.category
 
           setDescription(transaction.description)
           setAmount(transaction.amount.toString())
           setType(transaction.type)
           setDate(transaction.transactionAt)
-          console.log(transaction.transactionAt.toString())
 
           if (category) {
             setCategory(category)

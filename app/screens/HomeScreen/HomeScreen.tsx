@@ -26,9 +26,6 @@ import { useModals } from "app/hooks/useModals"
 import TransactionModel from "../../../db/models/TransactionModel"
 import AnimatedBackground from "app/components/AnimatedBackground"
 
-
-
-
 const ROUND_BUTTON_SIZE = 56
 
 interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
@@ -37,7 +34,6 @@ interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
 }
 
 type BottomSheetTextInputRef = TextInput
-
 
 const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...props }) => {
   const { navigation } = props
@@ -109,7 +105,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
         for (const transaction of categoryTransactions) {
           type UpdateFunction = (tx: TransactionModel) => void;
           const updateFn: UpdateFunction = (tx) => {
-            tx.category = undefined
+            tx.categoryId = null
           };
           await transaction.update(updateFn);
         }
@@ -133,7 +129,21 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
     }
   }
 
+  // Custom method to close the category modal without reopening confirmation sheet
+  const handleCategoryModalDismiss = useCallback(() => {
+    // Make sure we only perform the dismissal once
+    if (refs.addCategorySheetRef.current) {
+      // Close the category sheet
+      actions.closeAddCategorySheet()
 
+      // Ensure the confirmation sheet doesn't reappear
+      if (modalState.category && modalState.type === 'edit') {
+        // Clear the category from modal state or update a flag to prevent reopening
+        // This depends on how your useModals hook is implemented
+        actions.closeConfirmationSheet()
+      }
+    }
+  }, [modalState.category, modalState.type, actions])
 
   return (
     <View style={$screenContainer}>
@@ -156,7 +166,7 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
           category={modalState.category}
           addCategorySheetRef={refs.addCategorySheetRef}
           addCategoryInputRef={refs.addCategoryInputRef}
-          onDismiss={actions.closeAddCategorySheet}
+          onDismiss={handleCategoryModalDismiss}
         />
 
         {modalState.category && (
@@ -165,12 +175,21 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
             title={`Category: ${modalState.category.name}`}
             primaryButton={{
               text: "Edit",
-              onPress: () => actions.openAddCategorySheet('edit', modalState.category),
-              style: { backgroundColor: 'green' },
-              textStyle: { color: 'white' },
+              onPress: () => {
+                // Close confirmation sheet before opening category sheet
+                refs.confirmationSheetRef.current?.close()
+                // Slight delay to ensure smooth transition
+                setTimeout(() => {
+                  actions.openAddCategorySheet('edit', modalState.category)
+                }, 200)
+              },
+              style: {backgroundColor: colors.palette.neutral300 },
+              textStyle: { color: colors.text },
             }}
             secondaryButton={{
               text: "Delete",
+              style: {backgroundColor: colors.error },
+              textStyle: { color: colors.palette.neutral100 },
               onPress: handleDeleteCategory,
             }}
             onDismiss={actions.closeConfirmationSheet}
@@ -234,7 +253,6 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
           <Icon icon={"plus"} color={colors.palette.neutral100} />
         </TouchableOpacity>
       </View>
-
     </View>
   )
 }
@@ -323,16 +341,3 @@ const $addNewCategoryText: TextStyle = {
   fontFamily: typography.primary.medium,
   color: colors.textDim
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

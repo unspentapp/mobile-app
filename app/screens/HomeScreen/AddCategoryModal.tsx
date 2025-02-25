@@ -1,4 +1,4 @@
-import React, { ForwardedRef, RefObject, useCallback, useEffect, useMemo, useState } from "react"
+import React, { ForwardedRef, RefObject, useCallback, useEffect, useMemo, useState, memo } from "react"
 import {
   BottomSheetFooter,
   BottomSheetModal,
@@ -23,7 +23,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { BottomSheetDefaultFooterProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetFooter/types"
 
-
 export type CategoryModalProps = {
   modalType: 'new' | 'edit',
   category: Partial<CategoryModel> | null,
@@ -40,13 +39,13 @@ type CustomTextInputProps = {
   handleAddCategory: (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void,
 }
 
-/* moved out due to a modal text input bug which cause a rerendering during typing */
-const CustomTextInput = ({
-     addCategoryInputRef,
-     value,
-     onChangeText,
-     handleAddCategory,
-   }: CustomTextInputProps) => {
+/* Memoize the input component to prevent unnecessary re-renders */
+const CustomTextInput = memo(({
+                                addCategoryInputRef,
+                                value,
+                                onChangeText,
+                                handleAddCategory,
+                              }: CustomTextInputProps) => {
   return (
     <BottomSheetTextInput
       ref={addCategoryInputRef}
@@ -65,7 +64,7 @@ const CustomTextInput = ({
       onSubmitEditing={handleAddCategory}
     />
   )
-}
+})
 
 const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, modalType, onDismiss } : CategoryModalProps) => {
   const [categoryLabel, setCategoryLabel] = useState<string>(category?.name || "")
@@ -80,11 +79,11 @@ const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, 
 
   const { bottom } = useSafeAreaInsets()
 
-  const isColorSelected = (color : keyof typeof colors.custom) => {
+  const isColorSelected = useCallback((color : keyof typeof colors.custom) => {
     return color === selectedColor
-  }
+  }, [selectedColor])
 
-  const handleAddCategory = async () => {
+  const handleAddCategory = useCallback(async () => {
     if (categoryLabel.trim() === "") {
       console.log("[ADD CATEGORY]: categoryLabel is empty")
       return
@@ -115,13 +114,21 @@ const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, 
       resetModal()
       addCategorySheetRef.current?.close()
     }
-  }
+  }, [categoryLabel, selectedColor, category, addCategorySheetRef])
+
+  const handleTextChange = useCallback((text: string) => {
+    setCategoryLabel(text)
+  }, [])
+
+  const handleSubmitEditing = useCallback(() => {
+    handleAddCategory()
+  }, [handleAddCategory])
 
   const resetModal = useCallback(() => {
     setCategoryLabel("")
     setSelectedColor("color1")
     onDismiss?.()
-  }, [])
+  }, [onDismiss])
 
   const animationConfigs = useBottomSheetSpringConfigs({
     damping: 80,
@@ -133,7 +140,7 @@ const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, 
 
   const snapPoints = useMemo(() => ["70%", "85%", "95%"], []);
 
-  const renderFooter = (props : BottomSheetDefaultFooterProps) => (
+  const renderFooter = useCallback((props : BottomSheetDefaultFooterProps) => (
     <BottomSheetFooter {...props} bottomInset={bottom}>
       <View>
         <TouchableOpacity
@@ -144,7 +151,7 @@ const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, 
         </TouchableOpacity>
       </View>
     </BottomSheetFooter>
-  );
+  ), [bottom, handleAddCategory]);
 
   return (
     <BottomSheetModal
@@ -172,8 +179,8 @@ const AddCategoryModal = ({ category, addCategorySheetRef, addCategoryInputRef, 
           <CustomTextInput
             addCategoryInputRef={addCategoryInputRef}
             value={categoryLabel}
-            onChangeText={setCategoryLabel}
-            handleAddCategory={() => handleAddCategory()}
+            onChangeText={handleTextChange}
+            handleAddCategory={handleSubmitEditing}
           />
         </View>
         <View style={$colorsContainer}>
@@ -279,4 +286,3 @@ const $selected: ViewStyle = {
 const $unselected: ViewStyle = {
   borderColor: colors.transparent,
 }
-

@@ -11,7 +11,7 @@ interface SwipeableTransactionRowProps {
   item: TransactionModel
   index: number
   sectionLength: number
-  categoryColor: string
+  categoryColor: keyof typeof colors.custom
   onDelete: (transaction: TransactionModel) => void
 }
 
@@ -58,8 +58,8 @@ export const SwipeableTransactionRow = ({
         $itemWrapper,
         index === 0 && $itemWrapperFirst,
         index === sectionLength - 1 && $itemWrapperLast,
-        { borderColor: categoryColor }
-      ]}>
+        { borderColor: colors.custom[categoryColor] }]}
+      >
         <RowItem transaction={item} />
       </View>
     </ReanimatedSwipeable>
