@@ -49,7 +49,7 @@ const CustomTextInput = memo(({
   return (
     <BottomSheetTextInput
       ref={addCategoryInputRef}
-      value={value}
+      defaultValue={value}
       autoComplete={"off"}
       style={$modalAddCategoryInput}
       textAlign="left"

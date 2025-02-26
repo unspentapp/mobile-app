@@ -75,7 +75,7 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
           <View style={$dragIndicator} />
           {date ? (
           <Calendar
-            key={date.toISOString()}
+            key={date.toString()}
             theme={{
               backgroundColor: "red",
               arrowColor: colors.palette.primary500,
@@ -86,8 +86,8 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
             }}
             enableSwipeMonths={true}
             firstDay={1}
-            markedDates={{[date.toISOString()]: { selected: true, selectedColor: colors.palette.primary500}}}
-            current={date.toISOString()}
+            markedDates={{[date.toString()]: { selected: true, selectedColor: colors.palette.primary500}}}
+            current={date.toString()}
             onDayPress={(day) => {
               setDate(new Date(day.dateString))
               onClose();

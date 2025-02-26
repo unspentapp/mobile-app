@@ -203,7 +203,6 @@ const TransactionDetails = () => {
               editable={isEditing}
               cursorColor={colors.palette.primary500}
               style={[$textInput, isEditing && $editableInput]}
-              placeholder="Enter description"
               submitBehavior={"blurAndSubmit"}
               returnKeyType="next"
               onFocus={() => handleFocus("description")}
@@ -223,7 +222,6 @@ const TransactionDetails = () => {
                 cursorColor={colors.palette.primary500}
                 style={[$textInput, isEditing && $editableInput]}
                 keyboardType="numeric" // todo decimals?
-                placeholder="Enter amount"
                 returnKeyType="done"
                 onSubmitEditing={handleSave}
               />
