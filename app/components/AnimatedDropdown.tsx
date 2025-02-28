@@ -10,10 +10,8 @@ import {
   Keyboard,
   Modal, Platform,
 } from "react-native"
-import Animated, {
-  useAnimatedStyle,
+import {
   withTiming,
-  interpolate,
   useSharedValue,
 } from 'react-native-reanimated'
 import { colors, spacing, typography } from "app/theme"
@@ -82,18 +80,6 @@ const AnimatedDropdown: React.FC<DropdownProps> = ({
     closeDropdown()
   }, [onSelect])
 
-  const contentStyle = useAnimatedStyle(() => {
-    const height = interpolate(
-      heightAnimation.value,
-      [0, 1],
-      [0, Math.min(options.length * 48, maxHeight)]
-    )
-    return {
-      height,
-      opacity: heightAnimation.value,
-    }
-  })
-
   const measureDropdown = useCallback(() => {
     if (dropdownRef.current) {
       dropdownRef.current.measureInWindow((x, y, width, height) => {
@@ -143,6 +129,7 @@ const AnimatedDropdown: React.FC<DropdownProps> = ({
             <TouchableWithoutFeedback>
               <View style={[
                 $modalContent,
+                // eslint-disable-next-line react-native/no-inline-styles
                 {
                   position: 'absolute',
                   top: dropdownLayout.y + dropdownLayout.height,

@@ -1,7 +1,3 @@
-// Note the syntax of these imports from the date-fns library.
-// If you import with the syntax: import { format } from "date-fns" the ENTIRE library
-// will be included in your production bundle (even if you only use one function).
-// This is because react-native does not support tree-shaking.
 import { isToday, isYesterday, Locale } from "date-fns"
 import format from "date-fns/format"
 import parseISO from "date-fns/parseISO"
@@ -17,9 +13,15 @@ const getLocale = (): Locale => {
   return locale === "ar" ? ar : locale === "ko" ? ko : en
 }
 
-// Accept either string or Date
+// Convert a timestamp (number) to calendar string format (YYYY-MM-DD)
+export const dateToCalendarString = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toISOString().split('T')[0];
+}
+
+// Accept timestamp (number), Date object, or ISO string
 export const formatDate = (
-  date: string | Date,
+  date: string | Date | number,
   dateFormat?: string,
   options?: Options & {
     showRelative?: boolean // Show "Today" or "Yesterday" if applicable
@@ -31,8 +33,16 @@ export const formatDate = (
     locale,
   }
 
-  // Parse if string, otherwise use as is
-  const dateObj = typeof date === 'string' ? parseISO(date) : date
+  // Parse different input types to Date object
+  let dateObj: Date;
+
+  if (typeof date === 'string') {
+    dateObj = parseISO(date);
+  } else if (typeof date === 'number') {
+    dateObj = new Date(date); // Timestamp to Date
+  } else {
+    dateObj = date;
+  }
 
   // Show relative dates if enabled
   if (options?.showRelative) {

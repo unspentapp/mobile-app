@@ -10,10 +10,8 @@ import database from "../../../db"
 import TransactionModel from "../../../db/models/TransactionModel"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { CalendarModal } from "app/screens/Transactions/CalendarModal"
-import format from "date-fns/format"
 import AnimatedDropdown, { DropdownOption } from "app/components/AnimatedDropdown"
 import { useWmStorage } from "../../../db/useWmStorage"
-import { isToday } from "date-fns"
 import { formatDate } from "app/utils/formatDate"
 
 
@@ -261,6 +259,7 @@ const TransactionDetails = () => {
             )}
           </View>
 
+          {type === "expense" ? (
           <View style={$fieldContainer}>
             <Text preset="formLabel" tx={"transactionDetails.category"} style={$label} />
             {isEditing ? (
@@ -281,6 +280,7 @@ const TransactionDetails = () => {
               />
             )}
           </View>
+          ) : null}
         </View>
       </View>
     </View>

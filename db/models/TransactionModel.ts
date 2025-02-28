@@ -25,37 +25,8 @@ export default class TransactionModel extends Model {
   @readonly @date("createdAt") createdAt?: number
 
 
-/*  /!**
-   * Update transaction and optionally its category in a batch operation
-   * @param transactionData Data to update for the transaction
-   * @param categoryData Optional data to update for the category
-   * @returns Promise that resolves when the batch operation completes
-   *!/
-  @writer async updateWithCategory(
-    transactionData: TransactionModel,
-    categoryData: CategoryModel
-  ): Promise<void> {
-  await this.batch(
-    this.prepareUpdate(tx => {
-      if (transactionData.amount !== undefined) tx.amount = transactionData.amount
-      if (transactionData.description !== undefined) tx.description = transactionData.description
-      if (transactionData.transactionAt !== undefined) tx.transactionAt = transactionData.transactionAt
-      if (transactionData.type !== undefined) tx.type = transactionData.type
-      if (transactionData.isRecurring !== undefined) tx.isRecurring = transactionData.isRecurring
-    }),
-  )}
-
-  @writer async updateDetails({ amount, description, categoryId }) {
-    await this.update(transaction => {
-      if (amount !== undefined) transaction.amount = amount
-      if (description !== undefined) transaction.description = description
-      if (categoryId !== undefined) transaction.category = categoryId
-    })
-  }*/
-
 
   @writer async addNewTransaction(transactionData, categoryId) {
-    const category = await this.collections.get<CategoryModel>("categories").find(categoryId)
 
     const newTx = await this.collections.get<TransactionModel>("transactions").create(transaction => {
       transaction.amount = transactionData.amount

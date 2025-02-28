@@ -6,12 +6,12 @@ import { endOfYear, getWeekOfMonth, getYear, startOfYear } from "date-fns"
 import format from "date-fns/format"
 import { ScrollView, SectionList, TextStyle, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
-import { colors, spacing } from "app/theme"
+import { spacing } from "app/theme"
 import { YearTabsContainer, SectionHeader } from "app/screens"
 import { SwipeableTransactionRow } from "app/components"
 import TransactionModel from "../../../db/models/TransactionModel"
 import CategoryModel from "../../../db/models/CategoryModel"
-
+import { CustomColorType } from "app/theme/colors"
 
 export interface Props {
   transactions: TransactionModel[]
@@ -35,6 +35,7 @@ interface YearTab {
   hasTransactions: boolean
 }
 
+// Define a proper type for section data
 interface SectionData {
   monthKey: string;
   title: string;
@@ -42,9 +43,10 @@ interface SectionData {
   month: string;
   monthlyStats: MonthlyStats;
   weeklyStats: WeeklyStats;
-  isFirstWeekOfMonth?: boolean;
+  isFirstWeekOfMonth: boolean;
 }
 
+// Define a type for the grouped transactions
 interface GroupedTransactions {
   [weekKey: string]: {
     monthKey: string;
@@ -56,9 +58,11 @@ interface GroupedTransactions {
   };
 }
 
+// Define a type for the categories map
 interface CategoriesMap {
-  [key: string]: CategoryModel;
+  [categoryId: string]: CategoryModel;
 }
+
 
 const TransactionsList = ({ transactions, categories, selectedYear, setSelectedYear } : Props) => {
   const scrollViewRef = useRef<ScrollView>(null)
@@ -68,7 +72,6 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
   }])
 
   const handleDelete = async (transaction: TransactionModel) => {
-
     if (!transaction.id) return
 
     try {
@@ -83,7 +86,6 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
       console.error('Error deleting transaction:', error);
     }
   }
-
 
   // Fetch available years with transactions
   useEffect(() => {
@@ -112,12 +114,11 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
     }
 
     fetchAvailableYears()
-  }, [])
+  }, [transactions])
 
   // Scroll to selected year on first render and when years change
   useEffect(() => {
     if (availableYears.length > 0 && scrollViewRef.current) {
-
       const currentYearIndex = availableYears.findIndex(({ year }) => year === selectedYear)
       if (currentYearIndex !== -1) {
         scrollViewRef.current?.scrollTo({
@@ -129,11 +130,11 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
   }, [availableYears, selectedYear])
 
   // Transform and group transactions by month and week
-  const prepareSections = (transactions : TransactionModel[]) => {
-    const monthlyStats: { [key: string] : MonthlyStats } = {};
-    const weeklyStats: { [key: string] : WeeklyStats } = {};
+  const prepareSections = (transactions: TransactionModel[]): SectionData[] => {
+    const monthlyStats: Record<string, MonthlyStats> = {};
+    const weeklyStats: Record<string, WeeklyStats> = {};
 
-    const grouped : GroupedTransactions = transactions.reduce((acc, transaction) => {
+    const grouped: GroupedTransactions = transactions.reduce((acc: GroupedTransactions, transaction) => {
       const monthKey = format(transaction.transactionAt, 'yyyy-MM');
       const weekKey = `${monthKey}-W${getWeekOfMonth(transaction.transactionAt, { weekStartsOn: 1 })}`;
 
@@ -175,7 +176,7 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
       acc[weekKey].monthlyStats = monthlyStats[monthKey];
       acc[weekKey].weeklyStats = weeklyStats[weekKey];
       return acc;
-    }, {});
+    }, {} as GroupedTransactions);  // Type assertion here
 
     const sections = Object.values(grouped);
 
@@ -187,12 +188,13 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
     }));
   };
 
-  const categoriesMap = useMemo<CategoriesMap>(() => {
-    return categories.reduce((acc, category) => {
-      acc[category.id] = category;
-
+  const categoriesMap: CategoriesMap = useMemo(() => {
+    return categories.reduce((acc: CategoriesMap, category) => {
+      if (category.id) {  // Make sure id exists
+        acc[category.id] = category;
+      }
       return acc;
-    }, {});
+    }, {} as CategoriesMap);  // Type assertion here
   }, [categories]);
 
   const sections = prepareSections(transactions);
@@ -208,41 +210,57 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
       <SectionList
         style={$sectionContainer}
         sections={sections}
-        renderItem={({ item, index, section }) => (
-          <SwipeableTransactionRow
-            item={item}
-            index={index}
-            sectionLength={section.data.length}
-            categoryColor={categoriesMap[item.categoryId]?.color || "primary500" }
-            onDelete={handleDelete}
-          />
-        )}
-        keyExtractor={(item, index) => item.id + index}
+        renderItem={({ item, index, section }) => {
+          // Get category color with type safety
+          let categoryColor: CustomColorType = "color1"; // Default
+          if (item.categoryId && categoriesMap[item.categoryId]) {
+            // Assert that the color is a valid key for your custom colors
+            const color = categoriesMap[item.categoryId].color;
+            // Check if the color is a valid CustomColorType
+            if (color && (color.startsWith("color") && /^color(10|[1-9])$/.test(color))) {
+              categoryColor = color as CustomColorType;
+            }
+          }
+
+          return (
+            <SwipeableTransactionRow
+              item={item}
+              index={index}
+              sectionLength={section.data.length}
+              categoryColor={categoryColor}
+              onDelete={handleDelete}
+            />
+          );
+        }}
+        keyExtractor={(item, index) => item.id + index.toString()}
         renderSectionHeader={({ section }) => (
           <SectionHeader section={section} />
         )}
         ListEmptyComponent={<Text preset={"formHelper"} tx={"allTransactionsScreen.noItems"} style={$noItems}/>}
         showsVerticalScrollIndicator={false}
         initialNumToRender={20}
-        // SectionSeparatorComponent={() => <View style={$sectionSeparator} />}
-        // renderSectionFooter={() => <View style={$sectionFooter} />}
       />
     </View>
   )
 };
 
-const enhance = withObservables(["selectedYear"], ({ selectedYear }) => {
+interface InputProps {
+  selectedYear: number
+  setSelectedYear: (selectedYear: number) => void
+}
+
+const enhance = withObservables(["selectedYear"], ({ selectedYear }: InputProps) => {
   const startDate = startOfYear(new Date(selectedYear, 0, 1))
   const endDate = endOfYear(new Date(selectedYear, 11, 31))
   console.log(selectedYear, startDate, endDate)
 
   return {
-    transactions: database.get('transactions').query(
+    transactions: database.get<TransactionModel>('transactions').query(
       Q.where('transaction_at', Q.gte(new Date(startDate).getTime())),
       Q.where('transaction_at', Q.lte(new Date(endDate).getTime())),
       Q.sortBy('transaction_at', Q.desc),
     ).observe(),
-    categories: database.get('categories').query().observe()
+    categories: database.get<CategoryModel>('categories').query().observe()
   }
 })
 
@@ -260,15 +278,3 @@ const $sectionContainer: ViewStyle = {
   flex: 1,
   paddingHorizontal: spacing.sm,
 };
-
-const $sectionFooter: ViewStyle = {
-  height: spacing.sm,
-};
-
-
-
-
-
-
-
-

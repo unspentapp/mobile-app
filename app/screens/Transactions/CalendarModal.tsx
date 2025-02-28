@@ -11,14 +11,13 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated"
-import { isThisMonth } from "date-fns"
-import format from "date-fns/format"
+import { dateToCalendarString } from "app/utils/formatDate"
 
 type CalendarModalProps = {
   visible: boolean;
   onClose: () => void;
-  date: Date | undefined;
-  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  date: number;
+  setDate: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModalProps) => {
@@ -28,13 +27,13 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
 
   const backButtonAnimatedStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(isBackButtonVisible ? 1 : 0, { duration: 100 }), // Faster fade
+      opacity: withTiming(isBackButtonVisible ? 1 : 0, { duration: 100 }),
       transform: [
         {
           scale: withSpring(isBackButtonVisible ? 1 : 0.8, {
-            damping: 5, // Lower damping for more bounce
-            stiffness: 180, // Higher stiffness for faster initial movement
-            mass: 0.2, // Lower mass for quicker response
+            damping: 5,
+            stiffness: 180,
+            mass: 0.2,
           }),
         },
       ],
@@ -49,7 +48,6 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
       presentationStyle="overFullScreen"
       transparent={true}
       statusBarTranslucent={true}
-
     >
       <Animated.View
         style={$modalOverlay}
@@ -74,33 +72,43 @@ export const CalendarModal = ({ visible, onClose, date, setDate }: CalendarModal
         <View style={$calendarView}>
           <View style={$dragIndicator} />
           {date ? (
-          <Calendar
-            key={date.toString()}
-            theme={{
-              backgroundColor: "red",
-              arrowColor: colors.palette.primary500,
-              todayTextColor: colors.palette.primary500,
-              textDayFontFamily: typography.fonts.spaceGrotesk.normal,
-              textDayHeaderFontFamily: typography.fonts.spaceGrotesk.normal,
-              textMonthFontFamily: typography.fonts.spaceGrotesk.normal,
-            }}
-            enableSwipeMonths={true}
-            firstDay={1}
-            markedDates={{[date.toString()]: { selected: true, selectedColor: colors.palette.primary500}}}
-            current={date.toString()}
-            onDayPress={(day) => {
-              setDate(new Date(day.dateString))
-              onClose();
-            }}
-            onMonthChange={current => setIsBackButtonVisible(!isThisMonth(new Date(current.dateString)))}
-          />
+            <Calendar
+              key={date.toString()}
+              theme={{
+                backgroundColor: "red",
+                arrowColor: colors.palette.primary500,
+                todayTextColor: colors.palette.primary500,
+                textDayFontFamily: typography.fonts.spaceGrotesk.normal,
+                textDayHeaderFontFamily: typography.fonts.spaceGrotesk.normal,
+                textMonthFontFamily: typography.fonts.spaceGrotesk.normal,
+              }}
+              enableSwipeMonths={true}
+              firstDay={1}
+              markedDates={{[dateToCalendarString(date)]: { selected: true, selectedColor: colors.palette.primary500}}}
+              current={dateToCalendarString(date)}
+              onDayPress={(day) => {
+                // Convert to a Date and then to UTC timestamp for consistent storage
+                const localDate = new Date(day.dateString + 'T00:00:00');
+                const utcTimestamp = localDate.getTime();
+                setDate(utcTimestamp); // This will be stored as UTC timestamp in your database
+                onClose();
+              }}
+              onMonthChange={current => {
+                const selectedMonth = new Date(current.dateString);
+                const today = new Date();
+                setIsBackButtonVisible(
+                  selectedMonth.getMonth() !== today.getMonth() ||
+                  selectedMonth.getFullYear() !== today.getFullYear()
+                );
+              }}
+            />
           ) : null}
           <View style={$buttonContainer}>
             <Animated.View style={backButtonAnimatedStyle}>
               <TouchableOpacity
                 onPress={() => {
-                  setDate(new Date())
-                  setIsBackButtonVisible(false)
+                  setDate(new Date().getTime());
+                  setIsBackButtonVisible(false);
                 }}
                 style={$goTodayButtonContent}
               >

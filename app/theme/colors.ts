@@ -106,3 +106,7 @@ export const colors = {
    */
   errorBackground: palette.angry100,
 }
+
+export type CustomColorType = keyof typeof colors.custom
+export type PaletteColorType = keyof typeof colors.palette
+export type DefaultColorType = keyof typeof colors

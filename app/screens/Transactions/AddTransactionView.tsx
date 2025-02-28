@@ -148,7 +148,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
             placeholderTextColor={colors.palette.neutral400}
             maxFontSizeMultiplier={0}
             maxLength={40}
-            onChangeText={(value) => setDescription(value)}
+            onChangeText={setDescription}
             onSubmitEditing={handleKeyboardEnter}
           />
         </View>
@@ -213,7 +213,6 @@ const $bottomContainer: ViewStyle = {
 
 const $bottomSheetContainer : ViewStyle = {
   flex: 1,
-  padding: 10,
   alignItems: 'center',
   marginBottom: spacing.md,
 }

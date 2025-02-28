@@ -4,7 +4,7 @@ import { BottomSheetBackground } from "app/components/BottomSheetBackground"
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet"
 import { BackHandler, useWindowDimensions, View, ViewStyle } from "react-native"
 import { TabView } from "react-native-tab-view"
-import { colors } from "app/theme"
+import { colors, spacing } from "app/theme"
 import AnimatedTabIndicator from "app/components/AnimatedTabIndicator"
 import AddTransactionView from "app/screens/Transactions/AddTransactionView"
 import { useFocusEffect } from "@react-navigation/native"
@@ -157,10 +157,11 @@ export default AddTransactionModal
 
 
 const $viewContainer: ViewStyle = {
-  flex: 1
+  flex: 1,
 };
 
 const $modalIndicator: ViewStyle = {
+  marginTop: spacing.sm,
   backgroundColor: colors.palette.primary500,
 }
 
