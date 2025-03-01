@@ -8,10 +8,9 @@ import { ScrollView, SectionList, TextStyle, View, ViewStyle } from "react-nativ
 import { Text } from "app/components/Text"
 import { spacing } from "app/theme"
 import { YearTabsContainer, SectionHeader } from "app/screens"
-import { SwipeableTransactionRow } from "app/components"
 import TransactionModel from "../../../db/models/TransactionModel"
 import CategoryModel from "../../../db/models/CategoryModel"
-import { CustomColorType } from "app/theme/colors"
+import { TransactionItemRenderer } from "app/screens/AllTransactionsScreen/TransactionRenderItem"
 
 export interface Props {
   transactions: TransactionModel[]
@@ -210,35 +209,22 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
       <SectionList
         style={$sectionContainer}
         sections={sections}
-        renderItem={({ item, index, section }) => {
-          // Get category color with type safety
-          let categoryColor: CustomColorType = "color1"; // Default
-          if (item.categoryId && categoriesMap[item.categoryId]) {
-            // Assert that the color is a valid key for your custom colors
-            const color = categoriesMap[item.categoryId].color;
-            // Check if the color is a valid CustomColorType
-            if (color && (color.startsWith("color") && /^color(10|[1-9])$/.test(color))) {
-              categoryColor = color as CustomColorType;
-            }
-          }
-
-          return (
-            <SwipeableTransactionRow
-              item={item}
-              index={index}
-              sectionLength={section.data.length}
-              categoryColor={categoryColor}
-              onDelete={handleDelete}
-            />
-          );
-        }}
+        renderItem={({ item, index, section }) => (
+          <TransactionItemRenderer
+            item={item}
+            index={index}
+            section={section}
+            categoriesMap={categoriesMap}
+            onDelete={handleDelete}
+          />
+        )}
         keyExtractor={(item, index) => item.id + index.toString()}
         renderSectionHeader={({ section }) => (
           <SectionHeader section={section} />
         )}
         ListEmptyComponent={<Text preset={"formHelper"} tx={"allTransactionsScreen.noItems"} style={$noItems}/>}
         showsVerticalScrollIndicator={false}
-        initialNumToRender={20}
+        initialNumToRender={12}
       />
     </View>
   )

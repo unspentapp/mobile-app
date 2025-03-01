@@ -7,21 +7,22 @@ import { colors, spacing, typography } from "app/theme"
 type TagProps = {
   id: string,
   label: string,
+  color: keyof typeof colors.custom,
   onSelect: () => void,
   isSelected: boolean,
 }
 
 
-export const Tag = ({ id, label, onSelect, isSelected }: TagProps) => {
+export const Tag = ({ id, label, color, onSelect, isSelected }: TagProps) => {
 
   return (
     <TouchableOpacity
       id={id}
-      style={ isSelected ? $selectedTagContainer : $tagContainer}
+      style={ isSelected ? [$selectedTagContainer, { backgroundColor: colors.custom[color], borderColor: colors.custom[color] }] : $tagContainer}
       onPress={onSelect}
     >
       <Text
-        style={ isSelected ? $selectedTagText : $tagText}
+        style={ isSelected ? $selectedTagText : $tagText} /* todo fix text of white bg */
 
       >{label}</Text>
     </TouchableOpacity>
@@ -41,7 +42,6 @@ const $selectedTagContainer: ViewStyle = {
   paddingHorizontal: spacing.sm,
   paddingVertical: 4,
   borderWidth: 1,
-  borderColor: colors.palette.primary500,
   borderRadius: spacing.xxs,
 }
 
@@ -50,6 +50,6 @@ const $tagText: TextStyle = {
 }
 
 const $selectedTagText: TextStyle = {
-  color: colors.palette.primary500,
   fontFamily: typography.primary.medium,
+  color: colors.palette.neutral000,
 }

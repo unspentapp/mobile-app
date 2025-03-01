@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect, useRef } from "react"
 import {
   Text,
   TextStyle,
@@ -32,13 +32,13 @@ type DropdownProps = {
 }
 
 const AnimatedDropdown: React.FC<DropdownProps> = ({
-                                                     options,
-                                                     selectedOption,
-                                                     onSelect,
-                                                     placeholder = 'Select an option',
-                                                     disabled = false,
-                                                     maxHeight = 240,
-                                                   }) => {
+     options,
+     selectedOption,
+     onSelect,
+     placeholder = 'Select an option',
+     disabled = false,
+     maxHeight = 240,
+   }) => {
   const [isOpenState, setIsOpenState] = useState(false)
   const [dropdownLayout, setDropdownLayout] = useState({
     x: 0,
@@ -88,7 +88,7 @@ const AnimatedDropdown: React.FC<DropdownProps> = ({
     }
   }, [])
 
-  const dropdownRef = React.useRef(null)
+  const dropdownRef = useRef<View>(null)
 
   return (
     <View

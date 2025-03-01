@@ -86,7 +86,7 @@ const AnimatedBackground = ({
      <BlurView
       style={$screenWrapper}
       blurAmount={intensity}
-      blurType="xlight"
+      blurType="light"
       blurRadius={25}
       // overlayColor={"#00000000"}
       />

@@ -20,7 +20,7 @@ export default class CategoryModel extends Model {
   @field("type") type!: "expense" | "income"
   @field("is_default") isDefault!: boolean
   @field("icon") icon?: string
-  @field("color") color?: keyof typeof colors.custom
+  @field("color") color!: keyof typeof colors.custom
   // @field('budget') budget?: number
   @readonly @date("updated_at") updatedAt?: number
   @readonly @date("createdAt") createdAt?: number

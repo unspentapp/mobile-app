@@ -36,7 +36,7 @@ const TransactionDetails = () => {
 
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState("")
-  const [date, setDate] = useState<Date>()
+  const [date, setDate] = useState<number>(new Date().getTime())
 
   const { top } = useSafeAreaInsets()
 
@@ -115,7 +115,7 @@ const TransactionDetails = () => {
           setDescription(transaction.description)
           setAmount(transaction.amount.toString())
           setType(transaction.type)
-          setDate(transaction.transactionAt)
+          setDate(transaction.transactionAt.getTime())
 
           if (category) {
             setCategory(category)
@@ -150,14 +150,6 @@ const TransactionDetails = () => {
   const handleFocus = (inputName: keyof typeof inputRefs) => {
     setFocusedInput(inputName)
   }
-
-
-
-/*  const handleBlur = () => {
-    setIsEditing(false)
-    setFocusedInput(null)
-  } */
-
 
   return (
     <View style={$screenContainer}>

@@ -8,7 +8,6 @@ import { Platform, NativeModules } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ArgType } from "reactotron-core-client"
 
-import { clear } from "app/utils/storage"
 import { goBack, resetRoot, navigate } from "app/navigators/navigationUtilities"
 
 import { Reactotron } from "./ReactotronClient"
@@ -57,7 +56,7 @@ reactotron.onCustomCommand({
   command: "resetStore",
   handler: () => {
     Reactotron.log("resetting store")
-    clear()
+    // clear() todo clear from storage
   },
 })
 

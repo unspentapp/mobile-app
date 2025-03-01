@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, TouchableOpacity, ViewStyle } from 'react-native'
+import { View, TouchableOpacity, ViewStyle } from "react-native"
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
 import Reanimated, { SharedValue, useAnimatedStyle } from "react-native-reanimated"
 import { Icon } from 'app/components/Icon'
@@ -15,43 +15,54 @@ interface SwipeableTransactionRowProps {
   onDelete: (transaction: TransactionModel) => void
 }
 
+const DeleteAction = ({
+                        drag,
+                        item,
+                        onDelete
+                      }: {
+  prog: SharedValue<number>
+  drag: SharedValue<number>
+  item: TransactionModel
+  onDelete: (transaction: TransactionModel) => void
+}) => {
+  const styleAnimation = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: drag.value + 56 }],
+    };
+  });
+
+  return (
+    <Reanimated.View style={styleAnimation}>
+      <View style={$rightAction}>
+        <TouchableOpacity
+          style={$deleteAction}
+          onPress={() => onDelete(item)}
+        >
+          <Icon icon={"delete"} size={typography.iconSize} color={colors.palette.neutral000}/>
+        </TouchableOpacity>
+      </View>
+    </Reanimated.View>
+  );
+};
+
 export const SwipeableTransactionRow = ({
-    item,
-    index,
-    sectionLength,
-    categoryColor,
-    onDelete
-  }: SwipeableTransactionRowProps) => {
+                                          item,
+                                          index,
+                                          sectionLength,
+                                          categoryColor,
+                                          onDelete
+                                        }: SwipeableTransactionRowProps) => {
 
-  function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
-
-    const styleAnimation = useAnimatedStyle(() => {
-
-      return {
-        transform: [{ translateX: drag.value + 56 }],
-      };
-    });
-
-    return (
-      <Reanimated.View style={styleAnimation}>
-        <View style={$rightAction}>
-          <TouchableOpacity
-            style={$deleteAction}
-            onPress={() => onDelete(item)}
-          >
-            <Icon icon={"delete"} size={typography.iconSize} color={colors.palette.neutral000}/>
-          </TouchableOpacity>
-        </View>
-      </Reanimated.View>
-    );
-  }
+  const renderRightActions = (prog: SharedValue<number>, drag: SharedValue<number>) => (
+    <DeleteAction prog={prog} drag={drag} item={item} onDelete={onDelete} />
+  );
 
   return (
     <ReanimatedSwipeable
       friction={2}
       enableTrackpadTwoFingerGesture
       rightThreshold={40}
-      renderRightActions={RightAction}
+      renderRightActions={renderRightActions}
       containerStyle={$container}
     >
       <View style={[

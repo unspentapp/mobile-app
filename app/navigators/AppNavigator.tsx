@@ -17,10 +17,8 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
-import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen/AllTransactionsScreen"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import TransactionDetails from "app/screens/Transactions/TransactionDetails"
-import { Header } from "app/components"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -75,7 +73,7 @@ const AppStack = () => {
     >
       {isAuthenticated ? (
         <>
-          {/*<RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} />*/}
+          {/* <RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
           <RootStack.Screen
             name="Main"
             component={MainNavigator}
@@ -83,14 +81,14 @@ const AppStack = () => {
               statusBarHidden: false,
             }}
           />
-          <RootStack.Screen
+          {/* <RootStack.Screen
             name="AllTransactions"
             component={AllTransactionsScreen}
             options={{
               statusBarHidden: false,
 
             }}
-          />
+          /> */}
           <RootStack.Screen
             name="TransactionDetails"
             component={TransactionDetails}

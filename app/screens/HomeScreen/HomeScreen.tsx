@@ -1,6 +1,6 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useState } from "react"
 import {
-  ScrollView, TextInput, TextStyle,
+  ScrollView, TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -8,7 +8,6 @@ import {
 import { Icon, Text } from "app/components"
 import { colors, spacing, typography } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
-import { BottomSheetModal } from "@gorhom/bottom-sheet"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import AddTransactionModal from "app/screens/Transactions/AddTransactionModal"
 import EnhancedCategoryCard from "app/screens/HomeScreen/CategoryCard"
@@ -33,7 +32,6 @@ interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
   categories: CategoryModel[]
 }
 
-type BottomSheetTextInputRef = TextInput
 
 const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...props }) => {
   const { navigation } = props
@@ -46,8 +44,13 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
   // States
   const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState<number>(0)
-  const [groupedTransactions, setGroupedTransactions] = useState<Map<string, TransactionModel[]>>(new Map())
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
+  const [processedTransactions, setProcessedTransactions] = useState<Array<{
+    categoryId: string;
+    category: any;
+    transactions: TransactionModel[];
+    totalExpensesPerCategory: number;
+  }>>([]);
 
   // Navigation
   const navigateToAllTransactions = () => navigation.navigate("AllTransactions")
@@ -78,7 +81,33 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
         grouped.set(categoryId, categoryTransactions)
       })
 
-      setGroupedTransactions(grouped)
+      // Process and sort the grouped transactions
+      const processedAndSorted = [...grouped]
+        .map(([categoryId, categoryTransactions]) => {
+          const category = categoryId === 'unknown'
+            ? { id: 'unknown', name: 'Uncategorized', color: colors.textDim, type: 'expense' }
+            : categories.find(c => c.id === categoryId)
+
+          const totalExpensesPerCategory = categoryTransactions.reduce(
+            (total, transaction) => total + transaction.amount, 0
+          )
+
+          if (!category) return null
+          if (categoryId === 'unknown' && categoryTransactions.length === 0) return null
+
+          return {
+            categoryId,
+            category,
+            transactions: categoryTransactions,
+            totalExpensesPerCategory
+          }
+        })
+        .filter(Boolean) // Remove null entries
+        .sort((a, b) => b.totalExpensesPerCategory - a.totalExpensesPerCategory) // Sort by expense DESC
+
+      // Only store the processed transactions in state
+      setProcessedTransactions(processedAndSorted)
+
     }, [transactions, categories])
   )
 
@@ -148,8 +177,13 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
   return (
     <View style={$screenContainer}>
       <AnimatedBackground
-        count={5}
-        customColors={[colors.palette.primary200, colors.palette.primary300, colors.palette.secondary100, colors.palette.secondary200, colors.palette.secondary300]}
+        count={4}
+        customColors={[
+          colors.palette.primary200,
+          colors.palette.primary400,
+          colors.palette.secondary100,
+          colors.palette.secondary200,
+        ]}
         backgroundColor={colors.palette.neutral100}
         duration={30000}
       />
@@ -216,26 +250,18 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
             </TouchableOpacity>
           </View>
 
-          {groupedTransactions.size > 1 ? [...groupedTransactions].map(([categoryId, categoryTransactions], index) => {
-            const category = categoryId === 'unknown'
-              ? { id: 'unknown', name: 'Uncategorized', color: colors.textDim, type: 'expense' }
-              : categories.find(c => c.id === categoryId)
-
-            if (!category) return null
-            if (categoryId === 'unknown' && categoryTransactions.length === 0) return null
-
-            return (
-              <EnhancedCategoryCard
-                key={categoryId}
-                categoryId={categoryId}
-                category={category}
-                transactions={categoryTransactions}
-                totalExpenses={totalMonthlyExpenses || 0}
-                animationDelay={index * 50}
-                presentConfirmationModal={actions.openConfirmationSheet}
-              />
-            )
-          }) : null}
+          {processedTransactions.length > 0 ? processedTransactions.map((item, index) => (
+            <EnhancedCategoryCard
+              key={item.categoryId}
+              categoryId={item.categoryId}
+              category={item.category}
+              transactions={item.transactions}
+              totalExpenses={totalMonthlyExpenses || 0}
+              totalExpensesPerCategory={item.totalExpensesPerCategory || 0}
+              animationDelay={index * 50}
+              presentConfirmationModal={actions.openConfirmationSheet}
+            />
+          )) : null}
 
           <TouchableOpacity
             style={$addCategoryButtonContainer}
@@ -262,12 +288,12 @@ const enhance = withObservables([], () => {
   const endDate = endOfMonth(new Date)
 
   return {
-    transactions: database.get("transactions").query(
+    transactions: database.get<TransactionModel>("transactions").query(
       Q.where('type', 'expense'),
       Q.where('transaction_at', Q.gte(new Date(startDate).getTime())),
       Q.where('transaction_at', Q.lte(new Date(endDate).getTime())),
     ).observe(),
-    categories: database.get("categories").query().observe(),
+    categories: database.get<CategoryModel>("categories").query().observe(),
   }
 })
 

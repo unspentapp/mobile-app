@@ -19,7 +19,9 @@ export const dateToCalendarString = (timestamp: number): string => {
   return date.toISOString().split('T')[0];
 }
 
-// Accept timestamp (number), Date object, or ISO string
+/*
+* Util to display dates in locale
+* */
 export const formatDate = (
   date: string | Date | number,
   dateFormat?: string,

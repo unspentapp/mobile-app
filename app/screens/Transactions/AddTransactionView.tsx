@@ -23,7 +23,7 @@ type AddTransactionViewProps = {
     expenseValue: string,
     note: string,
     selectedCategoryId: string,
-    date: string,
+    date: number,
     type: 'expense' | 'income'
   ) => void
   index: number,
@@ -35,7 +35,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
   const [amount, setAmount] = useState("")
   const [description, setDescription] = useState("")
   const [selectedCategoryId, setSelectedCategoryId] = useState("")
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  const [date, setDate] = useState(new Date().getTime())
 
   const [categories, setCategories] = useState<CategoryModel[]>([])
   const [dateModalToggle, setDateModalToggle] = useState(false)
@@ -49,8 +49,6 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
       const categories = await database.get<CategoryModel>('categories')
         .query(Q.sortBy('name', Q.asc))
         .fetch()
-
-      // todo map CategoryModel in CategoryDataI
 
       setCategories(categories)
     }
@@ -67,7 +65,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
     onAddTransaction(amount, description, selectedCategoryId, date, type)
 
     // Reset form after adding transaction
-    setDate(format(new Date(), 'yyyy-MM-dd'))
+    setDate(new Date().getTime())
     setSelectedCategoryId("")
     setAmount("")
     setDescription("")
@@ -172,6 +170,7 @@ const AddTransactionView: React.FC<AddTransactionViewProps> = ({ type, onAddTran
                   id={category.id}
                   label={category.name}
                   key={category.id}
+                  color={category.color}
                   onSelect={() => {
                     if (selectedCategoryId === category.id) setSelectedCategoryId("")
                     else setSelectedCategoryId(category.id)

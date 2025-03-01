@@ -23,22 +23,22 @@ export const AllTransactionsScreen: FC<AllTransactionsScreenProps> = () => {
         translucent={true}
       />
       <View style={[$container, { paddingTop: top }]}>
-      <View style={$topContainer}>
-        <TouchableOpacity
-          style={$goBackButton}
-          onPress={goBack}
-        >
-          <Icon icon={"back"} />
-        </TouchableOpacity>
-        <Text testID="transactions-heading" tx={"allTransactionsScreen.title"} preset="heading" />
-      </View>
+        <View style={$topContainer}>
+          <TouchableOpacity
+            style={$goBackButton}
+            onPress={goBack}
+          >
+            <Icon icon={"back"} />
+          </TouchableOpacity>
+          <Text testID="transactions-heading" tx={"allTransactionsScreen.title"} preset="heading" />
+        </View>
 
-      <View style={$listContainer}>
-        <EnhancedTransactionsList
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-        />
-      </View>
+        <View style={$listContainer}>
+          <EnhancedTransactionsList
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+          />
+        </View>
       </View>
     </View>
   )

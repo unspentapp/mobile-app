@@ -11,15 +11,15 @@ export interface TransactionData {
   description: string;
   categoryId?: string;
   category?: CategoryModel;
-  transactionAt?: Date;
+  transactionAt?: number;
   type?: "expense" | "income";
   isRecurring?: boolean
 }
 
 export interface TransactionFiltersI {
   userId?: string;
-  startDate?: Date | undefined;
-  endDate?: Date | undefined;
+  startDate?: number;
+  endDate?: number;
   categoryId?: string;
 }
 

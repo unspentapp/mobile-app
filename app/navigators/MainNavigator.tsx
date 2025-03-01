@@ -5,17 +5,17 @@ import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
-import { colors, spacing, typography } from "../theme"
+import { colors, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { SettingsScreen } from "app/screens/SettingsScreen"
-import { ExpensesNavigator } from "app/navigators/ExpensesNavigator"
-import { AnalyticsScreen } from "app/screens"
-import { AllTransactionsScreen } from "app/screens/AllTransactionsScreen/AllTransactionsScreen"
+import { AllTransactionsScreen, AnalyticsScreen } from "app/screens"
+import EnhancedHomeScreen from "app/screens/HomeScreen/HomeScreen"
 
 export type MainTabParamList = {
   Analytics: undefined,
-  Settings: undefined
-  ExpensesNavigator: undefined
+  Settings: undefined,
+  Expenses: undefined,
+  AllTransactions: undefined,
 }
 
 /**
@@ -54,13 +54,25 @@ export function MainNavigator() {
     >
 
       <Tab.Screen
-        name="ExpensesNavigator"
-        component={ExpensesNavigator}
+        name="Expenses"
+        component={EnhancedHomeScreen}
         options={{
           tabBarShowLabel: false,
           tabBarLabel: translate("mainNavigator.expensesTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="home" color={focused ? colors.tint : undefined} size={25} />
+            <Icon icon="home" color={focused ? colors.tint : undefined} size={22} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="AllTransactions"
+        component={AllTransactionsScreen}
+        options={{
+          tabBarShowLabel: false,
+          tabBarLabel: translate("mainNavigator.expensesTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="list" color={focused ? colors.tint : undefined} size={22} />
           ),
         }}
       />
@@ -73,7 +85,7 @@ export function MainNavigator() {
           tabBarShowLabel: false,
           tabBarLabel: translate("mainNavigator.analyticsTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="chart" color={focused ? colors.tint : undefined} size={25} />
+            <Icon icon="chart" color={focused ? colors.tint : undefined} size={22} />
           ),
         }}
       />
@@ -86,7 +98,7 @@ export function MainNavigator() {
           tabBarShowLabel: false,
           tabBarLabel: translate("mainNavigator.settingsTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="settings" color={focused ? colors.tint : undefined} size={25} />
+            <Icon icon="settings" color={focused ? colors.tint : undefined} size={22} />
           ),
         }}
       />
@@ -97,12 +109,12 @@ export function MainNavigator() {
 }
 
 const $tabBar: ViewStyle = {
-  backgroundColor: colors.background,
+  backgroundColor: colors.elevatedBackground,
   borderTopColor: colors.transparent,
 }
 
 const $tabBarItem: ViewStyle = {
-  paddingTop: spacing.sm,
+  backgroundColor: colors.transparent,
 }
 
 const $tabBarLabel: TextStyle = {

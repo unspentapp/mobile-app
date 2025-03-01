@@ -38,7 +38,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
     expenseValue: string,
     note: string,
     selectedCategoryId: string,
-    date: string,
+    date: number,
     type: 'expense' | 'income'
   ) => {
     const userId = await database.localStorage.get("USER_ID")

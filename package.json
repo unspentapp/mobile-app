@@ -65,7 +65,7 @@
     "react-native": "0.76.6",
     "react-native-calendars": "^1.1307.0",
     "react-native-drawer-layout": "4.0.0-alpha.9",
-    "react-native-gesture-handler": "~2.20.2",
+    "react-native-gesture-handler": "^2.21.0",
     "react-native-logs": "^5.3.0",
     "react-native-pager-view": "6.5.1",
     "react-native-reanimated": "~3.16.1",

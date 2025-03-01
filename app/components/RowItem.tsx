@@ -2,11 +2,11 @@ import React from "react"
 import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
-import format from "date-fns/format"
 import { NavigationProp, useNavigation } from "@react-navigation/native"
 import { AppStackParamList } from "app/navigators"
 import { withObservables } from "@nozbe/watermelondb/react"
 import TransactionModel from "../../db/models/TransactionModel"
+import { formatDate } from "app/utils/formatDate"
 
 export interface RowItemProps {
   transaction : Partial<TransactionModel>
@@ -32,9 +32,11 @@ const RowItem = ({ transaction } : RowItemProps) => {
           </Text>
 
           {/* todo dynamic currency */}
+          {transaction.transactionAt ? (
           <Text style={$date}>
-            {format(transaction.transactionAt, "dd MMM", { weekStartsOn: 0 })}
+            {formatDate(transaction.transactionAt,  "eee, dd MMM")}
           </Text>
+          ) : "---"}
         </View>
         {/*
          * expense >> - sign [red]

@@ -1,4 +1,4 @@
-import React, { ForwardedRef, RefObject, useCallback, useEffect, useMemo, useState, memo } from "react"
+import React, { RefObject, useCallback, useEffect, useMemo, useState, memo } from "react"
 import {
   BottomSheetFooter,
   BottomSheetModal,
@@ -33,7 +33,7 @@ export type CategoryModalProps = {
 }
 
 type CustomTextInputProps = {
-  addCategoryInputRef: ForwardedRef<TextInput>,
+  addCategoryInputRef: RefObject<TextInput>,
   value: string,
   onChangeText: (text: string) => void,
   handleAddCategory: (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void,
@@ -46,8 +46,11 @@ const CustomTextInput = memo(({
                                 onChangeText,
                                 handleAddCategory,
                               }: CustomTextInputProps) => {
+  CustomTextInput.displayName = 'CustomTextInput';
+
   return (
     <BottomSheetTextInput
+      // @ts-ignore
       ref={addCategoryInputRef}
       defaultValue={value}
       autoComplete={"off"}

@@ -90,7 +90,7 @@ function App(props: AppProps) {
   }, [rehydrated])*/
 
   useEffect(() => {
-    setTimeout(hideSplashScreen, 2000)
+    setTimeout(hideSplashScreen, 1000)
   }, [])
 
   // Before we show the app, we have to wait for our state to be ready.

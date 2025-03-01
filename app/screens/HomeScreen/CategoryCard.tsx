@@ -13,6 +13,7 @@ type Props = {
   categoryId: string,
   transactions: TransactionModel[],
   totalExpenses: number,
+  totalExpensesPerCategory: number,
   animationDelay?: number,
   presentConfirmationModal: (category: Partial<CategoryModel>) => void,
   category: Partial<CategoryModel>,
@@ -22,11 +23,12 @@ const CategoryCard = ({
     categoryId,
     transactions,
     totalExpenses,
+    totalExpensesPerCategory,
     animationDelay,
     presentConfirmationModal,
     category
   }: Props) => {
-  const totalExpensesPerCategory = transactions.reduce((total, transaction) => total + transaction.amount, 0)
+
   const isExpanded = useSharedValue(false)
 
   const onPress = () => {
