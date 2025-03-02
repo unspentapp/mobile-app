@@ -6,6 +6,33 @@ import { ExpoConfig, ConfigContext } from "@expo/config"
  */
 require("ts-node/register")
 
+// const IS_DEV = process.env.APP_VARIANT === 'development';
+const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
+const getUniqueIdentifier = () => {
+/*  if (IS_DEV) {
+    return 'com.yourname.stickersmash.dev';
+  } */
+
+  if (IS_PREVIEW) {
+    return 'com.unspentapp.preview';
+  }
+
+  return 'com.unspentapp';
+};
+
+const getAppName = () => {
+  /* if (IS_DEV) {
+    return 'Unspent (Dev)';
+  } */
+
+  if (IS_PREVIEW) {
+    return 'Unspent (Preview)';
+  }
+
+  return 'Unspent';
+};
+
+
 /**
  * @param config ExpoConfig coming from the static config app.json if it exists
  * 
@@ -20,7 +47,11 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
     plugins: [
       ...existingPlugins,
       require("./plugins/withSplashScreen").withSplashScreen,
-    ]
+    ],
+    name: getAppName(),
+    android: {
+      package: getUniqueIdentifier(),
+    }
   }
 }
 

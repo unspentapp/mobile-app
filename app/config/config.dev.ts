@@ -9,7 +9,7 @@ export default {
 //   API_URL: "https://api.rss2json.com/v1/",
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL!,
+  supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  supabaseAnonKey: process.env.SUPABASE_ANON_KEY!,
+  supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
 }

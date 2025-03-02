@@ -5,7 +5,7 @@ import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
 
 export const supabase = createClient(
   Config.supabaseUrl,
-  Config.supabaseAnonKey,
+  process.env.SUPABASE_ANON_KEY,
   {
     auth: {
       storage: clientAuthStorageInstance,
