@@ -35,7 +35,7 @@ export const useWmStorage = () => {
       }
 
       if (startDate && endDate) {
-        query = query.extend(Q.between('created_at', startDate, endDate));
+        query = query.extend(Q.where('created_at', Q.between(startDate, endDate)));
       }
 
       if (categoryId) {

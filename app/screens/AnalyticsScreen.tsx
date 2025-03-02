@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import { TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text, Icon } from "app/components"
-import { colors, spacing } from "app/theme"
+import { spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import { StatusBar } from "expo-status-bar"
 import { goBack } from "app/navigators"
@@ -12,7 +12,7 @@ interface AnalyticsScreenProps extends MainTabScreenProps<"Analytics"> {}
 export const AnalyticsScreen: FC<AnalyticsScreenProps> = (
   _props,
 ) => {
-  const { navigation } = _props
+  // const { navigation } = _props
   const { top } = useSafeAreaInsets()
   // const logout = useStore((state) => state.logout)
 
@@ -33,8 +33,8 @@ export const AnalyticsScreen: FC<AnalyticsScreenProps> = (
           <Text testID="analytics-heading" tx={"analyticsScreen.title"} preset="heading" />
         </View>
 
-        <View style={$listContainer}>
-
+        <View style={$contentWrapper}>
+          <Text text="Coming soon" preset="subheading"/>
         </View>
       </View>
     </View>
@@ -63,8 +63,10 @@ const $goBackButton: ViewStyle = {
   paddingVertical: spacing.xs,
 }
 
-const $listContainer: ViewStyle = {
+const $contentWrapper: ViewStyle = {
   flex: 1,
+  alignItems: "center",
 }
+
 
 

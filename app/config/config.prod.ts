@@ -6,5 +6,9 @@
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
 export default {
-  API_URL: "CHANGEME",
+//   API_URL: "CHANGEME",
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL!,
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  supabaseAnonKey: process.env.SUPABASE_ANON_KEY!,
 }

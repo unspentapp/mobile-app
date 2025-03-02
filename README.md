@@ -4,6 +4,9 @@
 
 Welcome to the Unspent App build in public. This repository documents the development journey and major updates as they happen.
 
+## Pull Requests and Contributions
+Unfortunately, I do not accept contributions due to potential licensing problems. Since this application may turn some profits in the future, I'd to avoid any misunderstanding when it comes to compensation for contributions. You are free to submit an issue, and we will discuss any changes.
+
 ## Tech Stack (for now)
 - [React Native](https://reactnative.dev/)
 - [Ignite](https://github.com/infinitered/ignite): React Native + Expo boilerplate

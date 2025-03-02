@@ -5,7 +5,7 @@ import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
-import { colors, typography } from "../theme"
+import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { SettingsScreen } from "app/screens/SettingsScreen"
 import { AllTransactionsScreen, AnalyticsScreen } from "app/screens"
@@ -45,7 +45,7 @@ export function MainNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarStyle: [$tabBar, { height: bottom + 55 }],
+        tabBarStyle: [$tabBar, { height: bottom + 66 }],
         tabBarActiveTintColor: colors.text,
         tabBarInactiveTintColor: colors.text,
         tabBarLabelStyle: $tabBarLabel,
@@ -66,19 +66,6 @@ export function MainNavigator() {
       />
 
       <Tab.Screen
-        name="AllTransactions"
-        component={AllTransactionsScreen}
-        options={{
-          tabBarShowLabel: false,
-          tabBarLabel: translate("mainNavigator.expensesTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="list" color={focused ? colors.tint : undefined} size={22} />
-          ),
-        }}
-      />
-
-
-      <Tab.Screen
         name="Analytics"
         component={AnalyticsScreen}
         options={{
@@ -90,6 +77,17 @@ export function MainNavigator() {
         }}
       />
 
+      <Tab.Screen
+        name="AllTransactions"
+        component={AllTransactionsScreen}
+        options={{
+          tabBarShowLabel: false,
+          tabBarLabel: translate("mainNavigator.expensesTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="list" color={focused ? colors.tint : undefined} size={22} />
+          ),
+        }}
+      />
 
       <Tab.Screen
         name="Settings"
@@ -103,7 +101,6 @@ export function MainNavigator() {
         }}
       />
 
-
     </Tab.Navigator>
   )
 }
@@ -111,6 +108,8 @@ export function MainNavigator() {
 const $tabBar: ViewStyle = {
   backgroundColor: colors.elevatedBackground,
   borderTopColor: colors.transparent,
+  paddingHorizontal: spacing.sm,
+  alignItems: "center",
 }
 
 const $tabBarItem: ViewStyle = {

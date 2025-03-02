@@ -27,7 +27,7 @@ import AnimatedBackground from "app/components/AnimatedBackground"
 
 const ROUND_BUTTON_SIZE = 56
 
-interface ExpensesScreenProps extends MainTabScreenProps<"ExpensesNavigator"> {
+interface ExpensesScreenProps extends MainTabScreenProps<"Expenses"> {
   transactions: TransactionModel[]
   categories: CategoryModel[]
 }

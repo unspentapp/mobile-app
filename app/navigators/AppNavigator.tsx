@@ -81,19 +81,13 @@ const AppStack = () => {
               statusBarHidden: false,
             }}
           />
-          {/* <RootStack.Screen
-            name="AllTransactions"
-            component={AllTransactionsScreen}
-            options={{
-              statusBarHidden: false,
 
-            }}
-          /> */}
           <RootStack.Screen
             name="TransactionDetails"
             component={TransactionDetails}
             options={{
               statusBarHidden: false,
+              presentation: "card",
             }}
           />
         </>

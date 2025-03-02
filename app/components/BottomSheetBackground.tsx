@@ -1,7 +1,8 @@
 import { StyleProp, View, ViewStyle } from "react-native"
 import React from "react"
-import { colors } from "app/theme"
+import { colors, spacing } from "app/theme"
 
+// @ts-ignore
 export const BottomSheetBackground = ({style}: StyleProp<ViewStyle>) => {
   return (
     <View
@@ -11,5 +12,6 @@ export const BottomSheetBackground = ({style}: StyleProp<ViewStyle>) => {
 
 const $customStyle: ViewStyle = {
   borderWidth: 0,
+  borderRadius: spacing.sm,
   backgroundColor: colors.background,
 }

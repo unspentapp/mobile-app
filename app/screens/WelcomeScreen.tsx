@@ -18,7 +18,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = (props) => {
   const { signOut } = useAuth()
 
   function goNext() {
-    navigation.navigate("Main", { screen: "ExpensesNavigator" })
+    navigation.navigate("Main", { screen: "Expenses" })
   }
 
   useHeader(

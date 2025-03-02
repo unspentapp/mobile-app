@@ -12,6 +12,7 @@ import { TransactionData, useWmStorage } from "../../../db/useWmStorage"
 import database from "../../../db"
 import Toast from "react-native-toast-message"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import BottomSheetBackdrop from "app/components/BottomSheetBackdrop"
 
 type Props = {
   bottomSheetModalRef: RefObject<BottomSheetModalMethods>,
@@ -121,6 +122,7 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
         snapPoints={["100%"]}
         animateOnMount={true}
         backgroundComponent={(props) => <BottomSheetBackground {...props} />}
+        backdropComponent={(props) => <BottomSheetBackdrop {...props} />}
         handleIndicatorStyle={$modalIndicator}
         keyboardBehavior="fillParent"
         android_keyboardInputMode="adjustResize"

@@ -43,21 +43,16 @@ const prefix = Linking.createURL("/")
 // todo
 const config = {
   screens: {
-    Login: {
-      path: "",
-    },
-    Welcome: "welcome",
+    Login: "Login",
+    // Welcome: "welcome",
     Main: {
       screens: {
-        Expenses: {
-          screens: {
-              Expenses: "expenses",
-
-          }
-        },
+        Expenses: "Expenses",
+        Analytics: "Analytics",
+        AllTransactions: "AllTransactions",
+        Settings: "Settings"
       }
     },
-    AllTransactions: "AllTransactions",
     TransactionDetails: "TransactionDetails",
   },
 }

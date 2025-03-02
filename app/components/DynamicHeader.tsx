@@ -1,9 +1,9 @@
+/*
 import { colors, spacing, typography } from "app/theme"
 import { Animated, Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
 import React, { useMemo } from "react"
 import profilePic from "assets/images/profile-pic.jpg"
-import { useExpensesStore } from "app/store/ExpensesStore"
 
 interface DynamicHeaderProps {
   value: Animated.Value,
@@ -160,4 +160,4 @@ const $profileHeadingText: TextStyle = {
 }
 
 const $profileSubheadingText: TextStyle = {
-}
+}*/

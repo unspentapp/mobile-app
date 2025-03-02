@@ -69,7 +69,6 @@
         },
         "android": {
           "usesCleartextTraffic": true
-          // "kotlinVersion": "1.5.20"
         }
       }
     ],
@@ -80,5 +79,10 @@
   },
   "ignite": {
     "version": "9.10.1"
+  },
+  "extra": {
+    "eas": {
+      "projectId": "ba64347d-78b1-42d0-835f-ce456d9c7fdd"
+    }
   }
 }
