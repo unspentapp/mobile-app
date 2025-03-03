@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useMemo } from "react"
 import { YearTab } from "app/screens"
-import { ScrollView, ViewStyle, useWindowDimensions } from 'react-native'
+import { ScrollView, ViewStyle, useWindowDimensions, View } from "react-native"
 import { spacing } from 'app/theme'
 
 interface Years {
@@ -18,7 +18,11 @@ interface YearTabsProps {
 export const YearTabsContainer = ({ availableYears, selectedYear, setSelectedYear, scrollViewRef }: YearTabsProps) => {
   const { width: screenWidth } = useWindowDimensions()
 
-  if (availableYears.length === 0) return null
+  if (availableYears.length === 0) {
+    return (
+      <View style={$yearTabsContainer}></View>
+    )
+  }
 
   // Memoize the tabs to prevent unnecessary re-renders
   const yearTabs = useMemo(() => {

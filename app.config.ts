@@ -53,6 +53,9 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
       package: getUniqueIdentifier(),
     },
     extra: {
+      eas: {
+        projectId: "ba64347d-78b1-42d0-835f-ce456d9c7fdd"
+      },
       EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
     }
