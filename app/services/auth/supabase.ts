@@ -1,11 +1,11 @@
-import Config from "app/config"
 import { createClient } from "@supabase/supabase-js"
 import { AppState } from "react-native"
 import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
+import Constants from 'expo-constants'
 
 export const supabase = createClient(
-  Config.supabaseUrl,
-  process.env.SUPABASE_ANON_KEY,
+  Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_URL,
+  Constants.expoConfig?.extra?.SUPABASE_ANON_KEY,
   {
     auth: {
       storage: clientAuthStorageInstance,

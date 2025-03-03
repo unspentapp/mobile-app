@@ -26,7 +26,8 @@
       "extends": "production",
       "environment": "preview",
       "env": {
-        "APP_VARIANT": "preview"
+        "APP_VARIANT": "preview",
+        "SUPABASE_ANON_KEY": "SUPABASE_ANON_KEY"
       },
       "distribution": "internal",
       "ios": { "simulator": false },
