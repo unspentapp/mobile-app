@@ -18,14 +18,12 @@ interface YearTabsProps {
 export const YearTabsContainer = ({ availableYears, selectedYear, setSelectedYear, scrollViewRef }: YearTabsProps) => {
   const { width: screenWidth } = useWindowDimensions()
 
-  if (availableYears.length === 0) {
-    return (
-      <View style={$yearTabsContainer}></View>
-    )
-  }
-
   // Memoize the tabs to prevent unnecessary re-renders
   const yearTabs = useMemo(() => {
+    if (!availableYears || availableYears.length === 0) {
+      return [];
+    }
+
     return availableYears.map(({ year }) => ({
       year,
       isSelected: year === selectedYear
@@ -56,6 +54,10 @@ export const YearTabsContainer = ({ availableYears, selectedYear, setSelectedYea
       })
     }
   }, [availableYears, screenWidth, scrollViewRef, setSelectedYear])
+
+  if (!availableYears || availableYears.length === 0) {
+    return null
+  }
 
   const contentStyle = [
     $yearTabsContent,
