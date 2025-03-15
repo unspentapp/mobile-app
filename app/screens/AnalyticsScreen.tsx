@@ -3,7 +3,6 @@ import { TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text, Icon } from "app/components"
 import { spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
-import { StatusBar } from "expo-status-bar"
 import { goBack } from "app/navigators"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 

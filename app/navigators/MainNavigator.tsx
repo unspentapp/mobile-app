@@ -10,7 +10,6 @@ import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { SettingsScreen } from "app/screens/SettingsScreen"
 import { AllTransactionsScreen, AnalyticsScreen } from "app/screens"
 import EnhancedHomeScreen from "app/screens/HomeScreen/HomeScreen"
-import { backgroundColor } from "react-native-calendars/src/style"
 
 export type MainTabParamList = {
   Analytics: undefined,

@@ -17,7 +17,7 @@ export interface ErrorDetailsProps {
  * @returns {JSX.Element} The rendered `ErrorDetails` component.
  */
 export function ErrorDetails(props: ErrorDetailsProps) {
-  const { top, bottom } = useSafeAreaInsets()
+  const { top } = useSafeAreaInsets()
 
   return (
     <View style={$screenContainer}>
@@ -59,13 +59,6 @@ const $container: ViewStyle = {
   flex: 1,
   marginVertical: spacing.lg,
   paddingHorizontal: spacing.lg,
-}
-
-const $contentContainer: ViewStyle = {
-  alignItems: "center",
-  paddingHorizontal: spacing.lg,
-  paddingTop: spacing.xl,
-  flex: 1,
 }
 
 const $topSection: ViewStyle = {

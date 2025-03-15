@@ -1,12 +1,11 @@
 import React, { FC } from "react"
 import * as Application from "expo-application"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
-import { Button, ListItem, Screen, Text } from "app/components"
+import { Button, ListItem, Text } from "app/components"
 import { colors, spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import database from "../../db"
-import { StatusBar } from "expo-status-bar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 /**
@@ -18,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 // }
 
 export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function SettingsScreen(_props) {
-  const { top, bottom } = useSafeAreaInsets()
+  const { top } = useSafeAreaInsets()
 
   const { signOut } = useAuth()
 

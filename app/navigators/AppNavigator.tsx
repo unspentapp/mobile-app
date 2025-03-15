@@ -5,7 +5,6 @@
  * and a "main" flow which the user will use once logged in.
  */
 import {
-  DarkTheme,
   DefaultTheme,
   NavigationContainer,
   NavigatorScreenParams,
@@ -20,12 +19,6 @@ import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import TransactionDetails from "app/screens/Transactions/TransactionDetails"
-import { styles } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/styles"
-import { View } from "react-native"
-import Toast from "react-native-toast-message"
-import toastConfig from "app/config/toastConfig"
-import HomeScreen from "app/screens/HomeScreen/HomeScreen"
-import { AnalyticsScreen } from "app/screens"
 import { StatusBar } from "expo-status-bar"
 
 /**

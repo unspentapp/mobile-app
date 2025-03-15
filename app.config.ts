@@ -92,9 +92,6 @@ module.exports = ({ config }: ConfigContext): CustomExpoConfig => {
       "expo-secure-store",
       [
         "expo-build-properties",
-        "expo-splash-screen", {
-          "image": "./assets/images/splash-logo-all.png",
-        },
         {
           "newArchEnabled": true,
           "ios": {

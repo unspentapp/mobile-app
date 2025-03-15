@@ -6,13 +6,12 @@ import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
 import { log } from "../utils/logger"
-import { StatusBar } from "expo-status-bar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
 interface SignInScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignInScreen: FC<SignInScreenProps> = () => {
-  const { top, bottom } = useSafeAreaInsets()
+  const { top } = useSafeAreaInsets()
   const authPasswordInput = useRef<TextInput>(null)
   const { signIn } = useAuth()
 
@@ -71,7 +70,7 @@ export const SignInScreen: FC<SignInScreenProps> = () => {
 
         <Text testID="login-heading" tx={"signInScreen.title"} preset="heading" style={$logIn} />
         <Text tx="signInScreen.enterDetails" preset="subheading" style={$enterDetails} />
-        {/*{attemptsCount > 2 && <Text tx="signInScreen.hint" size="sm" weight="light" style={$hint} />}*/}
+        {/* {attemptsCount > 2 && <Text tx="signInScreen.hint" size="sm" weight="light" style={$hint} />} */}
 
         <TextField
           value={email}
@@ -141,10 +140,10 @@ const $enterDetails: TextStyle = {
   marginBottom: spacing.lg,
 }
 
-const $hint: TextStyle = {
+/* const $hint: TextStyle = {
   color: colors.tint,
   marginBottom: spacing.md,
-}
+} */
 
 const $textField: ViewStyle = {
   marginBottom: spacing.md,

@@ -5,12 +5,11 @@ import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
-import { logger } from "@nozbe/watermelondb/utils/common"
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignUpScreen: FC<LoginScreenProps> = () => {
   const authPasswordInput = useRef<TextInput>(null)
-  const { isAuthenticated, signUp, token } = useAuth()
+  const { signUp } = useAuth()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -20,7 +19,7 @@ export const SignUpScreen: FC<LoginScreenProps> = () => {
   // we can also use multiple hooks
   // const validationError = useStore(validationErrorSelector);
 
-  /*useEffect(() => {
+  /* useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
     setEmail("ignite@infinite.red")
@@ -31,7 +30,7 @@ export const SignUpScreen: FC<LoginScreenProps> = () => {
       setPassword("")
       setEmail("")
     }
-  }, [])*/
+  }, []) */
 
   // const error = isSubmitted ? validationError : ""
 
@@ -83,7 +82,7 @@ export const SignUpScreen: FC<LoginScreenProps> = () => {
         preset="subheading"
         style={$enterDetails}
       />
-      {/*{attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}*/}
+      {/* {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />} */}
 
       <TextField
         value={email}
