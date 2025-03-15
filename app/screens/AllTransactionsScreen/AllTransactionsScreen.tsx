@@ -4,7 +4,6 @@ import { Text, Icon } from "app/components"
 import { spacing } from "app/theme"
 import EnhancedTransactionsList from "app/screens/AllTransactionsScreen/TransactionsList"
 import { goBack, NavigationProps } from "app/navigators"
-import { StatusBar } from "expo-status-bar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 
@@ -18,10 +17,6 @@ export const AllTransactionsScreen: FC<AllTransactionsScreenProps> = () => {
 
   return (
     <View style={$screenContainer}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-      />
       <View style={[$container, { paddingTop: top }]}>
         <View style={$topContainer}>
           <TouchableOpacity

@@ -7,7 +7,6 @@ import { colors, spacing } from "../theme"
 import { useAuth } from "app/services/auth/useAuth"
 import { log } from "../utils/logger"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import Toast from "react-native-toast-message"
 interface SignInScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignInScreen: FC<SignInScreenProps> = () => {
@@ -30,22 +29,13 @@ export const SignInScreen: FC<SignInScreenProps> = () => {
 
     // if (validationError) return
 
-    // Make a request to your server to get an authentication token.
-    // If successful, reset the fields and set the token.
     const result = await signIn({ email, password })
     if (result.data.session !== null ) {
-      // todo test!!
-      Toast.show({
-        type: "success",
-        text1: "[LOGIN] User signed in with email ",
-        text2: result.data.session.user.email,
-      })
       log.info("[LOGIN] User signed in with email " + result.data.session.user.email)
       setPassword("")
       setEmail("")
       setIsSubmitted(false)
     }
-
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(

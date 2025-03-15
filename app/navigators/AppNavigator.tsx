@@ -20,6 +20,8 @@ import { useAuth } from "app/services/auth/useAuth"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import TransactionDetails from "app/screens/Transactions/TransactionDetails"
 import { StatusBar } from "expo-status-bar"
+import Toast from "react-native-toast-message"
+import ToastConfig from "app/config/toastConfig"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -114,15 +116,18 @@ export const AppNavigator = (props: NavigationProps) => {
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      theme={DefaultTheme}
-      // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-      {...props}
-    >
-      <BottomSheetModalProvider>
-        <AppStack />
-      </BottomSheetModalProvider>
-    </NavigationContainer>
+    <>
+      <NavigationContainer
+        ref={navigationRef}
+        theme={DefaultTheme}
+        // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        {...props}
+      >
+        <BottomSheetModalProvider>
+          <AppStack />
+        </BottomSheetModalProvider>
+      </NavigationContainer>
+      <Toast position={"top"} config={ToastConfig} autoHide={true} visibilityTime={3000} />
+    </>
   )
 }

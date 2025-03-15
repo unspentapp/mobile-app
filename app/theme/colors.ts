@@ -14,8 +14,8 @@ const custom = {
 
 const palette = {
   neutral000: "#ffffff",
-  neutral100: "#fcfcfc",
-  neutral200: "#F4F2F1",
+  neutral100: "#f3f3f3",
+  neutral200: "#dedede",
   neutral300: "#D7CEC9",
   neutral400: "#B6ACA6",
   neutral500: "#978F8A",
@@ -43,10 +43,10 @@ const palette = {
   accent400: "#FBC878",
   accent500: "#FFBB50",
 
-  angry100: "#F2D6CD",
+  angry100: "#f2dcd5",
   angry500: "#C03403",
 
-  green100: "#c4ffd5",
+  green100: "#d9ffe4",
   green500: "#186437",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
@@ -102,9 +102,17 @@ export const colors = {
   error: palette.angry500,
   /**
    * Error Background.
-   *
    */
   errorBackground: palette.angry100,
+  /**
+   * Success messages.
+   */
+  success: palette.green500,
+  /**
+   * Success Background.
+   */
+  successBackground: palette.green100,
+
 }
 
 export type CustomColorType = keyof typeof colors.custom

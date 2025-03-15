@@ -1,13 +1,16 @@
-import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
+import React, { ComponentType, FC, useMemo, useRef, useState } from "react"
+import { TextInput, TextStyle, View, ViewStyle } from "react-native"
+import { Button, Icon, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignUpScreen: FC<LoginScreenProps> = () => {
+  const { top } = useSafeAreaInsets()
+
   const authPasswordInput = useRef<TextInput>(null)
   const { signUp } = useAuth()
 
@@ -35,6 +38,7 @@ export const SignUpScreen: FC<LoginScreenProps> = () => {
   // const error = isSubmitted ? validationError : ""
 
   const signup = async () => {
+
     setIsSubmitted(true)
 
     // if (validationError) return
@@ -67,66 +71,70 @@ export const SignUpScreen: FC<LoginScreenProps> = () => {
   )
 
   return (
-    <Screen
-      preset="auto"
-      contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
-    >
-      <Text
-        testID="login-heading"
-        tx="signUpScreen.title"
-        preset="heading"
-        style={$logIn} />
-      <Text
-        tx="signUpScreen.enterDetails"
-        preset="subheading"
-        style={$enterDetails}
-      />
-      {/* {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />} */}
+    <View style={$screenContainer}>
+      <View style={[$container, { paddingTop: top }]}>
+        <Text
+          testID="login-heading"
+          tx="signUpScreen.title"
+          preset="heading"
+          style={$logIn} />
+        <Text
+          tx="signUpScreen.enterDetails"
+          preset="subheading"
+          style={$enterDetails}
+        />
+        {/* {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />} */}
 
-      <TextField
-        value={email}
-        onChangeText={setEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="signUpScreen.emailFieldLabel"
-        placeholderTx="signUpScreen.emailFieldPlaceholder"
-        // helper={error}
-        // status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
+        <TextField
+          value={email}
+          onChangeText={setEmail}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          labelTx="signUpScreen.emailFieldLabel"
+          placeholderTx="signUpScreen.emailFieldPlaceholder"
+          // helper={error}
+          // status={error ? "error" : undefined}
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+        />
 
-      <TextField
-        ref={authPasswordInput}
-        value={password}
-        onChangeText={setPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="signUpScreen.passwordFieldLabel"
-        placeholderTx="signUpScreen.passwordFieldPlaceholder"
-        onSubmitEditing={signup}
-        RightAccessory={PasswordRightAccessory}
-      />
+        <TextField
+          ref={authPasswordInput}
+          value={password}
+          onChangeText={setPassword}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          labelTx="signUpScreen.passwordFieldLabel"
+          placeholderTx="signUpScreen.passwordFieldPlaceholder"
+          onSubmitEditing={signup}
+          RightAccessory={PasswordRightAccessory}
+        />
 
-       <Button
-        testID="login-button"
-        tx="signUpScreen.tapToSignUp"
-        style={$tapButton}
-        preset="filled"
-        onPress={signup}
-      />
-    </Screen>
+         <Button
+          testID="login-button"
+          tx="signUpScreen.tapToSignUp"
+          style={$tapButton}
+          preset="filled"
+          onPress={signup}
+        />
+      </View>
+    </View>
   )
 }
 
-const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.xxl,
+const $screenContainer: ViewStyle = {
+  flex: 1,
+  backgroundColor: colors.background,
+}
+
+const $container: ViewStyle = {
+  flex: 1,
+  marginVertical: spacing.lg,
   paddingHorizontal: spacing.lg,
 }
 

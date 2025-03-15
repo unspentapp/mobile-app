@@ -1,12 +1,14 @@
 import React, { FC } from "react"
 import * as Application from "expo-application"
-import { Platform, TextStyle, View, ViewStyle } from "react-native"
-import { Button, ListItem, Text } from "app/components"
+import { Platform, ScrollView, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Button, Icon, ListItem, Text } from "app/components"
 import { colors, spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import database from "../../db"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import Toast from "react-native-toast-message"
+import { goBack } from "app/navigators"
 
 /**
  * @returns {void} - No return value.
@@ -58,67 +60,102 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
   return (
     <View style={$screenContainer}>
       <View style={[$container, { paddingTop: top }]}>
-      <Text style={$title} preset="heading" tx="settingsScreen.title" />
-      <View style={$itemsContainer}>
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Id</Text>
-              <Text>{Application.applicationId}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Name</Text>
-              <Text>{Application.applicationName}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Version</Text>
-              <Text>{Application.nativeApplicationVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Build Version</Text>
-              <Text>{Application.nativeBuildVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Hermes Enabled</Text>
-              <Text>{String(usingHermes)}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Fabric Enabled</Text>
-              <Text>{String(usingFabric)}</Text>
-            </View>
-          }
-        />
-      </View>
-      <View style={$buttonContainer}>
-        <Button style={$button} tx="settingsScreen.reactotron" onPress={reactotron} />
-        <Text style={$hint} tx={`settingsScreen.${Platform.OS}ReactotronHint` as const} />
-      </View>
-      <View style={$buttonContainer}>
-        <Button style={$button} tx="common.logOut" onPress={signOut} />
-      </View>
-      <View style={$buttonContainer}>
-        <Button preset="filled" text="Wipe Database Data" onPress={wipeDB} />
-      </View>
+        <View style={$topContainer}>
+          <TouchableOpacity
+            style={$goBackButton}
+            onPress={goBack}
+          >
+            <Icon icon={"back"} />
+          </TouchableOpacity>
+          <Text testID="transactions-heading" tx={"allTransactionsScreen.title"} preset="heading" />
+        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={$itemsContainer}>
+            <ListItem
+              LeftComponent={
+                <View style={$item}>
+                  <Text preset="bold">App Id</Text>
+                  <Text>{Application.applicationId}</Text>
+                </View>
+              }
+            />
+            <ListItem
+              LeftComponent={
+                <View style={$item}>
+                  <Text preset="bold">App Name</Text>
+                  <Text>{Application.applicationName}</Text>
+                </View>
+              }
+            />
+            <ListItem
+              LeftComponent={
+                <View style={$item}>
+                  <Text preset="bold">App Version</Text>
+                  <Text>{Application.nativeApplicationVersion}</Text>
+                </View>
+              }
+            />
+            <ListItem
+              LeftComponent={
+                <View style={$item}>
+                  <Text preset="bold">App Build Version</Text>
+                  <Text>{Application.nativeBuildVersion}</Text>
+                </View>
+              }
+            />
+            <ListItem
+              LeftComponent={
+                <View style={$item}>
+                  <Text preset="bold">Hermes Enabled</Text>
+                  <Text>{String(usingHermes)}</Text>
+                </View>
+              }
+            />
+            <ListItem
+              LeftComponent={
+                <View style={$item}>
+                  <Text preset="bold">Fabric Enabled</Text>
+                  <Text>{String(usingFabric)}</Text>
+                </View>
+              }
+            />
+          </View>
+          <View style={$buttonContainer}>
+            <Button style={$button} tx="settingsScreen.reactotron" onPress={reactotron} />
+            <Text style={$hint} tx={`settingsScreen.${Platform.OS}ReactotronHint` as const} />
+          </View>
+          <View style={$buttonContainer}>
+            <Button style={$button} text={"Toast error"} onPress={ () =>
+              Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "This is text 2 example",
+              })
+            } />
+
+            <Button style={$button} text={"Toast success"} onPress={ () =>
+              Toast.show({
+                type: "success",
+                text1: "Success!",
+                text2: "This is text 2 example",
+              })
+            } />
+
+            <Button style={$button} text={"Toast info"} onPress={ () =>
+              Toast.show({
+                type: "info",
+                text1: "Info!",
+                text2: "This is text 2 example",
+              })
+            } />
+          </View>
+          <View style={$buttonContainer}>
+            <Button style={$button} tx="common.logOut" onPress={signOut} />
+          </View>
+          <View style={$buttonContainer}>
+            <Button preset="filled" text="Wipe Database Data" onPress={wipeDB} />
+          </View>
+        </ScrollView>
       </View>
     </View>
   )
@@ -126,17 +163,24 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
 
 const $screenContainer: ViewStyle = {
   flex: 1,
-  backgroundColor: colors.background,
 }
 
 const $container: ViewStyle = {
   flex: 1,
-  marginVertical: spacing.lg,
-  paddingHorizontal: spacing.lg,
 }
 
-const $title: TextStyle = {
-  marginBottom: spacing.xxl,
+const $topContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: spacing.xs,
+  justifyContent: "flex-start",
+  paddingVertical: spacing.md,
+  paddingHorizontal: spacing.sm,
+}
+
+const $goBackButton: ViewStyle = {
+  paddingHorizontal: spacing.xs,
+  paddingVertical: spacing.xs,
 }
 
 const $item: ViewStyle = {
@@ -145,6 +189,7 @@ const $item: ViewStyle = {
 
 const $itemsContainer: ViewStyle = {
   marginBottom: spacing.xl,
+  paddingHorizontal: spacing.lg,
 }
 
 const $button: ViewStyle = {
@@ -153,6 +198,7 @@ const $button: ViewStyle = {
 
 const $buttonContainer: ViewStyle = {
   marginBottom: spacing.md,
+  paddingHorizontal: spacing.lg,
 }
 
 const $hint: TextStyle = {
