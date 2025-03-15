@@ -18,10 +18,6 @@ export const AnalyticsScreen: FC<AnalyticsScreenProps> = (
 
   return (
     <View style={$screenContainer}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-      />
       <View style={[$container, { paddingTop: top }]}>
         <View style={$topContainer}>
           <TouchableOpacity

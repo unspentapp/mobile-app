@@ -5,6 +5,7 @@
  * and a "main" flow which the user will use once logged in.
  */
 import {
+  DarkTheme,
   DefaultTheme,
   NavigationContainer,
   NavigatorScreenParams,
@@ -19,6 +20,13 @@ import { MainNavigator, MainTabParamList } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import TransactionDetails from "app/screens/Transactions/TransactionDetails"
+import { styles } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/styles"
+import { View } from "react-native"
+import Toast from "react-native-toast-message"
+import toastConfig from "app/config/toastConfig"
+import HomeScreen from "app/screens/HomeScreen/HomeScreen"
+import { AnalyticsScreen } from "app/screens"
+import { StatusBar } from "expo-status-bar"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -62,52 +70,45 @@ const AppStack = () => {
   const { isAuthenticated } = useAuth()
 
   return (
-    <RootStack.Navigator
-      screenOptions={{
-        headerShown: false,
-        navigationBarColor: colors.background,
-        statusBarHidden: true,
-        animation: "fade"
-    }}
-      initialRouteName={isAuthenticated ? "Main" : "Login"}
-    >
-      {isAuthenticated ? (
-        <>
-          {/* <RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
-          <RootStack.Screen
-            name="Main"
-            component={MainNavigator}
-            options={{
-              statusBarHidden: false,
-            }}
-          />
+    <>
+      <RootStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          navigationBarColor: colors.background,
+          animation: "fade",
+        }}
+        initialRouteName={isAuthenticated ? "Main" : "Login"}
+      >
+        {isAuthenticated ? (
+          <>
+            {/* <RootStack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
+            <RootStack.Screen
+              name="Main"
+              component={MainNavigator}
+            />
 
-          <RootStack.Screen
-            name="TransactionDetails"
-            component={TransactionDetails}
-            options={{
-              statusBarHidden: false,
-              presentation: "card",
-            }}
-          />
-        </>
-      ) : (
-        <>
-          <RootStack.Screen
-            name="Login"
-            component={Screens.SignInScreen}
-            options={{
-              statusBarColor: colors.background,
-              statusBarStyle: "dark",
-              statusBarHidden: false,
-            }}
-          />
-        </>
-      )}
+            <RootStack.Screen
+              name="TransactionDetails"
+              component={TransactionDetails}
+              options={{
+                presentation: "card",
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <RootStack.Screen
+              name="Login"
+              component={Screens.SignInScreen}
+            />
+          </>
+        )}
 
-      {/** 🔥 Your screens go here */}
-      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
-    </RootStack.Navigator>
+        {/** 🔥 Your screens go here */}
+        {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      </RootStack.Navigator>
+      <StatusBar backgroundColor="transparent" translucent={true} style={"auto"} />
+    </>
   )
 }
 

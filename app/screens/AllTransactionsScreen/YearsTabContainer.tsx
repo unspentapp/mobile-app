@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useMemo } from "react"
 import { YearTab } from "app/screens"
-import { ScrollView, ViewStyle, useWindowDimensions, View } from "react-native"
+import { ScrollView, ViewStyle, useWindowDimensions } from "react-native"
 import { spacing } from 'app/theme'
 
 interface Years {

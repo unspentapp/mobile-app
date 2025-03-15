@@ -63,10 +63,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           setToken(undefined)
           break
         case "INITIAL_SESSION":
+          break
         case "SIGNED_IN":
+          console.log("SIGNED IN: TRUE")
           await database.localStorage.set("USER_ID", session?.user.id)
           break
         case "TOKEN_REFRESHED":
+          console.log("TOKEN REFRESHED: TRUE")
           setToken(session?.access_token)
           break
         default:
@@ -91,9 +94,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       }
 
       return result
-    },
-    [supabase]
-  )
+    }, [supabase])
 
   const signUp = useCallback(
     async ({ email, password }: SignUpProps) => {

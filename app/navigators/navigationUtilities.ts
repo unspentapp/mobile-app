@@ -10,7 +10,6 @@ import type { PersistNavigationConfig } from "../config/config.base"
 import { useIsMounted } from "../utils/useIsMounted"
 import type { AppStackParamList, NavigationProps } from "./AppNavigator"
 import { logger } from "@nozbe/watermelondb/utils/common"
-import database from "../../db"
 import { SupportedStorage } from "@supabase/supabase-js"
 
 
@@ -141,9 +140,8 @@ export function useNavigationPersistence(storage: SupportedStorage, persistenceK
       routeNameRef.current = currentRouteName as keyof AppStackParamList
 
       // Persist state to storage
-      // todo persist navigation
-      await database.localStorage.set(persistenceKey, state)
-      // storage.save(persistenceKey, state)
+      await storage.setItem(persistenceKey, JSON.stringify(state))
+
       logger.log(`NAVIGATION SET: key: ${persistenceKey} >> STATE: ${state}`)
     }
   }
@@ -155,13 +153,14 @@ export function useNavigationPersistence(storage: SupportedStorage, persistenceK
       // Only restore the state if app has not started from a deep link
       if (!initialUrl) {
         // todo persist navigation
-        const state = (await database.localStorage.get(persistenceKey)) as NavigationProps["initialState"] | null
-        logger.log(state)
+        const stateData : string | null = (await storage.getItem(persistenceKey))
 
-        // const state = (await storage.load(persistenceKey)) as NavigationProps["initialState"] | null
-        if (state) setInitialNavigationState(state)
-        logger.log(`NAVIGATION RESTORED: key: ${persistenceKey} >> STATE: ${state}`)
+        if (stateData) {
+          const state = JSON.parse(stateData) as NavigationProps["initialState"] | null
 
+          if (state) setInitialNavigationState(state)
+          logger.log(`NAVIGATION RESTORED: key: ${persistenceKey} >> STATE: ${JSON.stringify(state)}`)
+        }
       }
     } finally {
       if (isMounted()) setIsRestored(true)

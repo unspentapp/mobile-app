@@ -54,6 +54,7 @@ const $container: ViewStyle = {
   backgroundColor: colors.palette.neutral300,
   padding: spacing.md,
   borderRadius: spacing.md,
+  zIndex: 1000,
 }
 const $text: TextStyle = {
   fontFamily: typography.primary.medium

@@ -6,6 +6,8 @@ import { colors, spacing } from "app/theme"
 import { MainTabScreenProps } from "app/navigators/MainNavigator"
 import { useAuth } from "app/services/auth/useAuth"
 import database from "../../db"
+import { StatusBar } from "expo-status-bar"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 /**
  * @returns {void} - No return value.
@@ -16,6 +18,7 @@ import database from "../../db"
 // }
 
 export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function SettingsScreen(_props) {
+  const { top, bottom } = useSafeAreaInsets()
 
   const { signOut } = useAuth()
 
@@ -54,12 +57,8 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
   )
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
-      {/*      <Text
-        style={$reportBugsLink}
-        tx="demoDebugScreen.reportBugs"
-        onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
-      /> */}
+    <View style={$screenContainer}>
+      <View style={[$container, { paddingTop: top }]}>
       <Text style={$title} preset="heading" tx="settingsScreen.title" />
       <View style={$itemsContainer}>
         <ListItem
@@ -121,13 +120,19 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
       <View style={$buttonContainer}>
         <Button preset="filled" text="Wipe Database Data" onPress={wipeDB} />
       </View>
-    </Screen>
+      </View>
+    </View>
   )
 }
 
+const $screenContainer: ViewStyle = {
+  flex: 1,
+  backgroundColor: colors.background,
+}
+
 const $container: ViewStyle = {
-  paddingTop: spacing.lg + spacing.xl,
-  paddingBottom: spacing.xxl,
+  flex: 1,
+  marginVertical: spacing.lg,
   paddingHorizontal: spacing.lg,
 }
 

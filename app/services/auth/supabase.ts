@@ -13,6 +13,7 @@ export const supabase = createClient(
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false,
+      debug: true,
     },
   }
 )

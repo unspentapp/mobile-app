@@ -1,7 +1,9 @@
 import React, { ErrorInfo } from "react"
 import { ScrollView, TextStyle, View, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text } from "app/components"
+import { Button, Icon, Text } from "app/components"
 import { colors, spacing } from "app/theme"
+import { StatusBar } from "expo-status-bar"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export interface ErrorDetailsProps {
   error: Error
@@ -15,12 +17,13 @@ export interface ErrorDetailsProps {
  * @returns {JSX.Element} The rendered `ErrorDetails` component.
  */
 export function ErrorDetails(props: ErrorDetailsProps) {
+  const { top, bottom } = useSafeAreaInsets()
+
   return (
-    <Screen
-      preset="fixed"
-      safeAreaEdges={["top", "bottom"]}
-      contentContainerStyle={$contentContainer}
-    >
+    <View style={$screenContainer}>
+      <StatusBar backgroundColor="transparent" translucent={true} />
+      <View style={[$container, { paddingTop: top }]}>
+
       <View style={$topSection}>
         <Icon icon="ladybug" size={64} />
         <Text style={$heading} preset="subheading" tx="errorScreen.title" />
@@ -42,8 +45,20 @@ export function ErrorDetails(props: ErrorDetailsProps) {
         onPress={props.onReset}
         tx="errorScreen.reset"
       />
-    </Screen>
+      </View>
+    </View>
   )
+}
+
+const $screenContainer: ViewStyle = {
+  flex: 1,
+  backgroundColor: colors.background,
+}
+
+const $container: ViewStyle = {
+  flex: 1,
+  marginVertical: spacing.lg,
+  paddingHorizontal: spacing.lg,
 }
 
 const $contentContainer: ViewStyle = {

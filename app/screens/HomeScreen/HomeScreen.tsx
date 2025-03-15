@@ -187,7 +187,6 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
         backgroundColor={colors.palette.neutral100}
         duration={30000}
       />
-      <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={[$container, { paddingTop: top }]}>
         <AddTransactionModal
           bottomSheetModalRef={refs.bottomSheetModalRef}

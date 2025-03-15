@@ -1,42 +1,31 @@
 import React, { ComponentType, FC, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
+import { TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Button, Icon, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 // import { useStore, validationErrorSelector } from "app/store"
 import { useAuth } from "app/services/auth/useAuth"
 import { log } from "../utils/logger"
+import { StatusBar } from "expo-status-bar"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import Toast from "react-native-toast-message"
 interface SignInScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const SignInScreen: FC<SignInScreenProps> = () => {
+  const { top, bottom } = useSafeAreaInsets()
   const authPasswordInput = useRef<TextInput>(null)
   const { signIn } = useAuth()
 
-  const [email, setEmail] = useState("test4@test.com")
-  const [password, setPassword] = useState("testtest")
+  const [email, setEmail] = useState("test4@test.com") // todo
+  const [password, setPassword] = useState("testtest") // todo
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
 
-  // we can also use multiple hooks
-  // const validationError = useStore(validationErrorSelector);
-
-  /*useEffect(() => {
-    // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields.
-    setEmail("ignite@infinite.red")
-    setPassword("ign1teIsAwes0m3")
-
-    // Return a "cleanup" function that React will run when the component unmounts
-    return () => {
-      setPassword("")
-      setEmail("")
-    }
-  }, [])*/
-
   // const error = isSubmitted ? validationError : ""
 
   const login = async () => {
+
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
 
@@ -47,7 +36,12 @@ export const SignInScreen: FC<SignInScreenProps> = () => {
     const result = await signIn({ email, password })
     if (result.data.session !== null ) {
       // todo test!!
-      log.info("SIGNED IN with email " + result.data.session.user.email)
+      Toast.show({
+        type: "success",
+        text1: "[LOGIN] User signed in with email ",
+        text2: result.data.session.user.email,
+      })
+      log.info("[LOGIN] User signed in with email " + result.data.session.user.email)
       setPassword("")
       setEmail("")
       setIsSubmitted(false)
@@ -72,65 +66,70 @@ export const SignInScreen: FC<SignInScreenProps> = () => {
   )
 
   return (
-    <Screen
-      preset="auto"
-      contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
-    >
-      <Text testID="login-heading" tx={"signInScreen.title"} preset="heading" style={$logIn} />
-      <Text tx="signInScreen.enterDetails" preset="subheading" style={$enterDetails} />
-      {/*{attemptsCount > 2 && <Text tx="signInScreen.hint" size="sm" weight="light" style={$hint} />}*/}
+    <View style={$screenContainer}>
+      <View style={[$container, { paddingTop: top }]}>
 
-      <TextField
-        value={email}
-        onChangeText={setEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="signInScreen.emailFieldLabel"
-        placeholderTx="signInScreen.emailFieldPlaceholder"
-        // helper={error}
-        // status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
+        <Text testID="login-heading" tx={"signInScreen.title"} preset="heading" style={$logIn} />
+        <Text tx="signInScreen.enterDetails" preset="subheading" style={$enterDetails} />
+        {/*{attemptsCount > 2 && <Text tx="signInScreen.hint" size="sm" weight="light" style={$hint} />}*/}
 
-      <TextField
-        ref={authPasswordInput}
-        value={password}
-        onChangeText={setPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="signInScreen.passwordFieldLabel"
-        placeholderTx="signInScreen.passwordFieldPlaceholder"
-        onSubmitEditing={login}
-        RightAccessory={PasswordRightAccessory}
-      />
+        <TextField
+          value={email}
+          onChangeText={setEmail}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          labelTx="signInScreen.emailFieldLabel"
+          placeholderTx="signInScreen.emailFieldPlaceholder"
+          // helper={error}
+          // status={error ? "error" : undefined}
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+        />
 
-      <TouchableOpacity
-        // todo: implement forgot password screen
-        onPress={() => log.info("Forgot password")}
-      >
-        <Text tx="signInScreen.forgotPassword" preset="formHelper" style={$forgotPassword} />
-      </TouchableOpacity>
+        <TextField
+          ref={authPasswordInput}
+          value={password}
+          onChangeText={setPassword}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          labelTx="signInScreen.passwordFieldLabel"
+          placeholderTx="signInScreen.passwordFieldPlaceholder"
+          onSubmitEditing={login}
+          RightAccessory={PasswordRightAccessory}
+        />
 
-      <Button
-        testID="signIn-button"
-        tx={isSubmitted ? "signInScreen.loading" : "signInScreen.tapToLogIn"}
-        style={$tapButton}
-        preset="filled"
-        onPress={login}
-      />
-    </Screen>
+        <TouchableOpacity
+          // todo: implement forgot password screen
+          onPress={() => log.info("Forgot password")}
+        >
+          <Text tx="signInScreen.forgotPassword" preset="formHelper" style={$forgotPassword} />
+        </TouchableOpacity>
+
+        <Button
+          testID="signIn-button"
+          tx={isSubmitted ? "signInScreen.loading" : "signInScreen.tapToLogIn"}
+          style={$tapButton}
+          preset="filled"
+          onPress={login}
+        />
+    </View>
+  </View>
   )
 }
 
-const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.xxl,
+const $screenContainer: ViewStyle = {
+  flex: 1,
+  backgroundColor: colors.background,
+}
+
+const $container: ViewStyle = {
+  flex: 1,
+  marginVertical: spacing.lg,
   paddingHorizontal: spacing.lg,
 }
 

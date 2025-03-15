@@ -1,88 +1,24 @@
 {
-  "name": "Unspent",
-  "description": "The app which helps you to save money.",
-  "slug": "unspent_app",
-  "scheme": "com.unspentapp",
-  "version": "1.0.0",
-  "orientation": "portrait",
-  "icon": "./assets/images/app-icon-all.png",
-  "userInterfaceStyle": "automatic",
-  "splash": {
-    "image": "./assets/images/splash-logo-all.png",
-    "resizeMode": "contain",
-    "backgroundColor": "#222222"
-  },
-  "updates": {
-    "fallbackToCacheTimeout": 0
-  },
-  "jsEngine": "hermes",
-  "assetBundlePatterns": [
-    "**/*"
-  ],
-  "android": {
-    "icon": "./assets/images/app-icon-android-legacy.png",
-    "package": "com.unspentapp",
-    "adaptiveIcon": {
-      "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
-      "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
-    }
-  },
-  "ios": {
-    "icon": "./assets/images/app-icon-ios.png",
-    "supportsTablet": true,
-    "bundleIdentifier": "com.unspentapp",
+  "expo": {
+    "name": "Unspent",
+    "slug": "unspent_app",
     "splash": {
-      "image": "./assets/images/splash-logo-ios-mobile.png",
-      "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#222222"
-    }
-  },
-  "web": {
-    "favicon": "./assets/images/app-icon-web-favicon.png",
-    "splash": {
-      "image": "./assets/images/splash-logo-web.png",
-      "resizeMode": "contain",
       "backgroundColor": "#222222"
     },
-    "bundler": "metro"
-  },
-  "plugins": [
-    "expo-localization",
-    "expo-secure-store",
-    [
-      "expo-build-properties",
-      {
-        "newArchEnabled": true,
-        "ios": {
-          "extraPods": [
-            {
-              "name": "simdjson",
-              "configurations": [
-                "Debug",
-                "Release"
-              ],
-              "path": "../node_modules/@nozbe/simdjson",
-              "modular_headers": true
-            }
-          ]
-        },
-        "android": {
-          "usesCleartextTraffic": true
-        }
+    "android": {
+      "splash": {
+        "backgroundColor": "#222222"
       }
-    ],
-    "expo-font"
-  ],
-  "experiments": {
-    "tsconfigPaths": true
-  },
-  "ignite": {
-    "version": "9.10.1"
-  },
-  "extra": {
-    "eas": {
-      "projectId": "ba64347d-78b1-42d0-835f-ce456d9c7fdd"
+    },
+    "ios": {
+      "splash": {
+        "backgroundColor": "#222222"
+      }
+    },
+    "web": {
+      "splash": {
+        "backgroundColor": "#222222"
+      }
     }
   }
 }

@@ -35,6 +35,7 @@ import Toast from "react-native-toast-message"
 import { AuthProvider } from "app/services/auth/useAuth"
 import clientAuthStorageInstance from "app/utils/storage/SupabaseClientStorage"
 import toastConfig from "app/config/toastConfig"
+import { useSessionRehydration } from "app/hooks/useSessionRehydration"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -58,7 +59,7 @@ const config = {
 }
 
 interface AppProps {
-  hideSplashScreen: () => Promise<boolean>
+  hideSplashScreen: () => Promise<void>
 }
 
 /**
@@ -74,19 +75,21 @@ function App(props: AppProps) {
     isRestored: isNavigationStateRestored,
   } = useNavigationPersistence(clientAuthStorageInstance , NAVIGATION_PERSISTENCE_KEY)
 
+  const { isRehydrated } = useSessionRehydration()
+
   const [areFontsLoaded, fontLoadError] = useFonts(customFontsToLoad)
 
   // todo
   // const rehydrated = useStore((state) => state._hasHydrated)
-  /*useEffect(() => {
-    if (rehydrated) {
-      setTimeout(hideSplashScreen, 500)
-    }
-  }, [rehydrated])*/
-
   useEffect(() => {
-    setTimeout(hideSplashScreen, 1000)
-  }, [])
+    if (isRehydrated) {
+      hideSplashScreen()
+    }
+  }, [isRehydrated])
+
+/*  useEffect(() => {
+    setTimeout(hideSplashScreen, 2000)
+  }, []) */
 
   // Before we show the app, we have to wait for our state to be ready.
   // In the meantime, don't render anything. This will be the background
@@ -114,7 +117,6 @@ function App(props: AppProps) {
               initialState={initialNavigationState}
               onStateChange={onNavigationStateChange}
             />
-            <Toast position="top" autoHide={true} visibilityTime={3} config={toastConfig}/>
           </GestureHandlerRootView>
         </ErrorBoundary>
       </SafeAreaProvider>
