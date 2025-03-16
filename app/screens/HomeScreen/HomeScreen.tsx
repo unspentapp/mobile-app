@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useState } from "react"
 import {
-  ScrollView, TextStyle,
+  ScrollView,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -25,6 +26,7 @@ import TransactionModel from "../../../db/models/TransactionModel"
 import AnimatedBackground from "app/components/AnimatedBackground"
 
 const ROUND_BUTTON_SIZE = 56
+
 
 interface ExpensesScreenProps extends MainTabScreenProps<"Expenses"> {
   transactions: TransactionModel[]
@@ -230,43 +232,47 @@ const HomeScreen: FC<ExpensesScreenProps> = ({ transactions, categories, ...prop
 
         <View style={$topContainer}>
           <MonthReviewCard totalMonthlyExpenses={totalMonthlyExpenses} />
+          <View style={$goToTransactionsContainer}>
+            <TouchableOpacity onPress={navigateToAllTransactions} style={$goToTransactionsBtn}>
+              <Text tx="homeScreen.seeAll" preset="formLabel" style={$goToTransactions} />
+              <Icon icon={"back"} color={colors.text} size={typography.iconSize} style={{ transform: [{ rotate: "180deg" } ] }}/>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView
           style={$scrollViewContainer}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: spacing.lg }}
+          // contentContainerStyle={{ paddingHorizontal: spacing.lg }}
           maintainVisibleContentPosition={{
             minIndexForVisible: 0,
             autoscrollToTopThreshold: undefined,
           }}
         >
-          <View style={$goToTransactionsContainer}>
-            <TouchableOpacity onPress={navigateToAllTransactions}>
-              <Text tx="homeScreen.seeAll" preset="formLabel" style={$goToTransactions} />
+
+          <View style={$categoriesWrapper}>
+            {processedTransactions.length > 0 ? processedTransactions.map((item, index) => (
+                <EnhancedCategoryCard
+                  key={item.categoryId}
+                  categoryId={item.categoryId}
+                  category={item.category}
+                  transactions={item.transactions}
+                  totalExpenses={totalMonthlyExpenses || 0}
+                  totalExpensesPerCategory={item.totalExpensesPerCategory || 0}
+                  animationDelay={index * 50}
+                  presentConfirmationModal={actions.openConfirmationSheet}
+                />
+            )) : null}
+            <TouchableOpacity
+              style={$addCategoryButtonContainer}
+              onPress={() => actions.openAddCategorySheet('new')}
+            >
+              <Icon icon={"add"} size={typography.iconSize} color={colors.text} />
+              <Text tx={"homeScreen.addCategory"} style={$addNewCategoryText}/>
             </TouchableOpacity>
           </View>
 
-          {processedTransactions.length > 0 ? processedTransactions.map((item, index) => (
-            <EnhancedCategoryCard
-              key={item.categoryId}
-              categoryId={item.categoryId}
-              category={item.category}
-              transactions={item.transactions}
-              totalExpenses={totalMonthlyExpenses || 0}
-              totalExpensesPerCategory={item.totalExpensesPerCategory || 0}
-              animationDelay={index * 50}
-              presentConfirmationModal={actions.openConfirmationSheet}
-            />
-          )) : null}
-
-          <TouchableOpacity
-            style={$addCategoryButtonContainer}
-            onPress={() => actions.openAddCategorySheet('new')}
-          >
-            <Text tx={"homeScreen.addCategory"} style={$addNewCategoryText}/>
-          </TouchableOpacity>
         </ScrollView>
 
         <TouchableOpacity
@@ -308,8 +314,8 @@ const $container: ViewStyle = {
 
 const $topContainer: ViewStyle = {
   justifyContent: "flex-start",
-  paddingHorizontal: spacing.lg,
-  paddingVertical: spacing.xs
+  paddingHorizontal: spacing.sm,
+  paddingTop: spacing.md,
 }
 
 const $roundButton: ViewStyle = {
@@ -335,7 +341,7 @@ const $roundButton: ViewStyle = {
 const $scrollViewContainer: ViewStyle = {
   // backgroundColor: "red",
   // paddingTop: 250 + spacing.lg, // 250 is for the header animation
-  // paddingHorizontal: spacing.lg,
+  paddingHorizontal: spacing.md,
   // marginTop: spacing.md,
 }
 
@@ -346,22 +352,32 @@ const $goToTransactions: TextStyle = {
 const $goToTransactionsContainer: ViewStyle = {
   width: '100%',
   alignItems: "flex-end",
+  paddingHorizontal: spacing.xxs,
+}
+
+const $goToTransactionsBtn: ViewStyle = {
+  flexDirection: "row",
+  gap: spacing.xs,
+}
+
+const $categoriesWrapper: ViewStyle = {
+  backgroundColor: colors.elevatedBackground,
+  borderRadius: spacing.xs,
+  marginBottom: spacing.xl,
 }
 
 const $addCategoryButtonContainer: ViewStyle = {
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
+  gap: spacing.xs,
   paddingHorizontal: spacing.lg,
   paddingVertical: spacing.lg,
   backgroundColor: colors.elevatedBackground,
-  borderWidth: 1,
-  borderColor: colors.border,
-  marginBottom: spacing.sm,
   borderRadius: spacing.xxs,
 }
 
 const $addNewCategoryText: TextStyle = {
-  fontFamily: typography.primary.medium,
-  color: colors.textDim
+  fontFamily: typography.primary.semiBold,
+  color: colors.text
 }

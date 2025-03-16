@@ -58,7 +58,6 @@ const $container: ViewStyle = {
   width: '90%',
   height: 'auto',
   minHeight: 56,
-  marginTop: spacing.md,
   borderLeftWidth: 5,
   padding: spacing.md,
   paddingHorizontal: spacing.md,

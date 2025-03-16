@@ -60,15 +60,16 @@ const AddTransactionModal = ({ bottomSheetModalRef, isOpen, onDismiss }: Props) 
 
     try {
       await addNewTransaction(newTransaction)
-      bottomSheetModalRef.current?.close()
     } catch (error) {
       console.error('Failed to save transaction:', error)
-    } finally {
       Toast.show({
-        type: "success",
-        text1: `${type.charAt(0).toUpperCase() + type.slice(1)} Added`,
-        text2: `Your ${type} has been added successfully`,
+        type: "error",
+        position: "top",
+        text1: "Error",
+        text2: "Something went wrong. Try again.",
       })
+    } finally {
+      bottomSheetModalRef.current?.close()
     }
   }, [addNewTransaction, bottomSheetModalRef])
 

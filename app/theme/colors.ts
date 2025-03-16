@@ -18,10 +18,10 @@ const palette = {
   neutral200: "#dedede",
   neutral300: "#D7CEC9",
   neutral400: "#B6ACA6",
-  neutral500: "#978F8A",
-  neutral600: "#564E4A",
+  neutral500: "#968c83",
+  neutral600: "#7a706a",
   neutral700: "#3C3836",
-  neutral800: "#191015",
+  neutral800: "#302929",
   neutral900: "#000000",
 
   primary100: "#fef2c7",
@@ -75,7 +75,7 @@ export const colors = {
   /**
    * Secondary text information.
    */
-  textDim: palette.neutral500,
+  textDim: palette.neutral600,
   /**
    * The default color of the screen background.
    */

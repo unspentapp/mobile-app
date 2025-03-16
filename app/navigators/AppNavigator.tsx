@@ -127,7 +127,7 @@ export const AppNavigator = (props: NavigationProps) => {
           <AppStack />
         </BottomSheetModalProvider>
       </NavigationContainer>
-      <Toast position={"top"} config={ToastConfig} autoHide={true} visibilityTime={3000} />
+      <Toast position={"top"} config={ToastConfig} autoHide={true} visibilityTime={3000} topOffset={50} bottomOffset={90}/>
     </>
   )
 }

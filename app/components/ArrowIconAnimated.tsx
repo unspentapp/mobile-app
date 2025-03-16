@@ -36,7 +36,7 @@ const ArrowIconAnimated: React.FC<ArrowIconAnimatedProps> = ({
 
   return (
     <Animated.View style={[$style, animatedIcon]}>
-      <Icon icon="arrowDown" color={colors.text} size={20} />
+      <Icon icon="caretDown" color={colors.text} size={20} />
     </Animated.View>
   )
 }

@@ -99,7 +99,7 @@ export const iconRegistry = {
   edit: require("../../assets/icons/edit.png"),
   calendar: require("../../assets/icons/calendar.png"),
   back: require("../../assets/icons/back.png"),
-  arrowDown: require("../../assets/icons/angle-down.png"),
+  caretDown: require("../../assets/icons/angle-down.png"),
   bell: require("../../assets/icons/bell.png"),
   caretLeft: require("../../assets/icons/caretLeft.png"),
   caretRight: require("../../assets/icons/caretRight.png"),
@@ -118,7 +118,9 @@ export const iconRegistry = {
   expense: require("../../assets/icons/wallet-expense.png"),
   reload: require("../../assets/icons/rotate-right.png"),
   tags: require("../../assets/icons/tags.png"),
-  delete: require("../../assets/icons/trash.png")
+  delete: require("../../assets/icons/trash.png"),
+  add: require("../../assets/icons/add.png"),
+  repeat: require("../../assets/icons/repeat.png"),
 }
 
 const $imageStyleBase: ImageStyle = {

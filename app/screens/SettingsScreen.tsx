@@ -27,6 +27,8 @@ export const SettingsScreen: FC<MainTabScreenProps<"Settings">> = function Setti
     await database.write(async () => {
       await database.unsafeResetDatabase();
     });
+
+    signOut()
   }
 /*  const fetchAuthSessionRecords = async () => {
     const results = await database.collections.get('auth_session').query().fetch()

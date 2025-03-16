@@ -258,7 +258,7 @@ const TransactionDetails = () => {
             <AnimatedDropdown
               options={categories}
               selectedOption={category ? {
-                label: category.name, // todo uncategorized implementation
+                label: category.name, // todo fix: handle uncategorized transactions
                 value: category.id
               } : undefined}
               onSelect={handleCategorySelect}
@@ -267,7 +267,7 @@ const TransactionDetails = () => {
             />
             ) : (
               <Text
-                text={category?.name}
+                text={category?.name || "---"}
                 style={$textInput}
               />
             )}

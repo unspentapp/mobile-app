@@ -87,11 +87,10 @@ export default CategoryCard
 const $cardContainer: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'flex-start',
-  backgroundColor: 'rgba(256, 256, 256, 0.6)',
-  borderWidth: 1,
-  borderColor: colors.border,
-  marginBottom: spacing.sm,
-  borderRadius: spacing.xxs,
+  // backgroundColor: colors.elevatedBackground,
+  // backgroundColor: 'rgba(256, 256, 256, 0.6)',
+  borderBottomWidth: 1,
+  borderBottomColor: colors.palette.neutral100,
 }
 
 const $labelContainer: ViewStyle = {
@@ -105,8 +104,8 @@ const $labelContainer: ViewStyle = {
 }
 
 const $title: TextStyle = {
-  fontSize: 20,
-  fontFamily: typography.primary.medium,
+  fontSize: 16,
+  fontFamily: typography.primary.semiBold,
   color: colors.text,
 }
 
@@ -124,5 +123,4 @@ const $progressBarContainer: ViewStyle = {
 
 const $cardDescriptionContainer: ViewStyle = {
   flex: 1
-
 }

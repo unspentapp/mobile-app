@@ -23,25 +23,32 @@ const MonthReviewCard = ({ totalMonthlyExpenses }: Props) => {
 export default MonthReviewCard
 
 const $container: ViewStyle = {
-  paddingHorizontal: spacing.xs,
-  paddingVertical: spacing.xs,
+  paddingHorizontal: spacing.md,
+  paddingTop: spacing.xl,
+  paddingBottom: spacing.lg,
+  // borderRadius: spacing.xs,
+  // backgroundColor: colors.elevatedBackground,
+  // marginTop: spacing.xs,
+  // marginBottom: spacing.md,
 }
 
 const $title: TextStyle = {
   textTransform: "uppercase",
   fontFamily: typography.secondary?.medium,
-  fontSize: 14,
-  color: colors.textDim,
+  fontSize: 13,
+  color: colors.text,
 
 }
 
 const $expenseText: TextStyle = {
   fontFamily: typography.primary.bold,
-  fontSize: 40,
-  lineHeight: 42,
+  fontSize: 48,
+  lineHeight: 50,
   marginTop: spacing.xs,
 }
 
 const $daysLeftText: TextStyle = {
-  color: colors.textDim,
+  color: colors.text,
+  fontFamily: typography.primary.normal,
+  // marginTop: spacing.xxs,
 }
