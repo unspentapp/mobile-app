@@ -16,6 +16,7 @@ interface TransactionItemRendererProps {
   };
   categoriesMap: CategoriesMap;
   onDelete: (transaction: TransactionModel) => void;
+  isLastItemInList: boolean
 }
 
 export const TransactionItemRenderer = ({
@@ -24,6 +25,7 @@ export const TransactionItemRenderer = ({
     section,
     categoriesMap,
     onDelete,
+    isLastItemInList
   }: TransactionItemRendererProps) => {
   // Get category color with type safety
   let categoryColor: CustomColorType = "color1";
@@ -42,6 +44,7 @@ export const TransactionItemRenderer = ({
       sectionLength={section.data.length}
       categoryColor={categoryColor}
       onDelete={onDelete}
+      isLastItemInList={isLastItemInList}
     />
   );
 };

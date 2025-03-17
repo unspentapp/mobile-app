@@ -14,28 +14,30 @@ const custom = {
 
 const palette = {
   neutral000: "#ffffff",
-  neutral100: "#f3f3f3",
+  neutral100: "#f3f3f3", // this
   neutral200: "#dedede",
   neutral300: "#D7CEC9",
   neutral400: "#B6ACA6",
   neutral500: "#968c83",
   neutral600: "#7a706a",
   neutral700: "#3C3836",
-  neutral800: "#302929",
+  neutral800: "#302929", // this
   neutral900: "#000000",
 
   primary100: "#fef2c7",
   primary200: "#fde48a",
   primary300: "#fccf47",
   primary400: "#fbbc24",
-  primary500: "#f59b0b",
+  primary500: "#f59b0b", // this
   primary600: "#d97406",
 
-  secondary100: "#00cdb1",
+  secondary100: "#00cdb1", // this
   secondary200: "#00a592",
   secondary300: "#028174",
   secondary400: "#07685f",
   secondary500: "#0c554e",
+
+  tertiary100: "#F953B2", // this
 
   accent100: "#FFEED4",
   accent200: "#FFE1B2",

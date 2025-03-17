@@ -43,6 +43,7 @@ const prefix = Linking.createURL("/")
 const config = {
   screens: {
     Login: "Login",
+    Signup: "Signup",
     // Welcome: "welcome",
     Main: {
       screens: {
@@ -84,10 +85,6 @@ function App(props: AppProps) {
       hideSplashScreen()
     }
   }, [isRehydrated])
-
-/*  useEffect(() => {
-    setTimeout(hideSplashScreen, 2000)
-  }, []) */
 
   // Before we show the app, we have to wait for our state to be ready.
   // In the meantime, don't render anything. This will be the background

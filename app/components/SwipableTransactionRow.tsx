@@ -13,6 +13,7 @@ interface SwipeableTransactionRowProps {
   sectionLength: number
   categoryColor: keyof typeof colors.custom
   onDelete: (transaction: TransactionModel) => void
+  isLastItemInList: boolean
 }
 
 const DeleteAction = ({
@@ -50,7 +51,8 @@ export const SwipeableTransactionRow = ({
                                           index,
                                           sectionLength,
                                           categoryColor,
-                                          onDelete
+                                          onDelete,
+                                          isLastItemInList
                                         }: SwipeableTransactionRowProps) => {
 
   const renderRightActions = (prog: SharedValue<number>, drag: SharedValue<number>) => (
@@ -69,6 +71,7 @@ export const SwipeableTransactionRow = ({
         $itemWrapper,
         index === 0 && $itemWrapperFirst,
         index === sectionLength - 1 && $itemWrapperLast,
+        isLastItemInList && { marginBottom: spacing.xl },
         { borderColor: colors.custom[categoryColor] }]}
       >
         <RowItem transaction={item} />

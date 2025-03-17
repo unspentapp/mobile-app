@@ -209,15 +209,25 @@ const TransactionsList = ({ transactions, categories, selectedYear, setSelectedY
       <SectionList
         style={$sectionContainer}
         sections={sections}
-        renderItem={({ item, index, section }) => (
-          <TransactionItemRenderer
-            item={item}
-            index={index}
-            section={section}
-            categoriesMap={categoriesMap}
-            onDelete={handleDelete}
-          />
-        )}
+        renderItem={({ item, index, section }) => {
+          const sectionIndex = sections.findIndex(s =>
+            s.monthKey === section.monthKey &&
+            s.title === section.title
+          );
+          const isLastSection = sectionIndex === sections.length - 1;
+          const isLastItemInSection = index === section.data.length - 1;
+
+          return (
+            <TransactionItemRenderer
+              item={item}
+              index={index}
+              section={section}
+              categoriesMap={categoriesMap}
+              onDelete={handleDelete}
+              isLastItemInList={isLastSection && isLastItemInSection}
+            />
+          );
+        }}
         keyExtractor={(item, index) => item.id + index.toString()}
         renderSectionHeader={({ section }) => (
           <SectionHeader section={section} />

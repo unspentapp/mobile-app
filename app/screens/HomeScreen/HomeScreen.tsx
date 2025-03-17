@@ -23,7 +23,7 @@ import { ConfirmationSheet } from "app/components/ConfirmationSheet"
 import CategoryModel from "../../../db/models/CategoryModel"
 import { useModals } from "app/hooks/useModals"
 import TransactionModel from "../../../db/models/TransactionModel"
-import AnimatedBackground from "app/components/AnimatedBackground"
+import AnimatedBackground from "app/components/backdrops/AnimatedBackground"
 
 const ROUND_BUTTON_SIZE = 56
 
@@ -373,8 +373,6 @@ const $addCategoryButtonContainer: ViewStyle = {
   gap: spacing.xs,
   paddingHorizontal: spacing.lg,
   paddingVertical: spacing.lg,
-  backgroundColor: colors.elevatedBackground,
-  borderRadius: spacing.xxs,
 }
 
 const $addNewCategoryText: TextStyle = {

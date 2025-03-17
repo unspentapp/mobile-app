@@ -1,8 +1,8 @@
 export * from "./WelcomeScreen"
-
 export * from "./SignInScreen"
-
 export * from "./SignUpScreen"
+export * from "./OnboardingScreen"
+
 
 export * from "./ErrorScreen/ErrorBoundary"
 

@@ -3,10 +3,10 @@ import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Text } from "app/components/Text"
 import { colors, spacing, typography } from "app/theme"
 import { NavigationProp, useNavigation } from "@react-navigation/native"
-import { AppStackParamList } from "app/navigators"
 import { withObservables } from "@nozbe/watermelondb/react"
 import TransactionModel from "../../db/models/TransactionModel"
 import { formatDate } from "app/utils/formatDate"
+import { AppStackParamList } from "../../types/appStackTypes"
 
 export interface RowItemProps {
   transaction : Partial<TransactionModel>

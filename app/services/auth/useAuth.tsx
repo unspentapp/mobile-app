@@ -105,6 +105,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
       if (result.data?.session?.access_token) {
         setToken(result.data.session.access_token)
+        await database.localStorage.set("ALREADY_LAUNCHED", true)
       }
 
       return result

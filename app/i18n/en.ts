@@ -9,11 +9,10 @@ const en = {
     yesterday: "Yesterday",
   },
   welcomeScreen: {
-    postscript:
-      "psst  — This probably isn't what your app looks like. (Unless your designer handed you these screens, and in that case, ship it!)",
-    readyForLaunch: "Your app, almost ready for launch!",
     exciting: "(ohh, this is exciting!)",
-    letsGo: "Let's go!",
+    welcome: "Welcome!",
+    description: "Managing your finances has never been so easy",
+    name: "How should I call you?"
   },
   errorScreen: {
     title: "Something went wrong!",
@@ -51,10 +50,12 @@ const en = {
       "Enter your details below",
     emailFieldLabel: "Email",
     passwordFieldLabel: "Password",
+    confirmPasswordFieldLabel: "Confirm password",
     emailFieldPlaceholder: "Email",
     passwordFieldPlaceholder: "Password",
     loading: "Creating account...",
     tapToSignUp: "Create account",
+    goToSignIn: "Already have an account? Log in",
   },
   mainNavigator: {
     expensesTab: "Expenses",
