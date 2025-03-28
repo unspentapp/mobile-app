@@ -16,7 +16,7 @@ export default class TransactionModel extends Model {
   @field("amount") amount!: number
   @field("description") description!: string
   @field("category_id") categoryId!: string | null
-  @relation("categories", "category_id") category: CategoryModel | undefined
+  @relation("categories", "category_id") category?: CategoryModel
   @date("transaction_at") transactionAt!: Date
   @field("type") type!: "expense" | "income"
   @field("is_recurring") isRecurring?: boolean

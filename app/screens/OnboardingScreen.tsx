@@ -116,7 +116,7 @@ const OnboardingRenderItem: FC<{
 }
 
 
-
+ // todo aggiungo screen in cui chiedo il totale delle entrate mensili
 
 export const OnboardingScreen = () => {
   const navigation = useNavigation()
