@@ -8,6 +8,7 @@ import RowItem from "app/components/RowItem"
 import { useSharedValue } from "react-native-reanimated"
 import CategoryModel from "../../../db/models/CategoryModel"
 import TransactionModel from "../../../db/models/TransactionModel"
+import { CircularProgressBar } from "app/components/CircularProgressBar"
 
 type Props = {
   categoryId: string,
@@ -29,6 +30,10 @@ const CategoryCard = ({
     category
   }: Props) => {
 
+  const numerator = totalExpensesPerCategory;
+  const denominator = totalExpenses;
+  const percentage = Math.round((numerator / denominator) * 100);
+
   const isExpanded = useSharedValue(false)
 
   const onPress = () => {
@@ -46,13 +51,16 @@ const CategoryCard = ({
         style={$labelContainer}
         onLongPress={handleLongPress}
       >
+        <View style={$progressBarContainer}>
+          <CircularProgressBar percentage={percentage} delay={animationDelay} innerCircleColor={colors.custom[category.color] || "color1"}/>
+        </View>
         <View style={$cardDescriptionContainer}>
           <Text style={[$title, categoryId === "unknown" ? { color: colors.textDim } : null]}>
             {category.name}
           </Text>
-          <View style={$progressBarContainer}>
-            <ProgressBar numerator={totalExpensesPerCategory} denominator={totalExpenses} animationDelay={animationDelay} />
-          </View>
+          <Text>
+            <Text style={$percentageText}>{numerator} € / {percentage}%</Text>
+          </Text>
         </View>
         <ArrowIconAnimated value={isExpanded}/>
       </TouchableOpacity>
@@ -87,8 +95,6 @@ export default CategoryCard
 const $cardContainer: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'flex-start',
-  // backgroundColor: colors.elevatedBackground,
-  // backgroundColor: 'rgba(256, 256, 256, 0.6)',
   borderBottomWidth: 1,
   borderBottomColor: colors.palette.neutral100,
 }
@@ -103,11 +109,6 @@ const $labelContainer: ViewStyle = {
   paddingHorizontal: spacing.md,
 }
 
-const $title: TextStyle = {
-  fontSize: 16,
-  fontFamily: typography.primary.semiBold,
-  color: colors.text,
-}
 
 const $normalText: TextStyle = {
   paddingHorizontal: spacing.md,
@@ -117,10 +118,26 @@ const $normalText: TextStyle = {
 }
 
 const $progressBarContainer: ViewStyle = {
-  width: "100%",
+  alignItems: "center",
+  justifyContent: "center",
   paddingRight: spacing.md,
 }
 
 const $cardDescriptionContainer: ViewStyle = {
-  flex: 1
+  flex: 1,
+  justifyContent: "center",
+  gap: spacing.xxs,
+}
+
+const $title: TextStyle = {
+  fontSize: 16,
+  lineHeight: 18,
+  fontFamily: typography.primary.semiBold,
+  color: colors.text,
+}
+
+const $percentageText: TextStyle = {
+  fontSize: 14,
+  color: colors.textDim,
+  lineHeight: 16,
 }
