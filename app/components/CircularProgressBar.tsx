@@ -3,7 +3,6 @@ import Svg, { Circle, G } from 'react-native-svg'
 import { View, ViewStyle } from 'react-native'
 import { colors } from "app/theme"
 import Animated, {
-  Extrapolate,
   interpolate,
   useAnimatedProps,
   useDerivedValue,
@@ -38,9 +37,9 @@ type CircularProgressBarProps = {
   progressColor?: string
   /**
    * Color of the inner circle
-   * @default colors.palette.primary100
+   * @default colors.custom.color1
    */
-  innerCircleColor: keyof typeof colors.custom
+  innerCircleColor?: keyof typeof colors.custom
   /**
    * Delay before animation starts (in milliseconds)
    * @default 0
@@ -67,7 +66,7 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   thickness = 3,
   trackColor = colors.palette.neutral100,
   progressColor = colors.palette.primary500,
-  innerCircleColor = colors.palette.primary100,
+  innerCircleColor = "color1",
   delay = 0,
   springConfig = {
     damping: 20,
@@ -75,16 +74,15 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
     mass: 1
   }
 }) => {
-  // Ensure percentage is between 0 and 100
   const clampedPercentage = Math.max(0, Math.min(100, percentage))
 
-  // Calculate radius and other SVG-specific measurements
   const radius = (diameter - thickness) / 2
   const center = diameter / 2
   const circumference = radius * 2 * Math.PI
+  const categoryColorKey = innerCircleColor;
+  console.log(categoryColorKey + ' , ' + colors.custom[categoryColorKey])
 
   const derivedProgressValue = useDerivedValue(() => {
-    // Use withDelay and withSpring for smooth animation with delay
     return withDelay(
       delay,
       withSpring(clampedPercentage, springConfig)
@@ -99,7 +97,6 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
       Extrapolation.CLAMP
     );
 
-    // Return the strokeDashoffset for the animated circle
     return {
       strokeDashoffset: progress,
     };
@@ -109,6 +106,7 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
     <View style={$container}>
       <Svg width={diameter} height={diameter}>
         <G rotation={-90} origin={`${center}, ${center}`}>
+
           {/* Background track circle */}
           <Circle
             cx={center}
@@ -132,11 +130,12 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
             animatedProps={circleAnimatedProps}
           />
 
+          {/* todo: add icon. Inner category icon circle */}
           <Circle
             cx={center}
             cy={center}
             r={radius - 4}
-            fill={innerCircleColor}
+            fill={colors.custom[categoryColorKey]}
           />
         </G>
       </Svg>

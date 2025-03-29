@@ -3,7 +3,6 @@ import { Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native
 import { colors, spacing, typography } from "app/theme"
 import { AccordionItem } from "app/components/AccordionItem"
 import ArrowIconAnimated from "app/components/ArrowIconAnimated"
-import { ProgressBar } from "app/components/ProgressBar"
 import RowItem from "app/components/RowItem"
 import { useSharedValue } from "react-native-reanimated"
 import CategoryModel from "../../../db/models/CategoryModel"
@@ -11,13 +10,13 @@ import TransactionModel from "../../../db/models/TransactionModel"
 import { CircularProgressBar } from "app/components/CircularProgressBar"
 
 type Props = {
-  categoryId: string,
-  transactions: TransactionModel[],
-  totalExpenses: number,
-  totalExpensesPerCategory: number,
-  animationDelay?: number,
-  presentConfirmationModal: (category: Partial<CategoryModel>) => void,
-  category: Partial<CategoryModel>,
+  categoryId: string
+  transactions: TransactionModel[]
+  totalExpenses: number
+  totalExpensesPerCategory: number
+  animationDelay?: number
+  presentConfirmationModal: (category: Partial<CategoryModel>) => void
+  category: Partial<CategoryModel>
 }
 
 const CategoryCard = ({
@@ -31,8 +30,7 @@ const CategoryCard = ({
   }: Props) => {
 
   const numerator = totalExpensesPerCategory;
-  const denominator = totalExpenses;
-  const percentage = Math.round((numerator / denominator) * 100);
+  const percentage = Math.round((numerator / totalExpenses) * 100)
 
   const isExpanded = useSharedValue(false)
 
@@ -52,7 +50,14 @@ const CategoryCard = ({
         onLongPress={handleLongPress}
       >
         <View style={$progressBarContainer}>
-          <CircularProgressBar percentage={percentage} delay={animationDelay} innerCircleColor={colors.custom[category.color] || "color1"}/>
+          <CircularProgressBar
+            percentage={percentage}
+            delay={animationDelay}
+            innerCircleColor={
+              category?.color && (category.color in colors.custom)
+                ? category.color : undefined
+            }
+          />
         </View>
         <View style={$cardDescriptionContainer}>
           <Text style={[$title, categoryId === "unknown" ? { color: colors.textDim } : null]}>

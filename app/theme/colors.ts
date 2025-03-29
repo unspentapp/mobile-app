@@ -1,6 +1,6 @@
 // TODO: write documentation for colors and palette in own markdown file and add links from here
 const custom = {
-  color1: "#ffffff", // White
+  color1: "#efefef", // Gray
   color2: "#FF1493", // Deep Pink (Pink Family)
   color3: "#DC143C", // Crimson (Red Family)
   color4: "#FF4500", // Vivid Orange-Red (Orange Family)
